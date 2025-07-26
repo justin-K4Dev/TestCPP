@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="TestCode.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <Filter>0.Common</Filter>
+    </ClCompile>
+    <ClCompile Include="StringFormat_add.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="MemorySpan.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreeWayCompare.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="Concepts.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="Modules.cpp">
+      <Filter>Logic\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="CustomModule.ixx">
+      <Filter>Logic\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Coroutine.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="TypeBasedDeductionGuide.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="VCPP_Improvements.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="NSDMI_add.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="Lambda_add.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="Bit.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="Numbers.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="Ranges.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="Chrono_add.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="Atomic_add.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="Thread_add.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="FileSystem_add.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="Concurrency_add.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="Container_add.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="Literals_add.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="Explicit_add.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="0.Common">
+      <UniqueIdentifier>{9e9593e4-3eb9-40bd-8019-ae140ce70a38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Logic">
+      <UniqueIdentifier>{0d473f25-73e2-482a-bf58-98c4551821f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Logic\Modules">
+      <UniqueIdentifier>{4e8a92e7-71a4-4fce-8913-80e438ec011a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>0.Common</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>0.Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Function.h" />
+  </ItemGroup>
+</Project>

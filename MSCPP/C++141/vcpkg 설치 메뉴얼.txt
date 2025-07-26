@@ -1,0 +1,152 @@
+﻿📦 vcpkg 설치 및 환경설정 올인원 가이드
+──────────────────────────────────────────────────
+
+📝 개요
+──────────────────────────────────────────────────
+vcpkg는 C/C++ 개발을 위한 Microsoft의 오픈소스 패키지 매니저입니다.
+라이브러리 설치/제거/업데이트/프로젝트 통합을 쉽게 해주며,
+Windows, Linux, macOS 모두에서 사용할 수 있습니다.
+
+──────────────────────────────────────────────────
+
+🖥️ OS 및 IDE별 지원 버전
+──────────────────────────────────────────────────
+- Windows
+  - Windows 7 SP1, 8.1, 10, 11 이상에서 동작
+  - Windows Server 2012 이상도 지원
+  - 32비트, 64비트 모두 사용 가능 (64비트 권장)
+- Linux
+  - 주요 리눅스 배포판(Ubuntu, Debian, CentOS, Fedora 등) 대부분 지원
+  - 최소 C++17 컴파일러(GCC 7 이상) 필요
+- macOS
+  - macOS 10.13(High Sierra) 이상 권장
+  - Xcode 및 최신 Command Line Tools 필요
+  - 최소 C++17 지원 컴파일러(Clang 9.0 이상) 필요
+
+- IDE 지원
+  - Visual Studio 2015, 2017, 2019, 2022  
+    - **2017 15.3 이상에서 vcpkg 통합(integrate) 공식 지원**
+    - Visual Studio 2019, 2022에서 매니페스트 모드(프로젝트별 vcpkg.json) 완벽 지원
+  - Visual Studio Code(Any)에서는 CMake Tools 확장, 터미널 등에서 사용 가능
+
+- CMake 및 컴파일러
+  - CMake 3.14 이상 권장, 매니페스트 모드는 CMake 3.21 이상 권장
+  - 컴파일러: GCC 7+, Clang 9+, MSVC 2017+ 필요 (C++17 이상 지원 필수)
+  - 대부분의 패키지가 C++17을 요구하므로, 최신 컴파일러일수록 호환성이 좋음
+
+──────────────────────────────────────────────────
+
+🛠️ 1. vcpkg 설치 방법
+──────────────────────────────────────────────────
+① Git 설치 (최초 1회)
+   - https://git-scm.com 에서 Git 설치
+
+② vcpkg 소스 클론
+   - 명령 프롬프트(또는 터미널)에서 원하는 폴더로 이동 후:
+     git clone https://github.com/microsoft/vcpkg.git
+
+③ vcpkg 부트스트랩 (초기화)
+   - Windows:
+       cd vcpkg
+       bootstrap-vcpkg.bat
+   - Linux/macOS:
+       cd vcpkg
+       ./bootstrap-vcpkg.sh
+
+④ (선택) PATH 환경변수 등록
+   - vcpkg.exe가 포함된 폴더(예: C:\dev\vcpkg)를 PATH에 추가하면 명령어를 어디서나 쓸 수 있음
+
+──────────────────────────────────────────────────
+
+🗂️ 2. 라이브러리 설치 및 제거
+──────────────────────────────────────────────────
+① 설치 가능한 패키지 검색
+   vcpkg search <키워드>
+   예: vcpkg search boost
+
+② 라이브러리 설치
+   vcpkg install <패키지명>[:triplet]
+   예: vcpkg install fmt            (자동)
+       vcpkg install fmt:x64-windows or fmt:x86-windows
+       vcpkg install boost:x64-linux
+
+③ 라이브러리 제거
+   vcpkg remove <패키지명>
+
+④ 설치 경로
+   - 기본: vcpkg\installed\<triplet>\include, lib, bin 등
+
+──────────────────────────────────────────────────
+
+🔗 3. Visual Studio 프로젝트 연동
+──────────────────────────────────────────────────
+① vcpkg와 Visual Studio 통합 (최초 1회)
+   vcpkg integrate install
+   - 이 과정으로 $(VcpkgIncludePath)가 VS 프로젝트내에 자동 설정 !!!
+   - 경로 참조 순서를 임의로 설정할 경우
+     + 프로젝트 속성에서 추가 포함 디렉터리내에서 순서 조정
+       예) $(ProjectDir)MyIncludes;$(VcpkgIncludePath);C:\OtherLib\include
+
+② (참고) 통합 해제
+   vcpkg integrate remove
+
+③ 통합 후에는 #include <라이브러리헤더> 로 바로 사용 가능
+   - Visual Studio에서 추가 포함 디렉터리/라이브러리 경로 자동 등록됨
+
+──────────────────────────────────────────────────
+
+⚙️ 4. CMake 프로젝트 연동 (매니페스트 모드 권장)
+──────────────────────────────────────────────────
+① 프로젝트 루트에 vcpkg.json 파일 생성 (예시)
+   {
+     "name": "my-app",
+     "version-string": "0.1.0",
+     "dependencies": [ "fmt", "boost" ]
+   }
+
+② CMakeLists.txt에 toolchain 파일 지정
+   cmake_minimum_required(VERSION 3.21)
+   project(my-app)
+   set(CMAKE_TOOLCHAIN_FILE "C:/dev/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
+   find_package(fmt CONFIG REQUIRED)
+   add_executable(my-app main.cpp)
+   target_link_libraries(my-app PRIVATE fmt::fmt)
+
+③ 빌드 명령 예시
+   cmake -B build -S . -DCMAKE_TOOLCHAIN_FILE=C:/dev/vcpkg/scripts/buildsystems/vcpkg.cmake
+   cmake --build build
+
+──────────────────────────────────────────────────
+
+🧩 5. 트리플릿(triplet)과 다중 환경 관리
+──────────────────────────────────────────────────
+- triplet이란: 빌드 타겟 플랫폼/설정을 지정하는 이름 (예: x86-windows, x64-windows, x64-linux 등)
+- 동일 라이브러리를 여러 환경(x86/x64/Debug/Release 등)에서 독립적으로 설치/사용 가능
+
+──────────────────────────────────────────────────
+
+🧾 6. 패키지/버전 관리 & 매니페스트 모드
+──────────────────────────────────────────────────
+- 매니페스트(vcpkg.json) 방식 사용 시
+  → 프로젝트마다 설치할 라이브러리와 버전을 지정 가능
+- 프로젝트마다 다른 라이브러리 버전 동시 관리 가능 (프로젝트별 vcpkg_installed 폴더 활용)
+
+──────────────────────────────────────────────────
+
+🛡️ 7. 문제해결 & 유용한 팁
+──────────────────────────────────────────────────
+- 패키지 전체 최신화: vcpkg update / vcpkg upgrade
+- 특정 경로에 vcpkg 설치: git clone 후 원하는 폴더 사용
+- 빌드 오류 시: triplet/플랫폼, 환경변수, 툴체인 파일 경로 확인
+- vcpkg list → 설치된 패키지 목록 확인
+- vcpkg help → 모든 명령어 및 사용법 안내
+
+──────────────────────────────────────────────────
+
+📚 공식 문서 & 참고 링크
+──────────────────────────────────────────────────
+- vcpkg 공식 문서: https://learn.microsoft.com/en-us/vcpkg/
+- vcpkg GitHub: https://github.com/microsoft/vcpkg
+- 패키지 검색: https://vcpkg.io/en/packages.html
+
+──────────────────────────────────────────────────

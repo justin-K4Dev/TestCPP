@@ -1,0 +1,233 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="0.Common">
+      <UniqueIdentifier>{c565bb5c-f55b-4cb2-9ca5-c31ab41d7f3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Logic">
+      <UniqueIdentifier>{40dda75c-d1d9-461d-9073-b42466fd41ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Info">
+      <UniqueIdentifier>{909947c6-1a26-4fb7-8eb2-fecd5cdd5f48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Logic\Basic of C++">
+      <UniqueIdentifier>{bb15e3e6-0cdf-4b7e-a7ab-d8229ede96cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Logic\Program structure">
+      <UniqueIdentifier>{c46b1188-41bb-4f7b-95c8-f89af55cfd39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Logic\Compound data types">
+      <UniqueIdentifier>{b3e7d222-ab68-4e3c-946c-1f247bf5a46f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Logic\Classes">
+      <UniqueIdentifier>{de4c35e5-96d1-4f17-a6c6-a9113293a7b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Logic\Other language features">
+      <UniqueIdentifier>{eac58766-d4e5-48e5-9d15-08cfaa426091}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Logic\Standard library">
+      <UniqueIdentifier>{ece4924a-9a2e-4147-86e0-ecc3bfc01ed1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Logic\Introduction">
+      <UniqueIdentifier>{edffba34-c8ba-4abd-9d72-733956c8879b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Logic\Etc">
+      <UniqueIdentifier>{8baefd21-d0fb-4a15-878a-13c3d041e2f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Logic\Etc\AdvancedMacro">
+      <UniqueIdentifier>{4feead9e-2464-41ba-ad14-bde1f56c7a53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Logic\Etc\Locale">
+      <UniqueIdentifier>{9c21bdbf-bf98-4963-93fc-82297cebbce5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>0.Common</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>0.Common</Filter>
+    </ClInclude>
+    <ClInclude Include="CRT_MemoryCheck.h">
+      <Filter>Info</Filter>
+    </ClInclude>
+    <ClInclude Include="Function.h" />
+    <ClInclude Include="ColorEnums.h">
+      <Filter>Logic\Etc\AdvancedMacro</Filter>
+    </ClInclude>
+    <ClInclude Include="Colors.h">
+      <Filter>Logic\Etc\AdvancedMacro</Filter>
+    </ClInclude>
+    <ClInclude Include="EnumMacro.h">
+      <Filter>Logic\Etc\AdvancedMacro</Filter>
+    </ClInclude>
+    <ClInclude Include="EnumToString.h">
+      <Filter>Logic\Etc\AdvancedMacro</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>0.Common</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="CRT_MemoryCheck.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="VariablesAndTypes.cpp">
+      <Filter>Logic\Basic of C++</Filter>
+    </ClCompile>
+    <ClCompile Include="Constants.cpp">
+      <Filter>Logic\Basic of C++</Filter>
+    </ClCompile>
+    <ClCompile Include="Operators.cpp">
+      <Filter>Logic\Basic of C++</Filter>
+    </ClCompile>
+    <ClCompile Include="StreamIO.cpp">
+      <Filter>Logic\Basic of C++</Filter>
+    </ClCompile>
+    <ClCompile Include="StatementsAndFlowControl.cpp">
+      <Filter>Logic\Program structure</Filter>
+    </ClCompile>
+    <ClCompile Include="Functions.cpp">
+      <Filter>Logic\Program structure</Filter>
+    </ClCompile>
+    <ClCompile Include="OverloadsAndTemplates.cpp">
+      <Filter>Logic\Program structure</Filter>
+    </ClCompile>
+    <ClCompile Include="NameVisiblility.cpp">
+      <Filter>Logic\Program structure</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterSequences.cpp">
+      <Filter>Logic\Compound data types</Filter>
+    </ClCompile>
+    <ClCompile Include="Pointers.cpp">
+      <Filter>Logic\Compound data types</Filter>
+    </ClCompile>
+    <ClCompile Include="DynamicMemory.cpp">
+      <Filter>Logic\Compound data types</Filter>
+    </ClCompile>
+    <ClCompile Include="DataStructures.cpp">
+      <Filter>Logic\Compound data types</Filter>
+    </ClCompile>
+    <ClCompile Include="OtherDataTypes.cpp">
+      <Filter>Logic\Compound data types</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes-1.cpp">
+      <Filter>Logic\Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes-2.cpp">
+      <Filter>Logic\Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="SpecialMembers.cpp">
+      <Filter>Logic\Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="FriendshipAndInheritance.cpp">
+      <Filter>Logic\Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Polymorphism.cpp">
+      <Filter>Logic\Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="TypeConversions.cpp">
+      <Filter>Logic\Other language features</Filter>
+    </ClCompile>
+    <ClCompile Include="PreprocessorDirectives.cpp">
+      <Filter>Logic\Other language features</Filter>
+    </ClCompile>
+    <ClCompile Include="InputOutputWithFiles.cpp">
+      <Filter>Logic\Standard library</Filter>
+    </ClCompile>
+    <ClCompile Include="Compilers.cpp">
+      <Filter>Logic\Introduction</Filter>
+    </ClCompile>
+    <ClCompile Include="StructureOfProgram.cpp">
+      <Filter>Logic\Basic of C++</Filter>
+    </ClCompile>
+    <ClCompile Include="Arrays.cpp">
+      <Filter>Logic\Compound data types</Filter>
+    </ClCompile>
+    <ClCompile Include="ByteOrder.cpp">
+      <Filter>Logic\Basic of C++</Filter>
+    </ClCompile>
+    <ClCompile Include="ExplicitMutable.cpp">
+      <Filter>Logic\Basic of C++</Filter>
+    </ClCompile>
+    <ClCompile Include="Random.cpp">
+      <Filter>Logic\Other language features</Filter>
+    </ClCompile>
+    <ClCompile Include="Cast.cpp">
+      <Filter>Logic\Basic of C++</Filter>
+    </ClCompile>
+    <ClCompile Include="Exception.cpp">
+      <Filter>Logic\Other language features</Filter>
+    </ClCompile>
+    <ClCompile Include="TailCall.cpp">
+      <Filter>Logic\Program structure</Filter>
+    </ClCompile>
+    <ClCompile Include="RecursiveToNonRecurcive.cpp">
+      <Filter>Logic\Program structure</Filter>
+    </ClCompile>
+    <ClCompile Include="CallbackAndDelegate.cpp">
+      <Filter>Logic\Program structure</Filter>
+    </ClCompile>
+    <ClCompile Include="StringHelper.cpp">
+      <Filter>Logic\Etc</Filter>
+    </ClCompile>
+    <ClCompile Include="NonLocalGoTo.cpp">
+      <Filter>Logic\Etc</Filter>
+    </ClCompile>
+    <ClCompile Include="Program32bit264bit.cpp">
+      <Filter>Logic\Etc</Filter>
+    </ClCompile>
+    <ClCompile Include="AdvancedMacro.cpp">
+      <Filter>Logic\Etc\AdvancedMacro</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadLocalStorage.cpp">
+      <Filter>Logic\Other language features</Filter>
+    </ClCompile>
+    <ClCompile Include="Thread.cpp">
+      <Filter>Logic\Other language features</Filter>
+    </ClCompile>
+    <ClCompile Include="Unicode.cpp">
+      <Filter>Logic\Etc</Filter>
+    </ClCompile>
+    <ClCompile Include="Time.cpp">
+      <Filter>Logic\Etc</Filter>
+    </ClCompile>
+    <ClCompile Include="Locale.cpp">
+      <Filter>Logic\Etc\Locale</Filter>
+    </ClCompile>
+    <ClCompile Include="Integer128.cpp">
+      <Filter>Logic\Etc</Filter>
+    </ClCompile>
+    <ClCompile Include="TestCode.cpp" />
+    <ClCompile Include="MacroTipsAndTricks.cpp">
+      <Filter>Logic\Etc\AdvancedMacro</Filter>
+    </ClCompile>
+    <ClCompile Include="Function.cpp">
+      <Filter>Logic\Etc</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadSyncWithVolatile.cpp">
+      <Filter>Logic\Other language features</Filter>
+    </ClCompile>
+    <ClCompile Include="SFINAE.cpp">
+      <Filter>Logic\Etc</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="locale_cpp_facets.gif">
+      <Filter>Logic\Etc\Locale</Filter>
+    </None>
+    <None Include="locale_c_io.gif">
+      <Filter>Logic\Etc\Locale</Filter>
+    </None>
+    <None Include="locale_cpp_io.gif">
+      <Filter>Logic\Etc\Locale</Filter>
+    </None>
+    <None Include="locale_cpp_architecture.gif">
+      <Filter>Logic\Etc\Locale</Filter>
+    </None>
+  </ItemGroup>
+</Project>

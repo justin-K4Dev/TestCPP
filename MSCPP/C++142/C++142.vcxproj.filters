@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="TestCode.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <Filter>0.Common</Filter>
+    </ClCompile>
+    <ClCompile Include="DeductionGuide.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="Optional.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="Variant.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="StructuredBindings.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="FoldExpression.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="Tuple_add.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="TerseStaticAssert.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="FallThrough.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneralizedRangeBasedForLoops.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="SFNIAE_add.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="STL_Improvements.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="Compiler_add.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="Lambda_add.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="Literal_add.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="IfSwitch_add.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="0.Common">
+      <UniqueIdentifier>{f4dbeee2-5040-4cac-afbc-a280c5536894}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Logic">
+      <UniqueIdentifier>{b4037bdc-fa49-400d-b047-f91438effd9e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Function.h" />
+    <ClInclude Include="targetver.h">
+      <Filter>0.Common</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>0.Common</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
