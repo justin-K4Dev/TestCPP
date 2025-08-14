@@ -19,7 +19,7 @@ namespace Modules
             - 모듈은 export(공개), module(정의), import(사용) 키워드로 관리
             - 빌드 속도 개선, 코드 의존성 및 캡슐화 강화, ODR(One Definition Rule) 위반 방지
             - 확장자: 보통 .ixx, .cppm, .mxx 등 (컴파일러마다 다름)
-            - 빌드 시 반드시 **모듈 파일을 먼저 컴파일**해야 import가 가능
+            - 빌드 시 반드시 모듈 파일을 먼저 컴파일해야 import가 가능
             - 지원 컴파일러: MSVC, GCC(13+), Clang(16+) 등
             - <module> 헤더 필요 없음 (언어 기본 기능)
 

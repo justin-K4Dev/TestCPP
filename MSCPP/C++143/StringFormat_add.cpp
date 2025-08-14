@@ -11,7 +11,7 @@ namespace StringFormat_AddFeatures
 		/*
 			📚 String Format 주요 추가 기능
 		
-		      - C++20에서 새롭게 도입된 **타입-세이프(type-safe)** 문자열 포맷팅 함수
+		      - C++20에서 새롭게 도입된 타입-세이프(type-safe) 문자열 포맷팅 함수
 			  - 기존 `printf`, `std::stringstream`의 한계를 보완한 현대적 포맷 기능 제공
 			  - Python의 `str.format()`, C#의 `string.Format()`과 유사한 스타일
 			  - 컴파일 타임 타입 체크 → 안정적이고 가독성이 뛰어난 코드 작성 가능

@@ -42,7 +42,7 @@ namespace NSDMI // non-static data member initializers
 			  - Aggregate(집합체): 사용자가 제공한 생성자가 없고, private/protected 비정적 멤버·상속·가상함수가 없는 단순 구조체/배열 등
 			  - C++11까지: NSDMI와 aggregate 초기화는 독립적으로만 사용 가능
 				+ NSDMI가 있어도 중괄호 리스트 초기화에서는 무시됨(값이 할당되지 않음)
-			  - C++14부터: **집합체(aggregate) 타입도 NSDMI 지원**
+			  - C++14부터: 집합체(aggregate) 타입도 NSDMI 지원
 				+ 중괄호 초기화로 값이 들어오지 않은 멤버는 NSDMI 값으로 자동 초기화
 				+ 즉, 일부 멤버만 중괄호 초기화 값으로 지정하면, 나머지는 선언부의 디폴트값(NSDMI) 사용
 

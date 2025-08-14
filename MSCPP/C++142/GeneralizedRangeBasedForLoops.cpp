@@ -31,7 +31,7 @@ namespace GeneralizedRangeBasedForLoops
             📚 Generalized range-based for loops 개요 (C++20~)
 
               - 기존(C++11~17)의 range-based for 문은 반드시 begin()과 end()의 반환 타입이 동일해야 함
-              - C++20부터는 begin()과 end()가 서로 **다른 타입**(특히 end가 sentinel 객체 등)이어도 동작함
+              - C++20부터는 begin()과 end()가 서로 다른 타입(특히 end가 sentinel 객체 등)이어도 동작함
                 → Ranges 라이브러리, 사용자 정의 이터레이터, sentinel 기반 반복 등 지원
               - range-v3 같은 라이브러리에서 유연한 순회가 가능해짐
               - 표준 라이브러리 ranges, 커스텀 컨테이너, 파일/네트워크 스트림 등 확장성 대폭 증가

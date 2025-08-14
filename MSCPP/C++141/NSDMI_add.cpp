@@ -9,7 +9,7 @@ namespace NSDMI_AddFeature
 		/*
 			📚 NSDMI (Non-Static Data Member Initializers) 추가 기능
 
-			  - C++14부터: **집합체(aggregate) 타입도 NSDMI 지원**
+			  - C++14부터: 집합체(aggregate) 타입도 NSDMI 지원
 				+ 중괄호 초기화로 값이 들어오지 않은 멤버는 NSDMI 값으로 자동 초기화
 				+ 즉, 일부 멤버만 중괄호 초기화 값으로 지정하면, 나머지는 선언부의 디폴트값(NSDMI) 사용
 			  

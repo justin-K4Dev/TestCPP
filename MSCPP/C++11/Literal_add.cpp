@@ -23,7 +23,7 @@ namespace Literal_AddFeatures
 
 			  🔹 2. Raw String Literal (원시 문자열 리터럴)
 				- 구문: `R"(내용)"`
-				- 이스케이프 문자를 해석하지 않고 문자열을 **그대로** 저장
+				- 이스케이프 문자를 해석하지 않고 문자열을 그대로 저장
 				- 예: `R"(C:\Users\Name\nFolder)"` → 그대로 출력
 
 			  🔹 3. 사용자 정의 리터럴(User-defined Literal, UDL)

@@ -17,20 +17,20 @@ namespace Exception_AddFeatures
 			  - 예외 안전(예외 발생시 자원 해제, 강력 예외 보장, RAII 등)이 중요
 
 			  - C++11 이후 주요 변화:
-				· noexcept 지정자: 함수가 예외를 던지지 않을 것임을 명시(예전 throw()와 동일, 성능 최적화/코드 의도 명확)
-				· throw 지정자(throw(int, double, ...)): 더 이상 권장되지 않음(C++11에서 deprecated, C++17~ 삭제)
-				· std::set_unexpected(): 예상치 못한 예외(throw 지정자에 없는 예외)가 throw될 때 콜백 지정(실제는 terminate)
-				· std::nested_exception, std::throw_with_nested 등 중첩 예외 처리 추가
+				• noexcept 지정자: 함수가 예외를 던지지 않을 것임을 명시(예전 throw()와 동일, 성능 최적화/코드 의도 명확)
+				• throw 지정자(throw(int, double, ...)): 더 이상 권장되지 않음(C++11에서 deprecated, C++17~ 삭제)
+				• std::set_unexpected(): 예상치 못한 예외(throw 지정자에 없는 예외)가 throw될 때 콜백 지정(실제는 terminate)
+				• std::nested_exception, std::throw_with_nested 등 중첩 예외 처리 추가
 
 			  - 예외 처리 정책:
-				· 함수가 noexcept 또는 throw()로 선언되었거나, throw 지정자와 다른 예외를 throw할 경우 std::terminate() 호출
-				· set_unexpected()로 사용자 정의 핸들러 등록 가능(단, 예외 처리 후 반드시 종료)
-				· 예외 남발 대신 예외 안전한 설계와 명확한 예외 계층 사용 권장
+				• 함수가 noexcept 또는 throw()로 선언되었거나, throw 지정자와 다른 예외를 throw할 경우 std::terminate() 호출
+				• set_unexpected()로 사용자 정의 핸들러 등록 가능(단, 예외 처리 후 반드시 종료)
+				• 예외 남발 대신 예외 안전한 설계와 명확한 예외 계층 사용 권장
 
 			  - 실무 원칙:
-				· 예외는 "비정상 상황"만, 정상 흐름 제어에는 사용 금지
-				· noexcept/throw 정책 준수, 예외 안전 보장 코드 작성
-				· try-catch, 표준/사용자 정의 예외 적절히 활용
+				• 예외는 "비정상 상황"만, 정상 흐름 제어에는 사용 금지
+				• noexcept/throw 정책 준수, 예외 안전 보장 코드 작성
+				• try-catch, 표준/사용자 정의 예외 적절히 활용
 
 			  ※ C++17 이후 throw 지정자, set_unexpected는 사실상 사용 금지(레거시), noexcept가 표준
 		*/
@@ -123,7 +123,7 @@ namespace Exception_AddFeatures
 			📚 noexcept
 
 			  - 정의한 함수내에 예외 throw가 없어야 함 !!!
-			  - 함수내에서 throw 처리될 경우 **std::terminate()**가 호출되어 프로그램이 강제 종료 !!!
+			  - 함수내에서 throw 처리될 경우 std::terminate()가 호출되어 프로그램이 강제 종료 !!!
 		*/
 
 		try 

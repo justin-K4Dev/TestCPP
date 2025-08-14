@@ -12,14 +12,14 @@ namespace Loop
 			📚 for문(Range-based for loop) (C++11~)
 
 			  - for ( 선언 : 범위 ) 문법
-			    · 배열, std::string, vector 등 시퀀스 컨테이너/배열의 모든 원소를 자동으로 순회
-			    · 기존 for문에 비해 인덱스, 반복자 없이 훨씬 간결하고 실수 위험 감소
+			    • 배열, std::string, vector 등 시퀀스 컨테이너/배열의 모든 원소를 자동으로 순회
+			    • 기존 for문에 비해 인덱스, 반복자 없이 훨씬 간결하고 실수 위험 감소
 			  - 범위란? begin()/end()를 지원하는 모든 객체(배열, vector, string, set 등)
 			  - 선언에는 보통 원소의 타입 또는 auto(타입 추론)를 사용
 
 			  - 실전 활용
-			    · for (auto x : container) {...} / for (const auto& x : container) {...}
-			    · 시퀀스 전체를 간단히 탐색/출력/수정할 때 매우 효율적
+			    • for (auto x : container) {...} / for (const auto& x : container) {...}
+			    • 시퀀스 전체를 간단히 탐색/출력/수정할 때 매우 효율적
 		*/
 
 		// [1] 문자열(string)의 각 문자 순회

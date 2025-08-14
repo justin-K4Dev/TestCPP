@@ -63,10 +63,10 @@ namespace Concepts
         /*
             📚 Concepts (C++20~)
 
-              - Concepts는 C++20에서 도입된 **템플릿 타입 제약 조건**을 정의하는 새로운 언어 기능
+              - Concepts는 C++20에서 도입된 템플릿 타입 제약 조건을 정의하는 새로운 언어 기능
               - 기존 템플릿은 타입/연산 요구사항을 컴파일 에러로만 알렸으나,
                 Concepts를 사용하면 "이 템플릿 파라미터는 이런 조건을 만족해야 한다"를 명시적으로 선언 가능
-              - 코드의 **가독성, 에러 메시지 명확화, 재사용성, 의도 표현력** 크게 향상
+              - 코드의 가독성, 에러 메시지 명확화, 재사용성, 의도 표현력 크게 향상
               - 표준 라이브러리에도 std::integral, std::floating_point, std::ranges::range 등
                 다양한 기본 Concepts 제공
               - user-defined Concepts(사용자 정의)도 손쉽게 정의 가능

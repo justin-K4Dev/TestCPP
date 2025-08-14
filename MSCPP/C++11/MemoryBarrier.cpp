@@ -22,12 +22,12 @@ namespace MemoryBarrier
 			  - 하드웨어/OS별로는 mfence, lfence, sfence(인텔), DMB, DSB(ARM) 등 로우레벨 명령도 존재
 
 			  - 주요 Memory Order 종류:
-				· memory_order_relaxed   : 원자성만 보장, 순서/가시성 미보장(최고 성능, 안전도 낮음)
-				· memory_order_acquire   : Load 후 이전 write 모두 관찰(동기화, 읽기 전 fence)
-				· memory_order_release   : Store 전에 write 모두 관찰(동기화, 쓰기 후 fence)
-				· memory_order_acq_rel   : acquire + release 결합
-				· memory_order_seq_cst   : 가장 강력, 모든 연산의 순서를 전역적으로 강제(최고 안전, 최저 성능)
-				· memory_order_consume   : (C++17에서 deprecated, 사실상 acquire와 동일)
+				• memory_order_relaxed   : 원자성만 보장, 순서/가시성 미보장(최고 성능, 안전도 낮음)
+				• memory_order_acquire   : Load 후 이전 write 모두 관찰(동기화, 읽기 전 fence)
+				• memory_order_release   : Store 전에 write 모두 관찰(동기화, 쓰기 후 fence)
+				• memory_order_acq_rel   : acquire + release 결합
+				• memory_order_seq_cst   : 가장 강력, 모든 연산의 순서를 전역적으로 강제(최고 안전, 최저 성능)
+				• memory_order_consume   : (C++17에서 deprecated, 사실상 acquire와 동일)
 
 			  ※ 성능과 동기화 안전성 사이에서 메모리 모델/배리어 설계가 매우 중요
 		*/

@@ -13,18 +13,18 @@ namespace TypeInfo_AddFeatures
 			  - <typeinfo> 자체는 C++98부터 존재했지만,
 			    C++11에서 타입 정보 관련 클래스와 함수들에 다음과 같은 변화가 있었음
 
-			  1. **std::type_info::before 멤버 함수에 noexcept 명시**
+			  1. std::type_info::before 멤버 함수에 noexcept 명시
 		        - C++11부터 std::type_info::before, operator==, operator!= 등 여러 멤버 함수에 noexcept 지정
 				- 예: `bool before(const type_info& rhs) const noexcept;`
 				- noexcept 지정으로 예외 안전성이 명확해지고, 최적화 및 코드 신뢰도 향상
 
-			  2. **std::bad_cast, std::bad_typeid에 move 생성자 및 소멸자 noexcept 추가**
+			  2. std::bad_cast, std::bad_typeid에 move 생성자 및 소멸자 noexcept 추가
 				- 예외 객체들의 move 생성자/소멸자가 noexcept임을 명확히 함
 
-			  3. **typeid의 결과가 lvalue reference이던 rvalue reference이던 동일하도록 규정 명확화**
+			  3. typeid의 결과가 lvalue reference이던 rvalue reference이던 동일하도록 규정 명확화
 				- typeid(x)에서 x가 lvalue reference, rvalue reference 모두에 대해 동일하게 동작하도록 명시
 
-			  4. **기타 현대 C++ 문법과의 결합**
+			  4. 기타 현대 C++ 문법과의 결합
 				- decltype, auto, 템플릿, noexcept 등 C++11 문법과 결합된 typeid, type_info의 활용이 더욱 자유로워짐
 
 			  ※ <typeinfo>의 실제 인터페이스나 사용법은 C++98과 크게 다르지 않지만,

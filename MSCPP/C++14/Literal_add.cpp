@@ -14,7 +14,7 @@ namespace Literal_AddFeature
 		/*
 			📚 String Literals 주요 추가 기능 (C++14)
 
-			  - 문자열 리터럴 자체보다는 **리터럴의 활용성과 확장성**을 위한 기능이 크게 향상
+			  - 문자열 리터럴 자체보다는 리터럴의 활용성과 확장성을 위한 기능이 크게 향상
 
 			  🔹 주요 기능:
 
@@ -31,7 +31,7 @@ namespace Literal_AddFeature
 
 				✅ 3. 사용자 정의 리터럴의 `constexpr` 지원 강화
 				  - `operator"" _suffix()`를 `constexpr`로 선언 가능
-				  - 리터럴 연산을 **컴파일 타임에 수행**할 수 있음
+				  - 리터럴 연산을 컴파일 타임에 수행할 수 있음
 
 				🔹 예시:
 
@@ -87,8 +87,8 @@ namespace Literal_AddFeature
 		/*
 			📚 String Literals Suffix (C++20)
 
-			  - 문자열 리터럴 뒤에 붙는 접미사(suffix)를 통해 문자열의 **타입을 명확히 지정하거나**
-				**사용자 정의 동작**을 부여할 수 있습니다.
+			  - 문자열 리터럴 뒤에 붙는 접미사(suffix)를 통해 문자열의 타입을 명확히 지정하거나
+				사용자 정의 동작을 부여할 수 있습니다.
 			  - C++20에서는 `char8_t`, `std::u8string`, `std::format`, `string_view` 등과의
 				조합을 통해 더 풍부한 문자열 처리 방식이 제공됩니다.
 

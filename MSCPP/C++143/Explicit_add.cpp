@@ -27,7 +27,7 @@ namespace Explicit_AddFeatures
         /*
             📚 조건부 explicit 생성자 (C++20~)
 
-              - C++20에서는 `explicit(true/false)` 형태로 생성자/변환자의 **암시적 변환 허용 여부를 조건부로 제어** 가능
+              - C++20에서는 `explicit(true/false)` 형태로 생성자/변환자의 암시적 변환 허용 여부를 조건부로 제어 가능
               - 기존에는 `explicit` 키워드가 유무만 결정됐지만, 이제는 조건식으로 제어 가능
 
               🔸 주요 목적:

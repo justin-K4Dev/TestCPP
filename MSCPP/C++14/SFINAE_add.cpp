@@ -27,16 +27,16 @@ namespace SFINAE_AddFeatures
 			📚 암시적 변환(Implicit Conversion)과 C++14 switch 조건문
 
 			  - C++11까지:
-				· 변환 연산자(operator T() / operator T&())가 여러 개면 switch, case 등에서 모호성(ambiguous conversion)으로 컴파일 오류
-				· 예: operator int()와 operator int&()가 모두 있으면, switch(i)에서 어떤 변환을 쓸지 애매하여 오류
+				• 변환 연산자(operator T() / operator T&())가 여러 개면 switch, case 등에서 모호성(ambiguous conversion)으로 컴파일 오류
+				• 예: operator int()와 operator int&()가 모두 있으면, switch(i)에서 어떤 변환을 쓸지 애매하여 오류
 
 			  - C++14부터:
-				· 변환 결과 타입이 동일하면(예: 모두 int) 모호성 없이 switch 등에서 사용 가능
-				· 즉, operator int(), operator int&() 모두 있어도 switch(i) 가능
+				• 변환 결과 타입이 동일하면(예: 모두 int) 모호성 없이 switch 등에서 사용 가능
+				• 즉, operator int(), operator int&() 모두 있어도 switch(i) 가능
 
 			  - 결론:
-				· C++14 이전엔 switch, case 등에서 암시적 변환 충돌로 오류
-				· C++14 이상에서는 동일 타입 변환이 여러 개 있어도 switch 가능
+				• C++14 이전엔 switch, case 등에서 암시적 변환 충돌로 오류
+				• C++14 이상에서는 동일 타입 변환이 여러 개 있어도 switch 가능
 		*/
 		{
 			zero_init<int> i;
@@ -76,13 +76,13 @@ namespace SFINAE_AddFeatures
 			    템플릿 인자 T를 "함수 인자 타입으로 전달될 때의 원시 타입"으로 변환해준다.
 
 			  - 변환 규칙:
-				· 참조/const/volatile 속성 제거: int&, const int&, int&& → int
-				· 배열 → 포인터: int[2] → int*
-				· 함수 타입 → 함수 포인터: int(int) → int(*)(int)
-				· (기본적으로 'Value Transformation' 역할)
+				• 참조/const/volatile 속성 제거: int&, const int&, int&& → int
+				• 배열 → 포인터: int[2] → int*
+				• 함수 타입 → 함수 포인터: int(int) → int(*)(int)
+				• (기본적으로 'Value Transformation' 역할)
 
 			  - decay_equiv<T, U>는 std::decay<T>::type과 U가 동일한 타입인지 std::is_same으로 판정하는 헬퍼 타입
-				· value가 true면 decay 결과가 U와 같다는 의미
+				• value가 true면 decay 결과가 U와 같다는 의미
 
 			  - 실전에서는 템플릿 함수/클래스에서 타입 통일, 오버로드 선택, std::tuple, std::function 등에서 많이 사용
 
@@ -148,14 +148,14 @@ namespace SFINAE_AddFeatures
 			  - std::is_same<T, U>::value는 T와 U가 동일한 타입인지 컴파일 타임에 판정
 
 			  - 이 예제의 구조:
-				· check<T> 구조체 안에 test() 함수가 두 개 (템플릿 오버로드)
-				· test()는 T가 bar일 때만 true, 그 외에는 false 반환
-				· enable_if를 이용해 타입이 bar일 때와 아닐 때 각각 별도의 test()가 "오버로드 후보"로 동작
-				· SFINAE로 인해 타입에 따라 딱 한 쪽만 인스턴스화
+				• check<T> 구조체 안에 test() 함수가 두 개 (템플릿 오버로드)
+				• test()는 T가 bar일 때만 true, 그 외에는 false 반환
+				• enable_if를 이용해 타입이 bar일 때와 아닐 때 각각 별도의 test()가 "오버로드 후보"로 동작
+				• SFINAE로 인해 타입에 따라 딱 한 쪽만 인스턴스화
 
 			  - 활용 효과:
-				· 특정 타입(bar)만 true를 반환하는 API 구현
-				· 템플릿 기반 컴파일 타임 타입 분기, 조건부 활성화, 정책 분리 등에 응용
+				• 특정 타입(bar)만 true를 반환하는 API 구현
+				• 템플릿 기반 컴파일 타임 타입 분기, 조건부 활성화, 정책 분리 등에 응용
 		*/
 		{
 			check<car> check_car;
@@ -295,8 +295,8 @@ namespace SFINAE_AddFeatures
 				: cond가 true일 때만 T 타입 활성화, 아니면 SFINAE로 함수가 후보에서 제외
 
 			  - 패턴: 함수 오버로드 시 가변 인자 타입 집합에 대해 "모두 int"일 때, "모두 char"일 때 등으로 분기 가능
-				· testFunction 함수는 bs...가 모두 int면 "bs are integers", 모두 char면 "bs are chars" 출력
-				· 조건이 안 맞는 조합(예: int, float, int)은 컴파일 에러
+				• testFunction 함수는 bs...가 모두 int면 "bs are integers", 모두 char면 "bs are chars" 출력
+				• 조건이 안 맞는 조합(예: int, float, int)은 컴파일 에러
 
 			  ※ 모두 C++11~ 표준 라이브러리에서 제공
 		*/
@@ -345,8 +345,8 @@ namespace SFINAE_AddFeatures
 				: 상속된 value 멤버(true_type/false_type) 값을 런타임 bool로 반환
 
 			  - 활용:
-				· 멤버 변수(혹은 함수) 존재 여부에 따라 정책/동작을 컴파일 타임 분기
-				· 라이브러리/템플릿에서 API 안전성, 자동 특화 등에 사용
+				• 멤버 변수(혹은 함수) 존재 여부에 따라 정책/동작을 컴파일 타임 분기
+				• 라이브러리/템플릿에서 API 안전성, 자동 특화 등에 사용
 
 			  ※ 모두 C++11~ 표준 라이브러리에서 제공
 		*/
@@ -408,17 +408,17 @@ namespace SFINAE_AddFeatures
 			📚 멤버 변수/함수 존재 및 타입 판정 매크로(IS_MEMBER)와 SFINAE + <type_trait> 활용 (C++11~)
 
 			  - IS_MEMBER(T1, M, funcName):
-				· T1 타입의 멤버 M이 "없음/변수/함수" 중 무엇인지 컴파일 타임에 판별
-				· SFINAE, decltype, std::is_member_object_pointer, std::is_member_function_pointer 등 type trait 활용
-				· 매크로 확장 후 funcName으로 해당 정보(존재 여부, 멤버 종류)에 대한 constexpr 변환 연산자 제공
+				• T1 타입의 멤버 M이 "없음/변수/함수" 중 무엇인지 컴파일 타임에 판별
+				• SFINAE, decltype, std::is_member_object_pointer, std::is_member_function_pointer 등 type trait 활용
+				• 매크로 확장 후 funcName으로 해당 정보(존재 여부, 멤버 종류)에 대한 constexpr 변환 연산자 제공
 
 			  - 사용법:
-				· IS_MEMBER(Object, id, isIDofObject);   // id 멤버가 변수면 1, 아니면 0 또는 2
-				· IS_MEMBER(Object, GetID, isGetIDofObject); // GetID가 멤버 함수면 2
+				• IS_MEMBER(Object, id, isIDofObject);   // id 멤버가 변수면 1, 아니면 0 또는 2
+				• IS_MEMBER(Object, GetID, isGetIDofObject); // GetID가 멤버 함수면 2
 
 			  - 활용:
-				· 컴파일 타임에 멤버의 존재/종류를 판별해 static_assert, enum, 정책 분기 등에서 활용
-				· 라이브러리/템플릿에서 API 자동화, 타입별 특화 등에도 사용
+				• 컴파일 타임에 멤버의 존재/종류를 판별해 static_assert, enum, 정책 분기 등에서 활용
+				• 라이브러리/템플릿에서 API 자동화, 타입별 특화 등에도 사용
 		*/
 
 		// 0 = 멤버 없음, 1 = 멤버 변수, 2 = 멤버 함수

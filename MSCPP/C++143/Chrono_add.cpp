@@ -12,8 +12,8 @@ namespace Chrono_AddFeatures
         /*
             📚 <chrono> 추가 기능 (C++20)
 
-              - C++20에서 `<chrono>` 라이브러리에 **캘린더 날짜 처리 및 시간대 지원** 기능이 추가됨
-              - 기존의 duration/clock 위주의 `<chrono>`를 넘어, **사람 친화적인 날짜/시간 표현**이 가능해짐
+              - C++20에서 `<chrono>` 라이브러리에 캘린더 날짜 처리 및 시간대 지원 기능이 추가됨
+              - 기존의 duration/clock 위주의 `<chrono>`를 넘어, 사람 친화적인 날짜/시간 표현이 가능해짐
 
               🔹 주요 추가 요소
 
@@ -45,7 +45,7 @@ namespace Chrono_AddFeatures
 
               🔹 표준 지원
                 - C++20 이상
-                - 시간대(zone) 기능은 OS + 라이브러리에서 **시간대 데이터(tzdb)** 필요
+                - 시간대(zone) 기능은 OS + 라이브러리에서 시간대 데이터(tzdb) 필요
                 - Visual Studio 2022, GCC 11+, Clang 14+ 일부 제한 지원
 
               🔹 예제 문법

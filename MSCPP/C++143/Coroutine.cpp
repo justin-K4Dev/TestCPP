@@ -13,8 +13,8 @@ namespace Coroutine
         /*
             📚 Coroutine (C++20)
 
-              - Coroutine(코루틴)은 함수의 실행을 **중단(suspend)**하고
-                나중에 **재개(resume)**할 수 있는 메커니즘을 제공하는 기능입니다.
+              - Coroutine(코루틴)은 함수의 실행을 중단(suspend)하고
+                나중에 재개(resume)할 수 있는 메커니즘을 제공하는 기능입니다.
               - 기존 함수 호출과 달리 스택을 유지하면서 상태를 보존합니다.
 
               🔹 주요 특징
@@ -25,7 +25,7 @@ namespace Coroutine
 
               🔹 도입 배경
                 - 기존의 콜백 기반 비동기 처리 방식은 가독성이 낮고 유지보수가 어려움
-                - Coroutine은 더 **선형적이고 직관적인 흐름**으로 비동기 로직을 작성할 수 있도록 도와줌
+                - Coroutine은 더 선형적이고 직관적인 흐름으로 비동기 로직을 작성할 수 있도록 도와줌
 
               🔹 핵심 키워드
                 - `co_await`: 비동기 작업 완료를 기다리고 중단
@@ -33,14 +33,14 @@ namespace Coroutine
                 - `co_return`: 코루틴 종료 및 결과 반환
 
               🔹 구성 요소
-                1. **promise_type**:
+                1. promise_type:
                     - 코루틴의 상태를 관리
                     - 결과 값 또는 예외 처리, suspend/return 동작 정의
 
-                2. **coroutine_handle<>**:
+                2. coroutine_handle<>:
                     - 코루틴 객체를 제어 (resume, destroy 등)
 
-                3. **awaiter / awaitable**:
+                3. awaiter / awaitable:
                     - co_await 대상 객체는 이 인터페이스를 따라야 함
                     - 함수: await_ready(), await_suspend(), await_resume()
 
@@ -128,7 +128,7 @@ namespace Coroutine
         /*
             📚 co_yield
 
-              - 호출자에게 **중간값을 전달(yield)** 하며 함수 실행을 **일시 중단(suspend)** 시킴
+              - 호출자에게 중간값을 전달(yield) 하며 함수 실행을 일시 중단(suspend) 시킴
               - 이후 resume 시 중단한 지점부터 계속 실행
 
               🔹 특징
@@ -166,7 +166,7 @@ namespace Coroutine
         /*
             📚 co_return
 
-              - 코루틴 함수에서 **최종 결과를 반환**하거나 **종료를 명시**할 때 사용됨
+              - 코루틴 함수에서 최종 결과를 반환하거나 종료를 명시할 때 사용됨
               - 반환 타입은 `promise_type`에서 정의한 `return_value()` 또는 `return_void()`에 위임됨
 
               🔹 특징
@@ -214,9 +214,9 @@ namespace Coroutine
         /*
             📚 co_await
 
-              - **비동기 작업을 기다리는(wait)** 제어 흐름을 표현함
-              - 호출 시 해당 작업이 완료될 때까지 **코루틴을 일시 중단(suspend)** 함
-              - 이후 외부 조건이 만족되면 **resume** 되어 다시 실행을 이어감
+              - 비동기 작업을 기다리는(wait) 제어 흐름을 표현함
+              - 호출 시 해당 작업이 완료될 때까지 코루틴을 일시 중단(suspend) 함
+              - 이후 외부 조건이 만족되면 resume 되어 다시 실행을 이어감
 
               🔹 동작 흐름
                 - co_await expr; 호출 시 다음 3단계가 호출됨 (expr은 Awaiter 또는 Awaitable)

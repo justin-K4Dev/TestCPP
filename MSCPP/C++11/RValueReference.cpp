@@ -293,7 +293,7 @@ namespace RValueReference
 					EX returnRVO() {
 						return EX();
 					}
-	          - **C++17부터는 RVO가 반드시(Guaranteed RVO) 적용됨!**
+	          - C++17부터는 RVO가 반드시(Guaranteed RVO) 적용됨!
 		        (return EX(); 와 같이 익명 임시 객체를 반환하는 경우 무조건 복사/이동 없이 바로 생성)
 
 			▶ NRVO (Named Return Value Optimization)

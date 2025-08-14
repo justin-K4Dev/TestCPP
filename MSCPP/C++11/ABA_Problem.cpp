@@ -123,8 +123,8 @@ namespace ABAProblem
 			    + single CAS만으론 무결성 보장 불가 (Access Violation 가능)
 
 			  - 실전에서는:
-				· lock-free 자료구조는 ABA 회피 기법(tagged pointer, hazard pointer, GC 등)이 필요
-				· std::atomic<T*>로 직접 lock-free 자료구조를 만들 때는 항상 ABA를 조심해야 함
+				• lock-free 자료구조는 ABA 회피 기법(tagged pointer, hazard pointer, GC 등)이 필요
+				• std::atomic<T*>로 직접 lock-free 자료구조를 만들 때는 항상 ABA를 조심해야 함
 
 			  ※ C++11 이상에서만 std::atomic, CAS, lock-free 관련 함수 지원
 		*/ 

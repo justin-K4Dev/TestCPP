@@ -25,7 +25,7 @@ Windows, Linux, macOS 모두에서 사용할 수 있습니다.
 
 - IDE 지원
   - Visual Studio 2015, 2017, 2019, 2022  
-    - **2017 15.3 이상에서 vcpkg 통합(integrate) 공식 지원**
+    - 2017 15.3 이상에서 vcpkg 통합(integrate) 공식 지원
     - Visual Studio 2019, 2022에서 매니페스트 모드(프로젝트별 vcpkg.json) 완벽 지원
   - Visual Studio Code(Any)에서는 CMake Tools 확장, 터미널 등에서 사용 가능
 

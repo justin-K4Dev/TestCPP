@@ -20,7 +20,7 @@ namespace Constexpr
 			📚 constexpr
 
 			  - constexpr은 컴파일 타임 상수(constant expression) 값을 지정하는 키워드입니다.
-			  - constexpr 변수/함수는 반드시 **컴파일 타임에 계산**될 수 있어야 하며,
+			  - constexpr 변수/함수는 반드시 컴파일 타임에 계산될 수 있어야 하며,
 				복잡한 문장(반복문, 지역변수 등)은 사용할 수 없습니다.
 			  - C++11에서는 constexpr 함수는 반드시 return 한 줄만 허용하며,
 			    조건문, 반복문, 지역 변수 선언 등은 금지됩니다.

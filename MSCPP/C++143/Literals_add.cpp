@@ -49,7 +49,7 @@ namespace Literal_AddFeatures
                     - string_view와 std::views::transform 등 연계로 성능 개선
 
                 ✅ 6. string_view 리터럴 접미사(suffix) ("..."sv)
-                    - 문자열을 복사하지 않고 **읽기 전용 참조** 형태로 다룰 수 있음
+                    - 문자열을 복사하지 않고 읽기 전용 참조 형태로 다룰 수 있음
                     - `"abc"sv`     → `std::string_view`
                     - `u"abc"sv`    → `std::u16string_view`
                     - `U"abc"sv`    → `std::u32string_view`

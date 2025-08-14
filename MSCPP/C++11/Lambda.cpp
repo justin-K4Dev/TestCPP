@@ -24,20 +24,20 @@ namespace Lambda
 
 			  - 람다는 "익명 함수(closure)"를 코드 내에서 간결하게 선언·즉시 실행할 수 있게 해주는 C++11 표준 기능
 			  - [캡처](인자){ 함수 본문 } 형태
-				· [캡처]: 외부 변수 캡처(값/참조)
-				· (인자): 함수 파라미터
-				· { ... }: 함수 바디
+				• [캡처]: 외부 변수 캡처(값/참조)
+				• (인자): 함수 파라미터
+				• { ... }: 함수 바디
 			  - 함수 객체, std::function, for_each, STL, 멀티스레드 등 다양한 상황에서 활용
 
 			  - 주요 장점
-				· 일회성, 임시, 함수포인터 대신 코드 내에 바로 정의/전달 가능
-				· 외부 변수 캡처(복사/참조/auto/mutable), 고차 함수, 템플릿 인자 등과 쉽게 결합
-				· 반복문, 콜백, STL 알고리즘 등에서 가독성·생산성 향상
+				• 일회성, 임시, 함수포인터 대신 코드 내에 바로 정의/전달 가능
+				• 외부 변수 캡처(복사/참조/auto/mutable), 고차 함수, 템플릿 인자 등과 쉽게 결합
+				• 반복문, 콜백, STL 알고리즘 등에서 가독성·생산성 향상
 
 			  - 실전 예시
-				· std::for_each(..., [](int x) { ... });
-				· auto f = [=,&y](int z) mutable { ... };
-				· std::function<int(int)> f = [](int n) { return n*n; };
+				• std::for_each(..., [](int x) { ... });
+				• auto f = [=,&y](int z) mutable { ... };
+				• std::function<int(int)> f = [](int n) { return n*n; };
 
 			  ※ C++11부터 지원, C++14 이후 generic lambda/auto/capture init 등 확장
 		*/

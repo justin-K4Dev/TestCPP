@@ -15,13 +15,13 @@ namespace Thread_AddFeature
         /*
             📚 <thread> 개선 (C++20)
 
-              - C++20에서는 기존 `std::thread`의 한계를 보완하기 위해 **joinable thread**, **취소 가능한 thread** 개념이 도입됨
+              - C++20에서는 기존 `std::thread`의 한계를 보완하기 위해 joinable thread, 취소 가능한 thread 개념이 도입됨
               - `std::jthread`, `std::stop_token`, `std::stop_source`가 핵심 구성 요소
 
               🔹 std::jthread
                 - `std::thread`의 개선 버전
-                - 생성시 자동 실행되고, **소멸시 자동 join()** 수행 → 리소스 누수 방지
-                - `std::stop_token` 을 통해 외부에서 **정지 요청(stop request)** 가능
+                - 생성시 자동 실행되고, 소멸시 자동 join() 수행 → 리소스 누수 방지
+                - `std::stop_token` 을 통해 외부에서 정지 요청(stop request) 가능
                 - 기본적으로 RAII 기반 안전 스레드로 설계됨
 
               🔹 std::stop_token / stop_source
@@ -122,10 +122,10 @@ namespace Thread_AddFeature
             📚 std::stop_token + stop_callback + condition_variable_any (C++20)
 
               🔹 stop_token
-                - `std::jthread`와 함께 전달되어, 스레드 내부에서 **중단 요청 여부를 확인**할 수 있는 객체
+                - `std::jthread`와 함께 전달되어, 스레드 내부에서 중단 요청 여부를 확인할 수 있는 객체
 
               🔹 stop_callback
-                - `stop_token`이 중단 요청을 수신했을 때 **즉시 실행할 콜백 함수**를 등록할 수 있음
+                - `stop_token`이 중단 요청을 수신했을 때 즉시 실행할 콜백 함수를 등록할 수 있음
                 - 조건 변수, 리소스 클린업, 타임아웃 처리 등에 활용됨
 
               🔹 condition_variable_any
@@ -134,7 +134,7 @@ namespace Thread_AddFeature
                 - `stop_token`과 함께 중단 가능 `wait()`을 구현할 수 있음
 
               🔹 활용 목적
-                - 무한 대기 중인 스레드를 외부에서 **즉시 깨우기(stop)** 위한 방법
+                - 무한 대기 중인 스레드를 외부에서 즉시 깨우기(stop) 위한 방법
                 - 조건 변수 기반 기다림을 안전하게 종료
         */
         {

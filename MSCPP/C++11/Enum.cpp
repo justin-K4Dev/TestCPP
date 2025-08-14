@@ -32,10 +32,10 @@ namespace Enum
 			    기존 enum의 단점(암시적 형변환, 이름 충돌 등)을 보완한 새로운 열거형입니다.
 
 			  ▶ 주요 특징
-			    1. **스코프 제한**: 값에 반드시 열거형 이름을 붙여 사용 (예: Color::Red)
-				2. **강타입(Strongly typed)**: int 등 다른 타입으로 암시적 변환 불가 (명시적 캐스팅만 허용)
-				3. **이름 충돌 방지**: 동일한 값 이름이 여러 enum class에 있어도 충돌하지 않음
-				4. **기본형 지정 가능**: enum class Color : unsigned char { ... } 처럼 저장 타입 지정 가능
+			    1. 스코프 제한: 값에 반드시 열거형 이름을 붙여 사용 (예: Color::Red)
+				2. 강타입(Strongly typed): int 등 다른 타입으로 암시적 변환 불가 (명시적 캐스팅만 허용)
+				3. 이름 충돌 방지: 동일한 값 이름이 여러 enum class에 있어도 충돌하지 않음
+				4. 기본형 지정 가능: enum class Color : unsigned char { ... } 처럼 저장 타입 지정 가능
 				5. enum class는 직접적으로 문자열로 변환하는 기능이 내장되어 있지 않습니다. (외부 모듈 magic_enum 활용)
 
 			  ▶ 주요 용도

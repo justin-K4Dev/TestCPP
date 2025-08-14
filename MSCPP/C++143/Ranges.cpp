@@ -17,31 +17,31 @@ namespace Ranges
         /*
             📚 <ranges> (C++20)
 
-              - C++20에서 새롭게 도입된 **범위 기반(range-based) 알고리즘/뷰(view) 시스템**
-              - 기존의 `<algorithm>`, `<iterator>` 기반 STL보다 더 **표현력 있고 안전한 데이터 흐름 처리** 가능
+              - C++20에서 새롭게 도입된 범위 기반(range-based) 알고리즘/뷰(view) 시스템
+              - 기존의 `<algorithm>`, `<iterator>` 기반 STL보다 더 표현력 있고 안전한 데이터 흐름 처리 가능
               - "범위(range)"는 [begin, end) 쌍을 나타내는 컨테이너 또는 뷰를 의미함
 
               🔹 주요 특징
-                - 모든 컨테이너를 직접 조작하지 않고 **뷰(view)** 를 통해 지연 평가 방식 처리
+                - 모든 컨테이너를 직접 조작하지 않고 뷰(view) 를 통해 지연 평가 방식 처리
                 - 체이닝 가능 (파이프 스타일: `|`)
                 - `std::ranges::algo()` → 범위 인자 기반 알고리즘
                 - `std::views::xxx`     → 변형 가능한 지연 평가 어댑터
 
               🔹 주요 구성
-                1. **Views (뷰 어댑터)**:
+                1. Views (뷰 어댑터):
                   - `std::views::filter`     → 조건에 맞는 값만 필터링
                   - `std::views::transform`  → 각 요소에 함수 적용
                   - `std::views::take(n)`    → 앞에서 n개만 취함
                   - `std::views::drop(n)`    → 앞에서 n개 버림
                   - `std::views::reverse`, `join`, `split`, `enumerate` 등
 
-                2. **Algorithms (알고리즘)**:
+                2. Algorithms (알고리즘):
                   - `std::ranges::sort`, `find`, `copy`, `for_each`, `count`, `equal` 등
                   - 기존 `<algorithm>`과 유사하지만, iterator 대신 range 자체를 사용
 
               🔹 도입 배경
                 - 기존 STL은 반복자 조작이 복잡하고 안전하지 않음
-                - Range 기반 STL은 **더 안전하고 직관적인 함수형 스타일** 제공
+                - Range 기반 STL은 더 안전하고 직관적인 함수형 스타일 제공
                 - 데이터 흐름 파이프라인 구성이 자연스러움
 
               🔹 표준 지원

@@ -40,13 +40,13 @@ namespace VariadicTemplate
 					// ... 연산자를 이용해 재귀 분해/전개 가능
 
 			  - 특징 및 장점:
-				· 함수/클래스 템플릿에서 인자 개수 제한 없는 범용성
-				· 타입 리스트 분해, 재귀, 패커블 타입 등 템플릿 메타프로그래밍의 핵심 도구
-				· std::tuple, std::array, std::make_shared, 포매팅 함수 등 현대 C++ 라이브러리 기본 패턴
+				• 함수/클래스 템플릿에서 인자 개수 제한 없는 범용성
+				• 타입 리스트 분해, 재귀, 패커블 타입 등 템플릿 메타프로그래밍의 핵심 도구
+				• std::tuple, std::array, std::make_shared, 포매팅 함수 등 현대 C++ 라이브러리 기본 패턴
 
 			  - 실전 활용:
-				· 컨테이너/튜플/포맷터/스마트포인터/스레드 생성 등
-				· 라이브러리, 프레임워크, 메타프로그래밍, SFINAE, 정책 클래스 등에서 필수
+				• 컨테이너/튜플/포맷터/스마트포인터/스레드 생성 등
+				• 라이브러리, 프레임워크, 메타프로그래밍, SFINAE, 정책 클래스 등에서 필수
 
 			  ※ C++11 이상 표준에서 사용 가능
 		*/
@@ -71,8 +71,8 @@ namespace VariadicTemplate
 				: 반환 타입은 std::array<공통타입, N>(N=인자 개수)
 
 			  - 효과:
-				· 가변 인자, 타입 자동 추론, 배열 크기 자동 산출 등 현대 C++ 컨테이너 코드에서 범용 활용
-				· 표준 배열 초기화, 함수 파라미터 패킹, 타입 유추 등에 매우 유용
+				• 가변 인자, 타입 자동 추론, 배열 크기 자동 산출 등 현대 C++ 컨테이너 코드에서 범용 활용
+				• 표준 배열 초기화, 함수 파라미터 패킹, 타입 유추 등에 매우 유용
 
 			  ※ C++14 이상에서 사용 권장 (common_type_t 지원)
 		*/
@@ -121,13 +121,13 @@ namespace VariadicTemplate
 				: 더 이상 포매팅할 인자가 없을 때 남은 format 문자열을 모두 출력
 
 			  - 특징
-				· C/C++ 전통의 printf 스타일을 타입 안정성 있게(타입 안전, 확장성 ↑) 재현
-				· 템플릿 재귀로 모든 인자가 소진될 때까지 처리
-				· "..."(Parameter Pack)을 다른 함수로 넘길 수도 있음
+				• C/C++ 전통의 printf 스타일을 타입 안정성 있게(타입 안전, 확장성 ↑) 재현
+				• 템플릿 재귀로 모든 인자가 소진될 때까지 처리
+				• "..."(Parameter Pack)을 다른 함수로 넘길 수도 있음
 
 			  - 한계/주의
-				· 실제 printf와 달리 %d, %f 구분 없이 value를 std::cout으로 직접 출력
-				· 포매팅 미스매치, 타입 변환 오류 등은 직접 체크 필요
+				• 실제 printf와 달리 %d, %f 구분 없이 value를 std::cout으로 직접 출력
+				• 포매팅 미스매치, 타입 변환 오류 등은 직접 체크 필요
 
 			  ※ C++11 이상에서 사용 가능, 현대 C++ 라이브러리(예: fmt, spdlog) 등의 기본 패턴과 유사
 		*/
@@ -181,19 +181,19 @@ namespace VariadicTemplate
 			📚 가변 인자 템플릿(Variadic Template) + typeid 활용한 타입 리스트 저장/비교 예제 (C++11~)
 
 			  - ParameterChecker 클래스
-				· template<typename... ParamList> SetParams()
+				• template<typename... ParamList> SetParams()
 					: 타입 리스트(ParamList...)를 받아 각 타입의 type_index를 vector에 저장
-				· template<typename... ParamList> IsMatchedParams()
+				• template<typename... ParamList> IsMatchedParams()
 					: 현재 저장된 타입 리스트와 입력 타입(ParamList...)의 type_index 리스트가 완전히 일치하는지 비교
 
 			  - 핵심 원리
-				· C++11 가변 인자 템플릿(Variadic Template)로 임의 타입 리스트를 받아
+				• C++11 가변 인자 템플릿(Variadic Template)로 임의 타입 리스트를 받아
 				  { typeid(ParamList)... }로 std::type_index 패커 전개
-				· vector의 비교 연산으로 타입 순서/개수까지 완벽히 일치하는지 판단
+				• vector의 비교 연산으로 타입 순서/개수까지 완벽히 일치하는지 판단
 
 			  - 활용 효과
-				· 함수/메서드/이벤트 등의 타입 시그니처를 런타임에 저장·검증
-				· 동적 파라미터 매칭, 타입 기반 등록/체크, 메타데이터 자동화 등 실무에서 자주 활용
+				• 함수/메서드/이벤트 등의 타입 시그니처를 런타임에 저장·검증
+				• 동적 파라미터 매칭, 타입 기반 등록/체크, 메타데이터 자동화 등 실무에서 자주 활용
 
 			  ※ C++11 이상에서 사용 가능, std::type_index, variadic template 필수
 		*/
@@ -261,12 +261,12 @@ namespace VariadicTemplate
 				: a == b를 먼저 검사, 아니면 나머지 값들(vs...)에 대해 재귀적으로 isOneOf(a, vs...) 호출
 
 			  - 특징/효과
-				· 임의 개수의 인자에 대해 a가 그중 하나라도 같은지 "단일 함수 호출"로 판정 가능
-				· 함수 오버로딩 + Variadic Template의 대표적 재귀 분해 패턴
-				· printf로 호출 스택/전개 순서를 직관적으로 확인 가능
+				• 임의 개수의 인자에 대해 a가 그중 하나라도 같은지 "단일 함수 호출"로 판정 가능
+				• 함수 오버로딩 + Variadic Template의 대표적 재귀 분해 패턴
+				• printf로 호출 스택/전개 순서를 직관적으로 확인 가능
 
 			  - 활용
-				· Enum/상수/값 집합 체크, 편의 유틸 함수, 인자 검사, 자동 분기 등 실전에서 자주 사용
+				• Enum/상수/값 집합 체크, 편의 유틸 함수, 인자 검사, 자동 분기 등 실전에서 자주 사용
 
 			  ※ C++11 이상에서 사용 가능 (가변 인자 템플릿 필수)
 		*/ 
@@ -337,9 +337,9 @@ namespace VariadicTemplate
 					: func2(f(args)...);     // 각 인자에 f()를 적용하여 func2(f(a), f(b), f(c)) 호출
 
 			  - 효과/활용
-				· 패커의 크기, 패커 전개, 패커를 다른 함수로 넘기기, 변환·적용 후 넘기기 등
+				• 패커의 크기, 패커 전개, 패커를 다른 함수로 넘기기, 변환·적용 후 넘기기 등
 				  Variadic Template 메타프로그래밍의 핵심 활용 패턴을 모두 포함
-				· 실무 함수 포워딩, 변환/적용, 프레임워크 내부 래핑 등에서 광범위하게 쓰임
+				• 실무 함수 포워딩, 변환/적용, 프레임워크 내부 래핑 등에서 광범위하게 쓰임
 
 			  ※ C++11 이상에서 사용 가능 (pack expansion, parameter pack 필수)
 		*/
@@ -407,9 +407,9 @@ namespace VariadicTemplate
 				3. 객체에서 (b.*b.class_TestClass.m_pfnFunction)(인자...) 형태로 런타임 호출
 
 			  - 효과/활용
-				· 다양한 함수 시그니처(리턴타입/인자)의 멤버 함수 포인터를 통합적으로 저장·호출 가능
-				· 리플렉션, 스크립트 바인딩, 런타임 디스패치 등에서 매우 유용
-				· 매크로+Variadic Template로 반복 코드 최소화, 타입 안정성↑
+				• 다양한 함수 시그니처(리턴타입/인자)의 멤버 함수 포인터를 통합적으로 저장·호출 가능
+				• 리플렉션, 스크립트 바인딩, 런타임 디스패치 등에서 매우 유용
+				• 매크로+Variadic Template로 반복 코드 최소화, 타입 안정성↑
 
 			  ※ C++11 이상에서 사용 가능 (Variadic Template 필수)
 		*/
@@ -455,22 +455,22 @@ namespace VariadicTemplate
 			📚 Variadic Template(가변 인자 템플릿)과 virtual 함수 재정의 불가 (C++11~)
 
 			  - 문제 상황
-				· 가변 인자(typename... ParamList)를 포함한 템플릿 기반 클래스에서
+				• 가변 인자(typename... ParamList)를 포함한 템플릿 기반 클래스에서
 				  가상 함수(virtual void func1(const T&, ParamList... params))를 선언하려 하면 컴파일 오류 발생
 
 			  - 이유
-				· C++ 표준에서 virtual(가상 함수)는 **정확한 시그니처**(매개변수 개수/타입/순서)가 필요함
-				· 하지만 가변 인자 함수는 파생 클래스에서 정확한 시그니처가 "명확히 정해질 수 없음"
-				· 컴파일러는 ParamList...가 어떻게 풀릴지 예측할 수 없어 vtable 구성/오버라이드 검증이 불가
+				• C++ 표준에서 virtual(가상 함수)는 정확한 시그니처(매개변수 개수/타입/순서)가 필요함
+				• 하지만 가변 인자 함수는 파생 클래스에서 정확한 시그니처가 "명확히 정해질 수 없음"
+				• 컴파일러는 ParamList...가 어떻게 풀릴지 예측할 수 없어 vtable 구성/오버라이드 검증이 불가
 
 			  - 예제
-				· AA<T, ParamList...>에 virtual func1(const T&, ParamList...) 선언 시 오류
-				· 파생 클래스(BB)에서는 가변 인자 없이 명확한 시그니처로만 오버라이드 가능
+				• AA<T, ParamList...>에 virtual func1(const T&, ParamList...) 선언 시 오류
+				• 파생 클래스(BB)에서는 가변 인자 없이 명확한 시그니처로만 오버라이드 가능
 
 			  - 결론/한계
-				· virtual 함수는 항상 명확하고 완전한 타입 시그니처가 필요하며,
+				• virtual 함수는 항상 명확하고 완전한 타입 시그니처가 필요하며,
 				  가변 인자 템플릿은 이를 제공할 수 없어 override 불가
-				· 다형적 인터페이스를 정의하려면 ParamList... 없이 구체적 타입을 명시해야 함
+				• 다형적 인터페이스를 정의하려면 ParamList... 없이 구체적 타입을 명시해야 함
 
 			  ※ C++ 표준 제한, 모든 컴파일러 동일
 		*/
@@ -701,28 +701,28 @@ namespace VariadicTemplate
 			📚 가변 인자 템플릿(Variadic Template) + typeid + Delegate 패턴 기반 런타임 타입 체크 예제 (C++11~)
 
 			  - 목적:
-				· 전역 함수, 멤버 함수(상속 포함), 다양한 시그니처(리턴/인자)까지 타입 안전하게 런타임 바인딩 및 호출
-				· 함수/멤버 함수의 파라미터 타입 정보(type_index) 저장 및 비교로 타입 기반 검증 가능
-				· Callbacks/Delegates를 실무적으로 범용 구현 (리스너, 이벤트 시스템, 스크립트 바인딩 등)
+				• 전역 함수, 멤버 함수(상속 포함), 다양한 시그니처(리턴/인자)까지 타입 안전하게 런타임 바인딩 및 호출
+				• 함수/멤버 함수의 파라미터 타입 정보(type_index) 저장 및 비교로 타입 기반 검증 가능
+				• Callbacks/Delegates를 실무적으로 범용 구현 (리스너, 이벤트 시스템, 스크립트 바인딩 등)
 
 			  - 구조:
-				· Callback<Return, Params...>: 함수(멤버/정적) 공통 인터페이스 (invoke)
-				· StaticFunctionCallback: 전역/정적 함수 바인딩 구현체
-				· MethodCallback: 멤버 함수 바인딩 구현체 (void* + 멤버 포인터)
-				· Delegate: Callback의 포인터/타입 리스트/함수명 등 통합 관리, invoke 분기
+				• Callback<Return, Params...>: 함수(멤버/정적) 공통 인터페이스 (invoke)
+				• StaticFunctionCallback: 전역/정적 함수 바인딩 구현체
+				• MethodCallback: 멤버 함수 바인딩 구현체 (void* + 멤버 포인터)
+				• Delegate: Callback의 포인터/타입 리스트/함수명 등 통합 관리, invoke 분기
 
-				· DelegateMaker, makeDelegate, DELEGATE 매크로: 멤버 함수 바인딩을 쉽고 타입 안전하게 보장
+				• DelegateMaker, makeDelegate, DELEGATE 매크로: 멤버 함수 바인딩을 쉽고 타입 안전하게 보장
 
-				· SystemTypeStringList, GetTypeString: type_index 기반 C++ 타입명→문자열 변환 (디버깅/로깅용)
+				• SystemTypeStringList, GetTypeString: type_index 기반 C++ 타입명→문자열 변환 (디버깅/로깅용)
 
 			  - 특징/효과:
-				· 임의 인자, 다양한 함수 타입을 컴파일/런타임에서 모두 타입 안전하게 바인딩/호출
-				· std::type_index, 가변 인자 템플릿, CRTP 등 현대 C++ 메타프로그래밍 핵심 패턴 집약
-				· 복수 상속, 다형성, 전역/멤버 구분 없는 통합 인터페이스 지원
+				• 임의 인자, 다양한 함수 타입을 컴파일/런타임에서 모두 타입 안전하게 바인딩/호출
+				• std::type_index, 가변 인자 템플릿, CRTP 등 현대 C++ 메타프로그래밍 핵심 패턴 집약
+				• 복수 상속, 다형성, 전역/멤버 구분 없는 통합 인터페이스 지원
 
 			  - 주요 활용:
-				· 시그니처 검사 기반 이벤트 시스템, 리플렉션, 런타임 동적 호출, 스크립트 연동, API 게이트웨이 등
-				· 실제로는 다양한 파생/확장도 자유롭게 구현 가능
+				• 시그니처 검사 기반 이벤트 시스템, 리플렉션, 런타임 동적 호출, 스크립트 연동, API 게이트웨이 등
+				• 실제로는 다양한 파생/확장도 자유롭게 구현 가능
 
 			  ※ C++11 이상에서 사용 가능, std::type_index, variadic template 필수
 		*/
@@ -1136,29 +1136,29 @@ namespace VariadicTemplate
 			📚 EventProxy + delegate 시스템: 타입 안전 이벤트/콜백/디스패치 프레임워크 예제 (C++11~)
 
 			  - 목적:
-				· 전역/멤버 함수, 다양한 시그니처(인자/리턴) 지원
-				· delegate<>, std::function 등과 유사한 타입 안전 콜백/이벤트 바인딩
-				· 런타임에 파라미터 타입 정보(std::type_index)까지 보관, 호출 시 타입 일치 검증
-				· 매크로/헬퍼로 자동 바인딩/등록/호출/에러 추적까지 지원
+				• 전역/멤버 함수, 다양한 시그니처(인자/리턴) 지원
+				• delegate<>, std::function 등과 유사한 타입 안전 콜백/이벤트 바인딩
+				• 런타임에 파라미터 타입 정보(std::type_index)까지 보관, 호출 시 타입 일치 검증
+				• 매크로/헬퍼로 자동 바인딩/등록/호출/에러 추적까지 지원
 
 			  - 구조:
-				· template<typename T> class delegate<R(A...)>:
+				• template<typename T> class delegate<R(A...)>:
 					- 함수/멤버 바인딩/호출용, 인자 리스트, 타입 정보, 함수명까지 런타임 보관
-				· EventProxy:
+				• EventProxy:
 					- 멀티 이벤트 ID → delegate/콜백 다중 등록/해제/호출, 에러 추적, 타입 정보 자동 검증
 					- DelegateMaker/makeDelegate 등으로 전역/멤버 함수 등록 자동화
 
-				· ErrorCapture:
+				• ErrorCapture:
 					- 호출 시 타입 미스매치 함수, 에러 메시지 자동 수집(예: 스크립트/런타임 정책)
 
-				· NotifyAllDelegate/NotifyAllDelegateRA:
+				• NotifyAllDelegate/NotifyAllDelegateRA:
 					- 이벤트ID에 등록된 delegate들을 파라미터 타입 검증 후 한 번에 호출
 					- 타입 미스매치시 에러 리스트에 함수 시그니처 기록
 
 			  - 특징/효과:
-				· C++ 함수/멤버 함수의 "런타임 안전 바인딩/호출"을 타입/에러 체크와 함께 구현
-				· std::type_index, 가변 인자 템플릿, 매크로, std::function 패턴 등 현대 C++ 핵심 패턴 집약
-				· 실전 이벤트 시스템, 리플렉션, 동적 디스패치, 스크립트 바인딩에 적합
+				• C++ 함수/멤버 함수의 "런타임 안전 바인딩/호출"을 타입/에러 체크와 함께 구현
+				• std::type_index, 가변 인자 템플릿, 매크로, std::function 패턴 등 현대 C++ 핵심 패턴 집약
+				• 실전 이벤트 시스템, 리플렉션, 동적 디스패치, 스크립트 바인딩에 적합
 
 			  ※ C++11 이상에서 사용 가능 (가변 인자 템플릿, std::type_index 필수)
 		*/
@@ -1430,8 +1430,8 @@ namespace VariadicTemplate
 				: N번째 인덱스의 타입 T 데이터에 접근하는 함수
 
 			  - 효과:
-				· std::tuple 없이 순수 템플릿/상속/시퀀스만으로 타입 안정적인 다중값 저장 및 인덱스 접근 가능
-				· 템플릿 메타프로그래밍, 커스텀 컨테이너, 라이브러리 내부구조 등에 활용
+				• std::tuple 없이 순수 템플릿/상속/시퀀스만으로 타입 안정적인 다중값 저장 및 인덱스 접근 가능
+				• 템플릿 메타프로그래밍, 커스텀 컨테이너, 라이브러리 내부구조 등에 활용
 
 			  ※ C++11 이상 표준에서 사용 가능, C++14 이후엔 std::index_sequence로 대체 가능
 		*/
@@ -1558,8 +1558,8 @@ namespace VariadicTemplate
 				: xtuple의 요소 개수를 출력 (N 활용)
 
 			  - 효과:
-				· std::tuple 없이 순수 템플릿/재귀 상속/시퀀스만으로 타입 안정적 다중값 컨테이너와 인덱스/타입별 접근, 출력 구현
-				· 템플릿 메타프로그래밍, 커스텀 컨테이너/라이브러리 구조, 타입 리스트, pretty-print 등 실전 활용
+				• std::tuple 없이 순수 템플릿/재귀 상속/시퀀스만으로 타입 안정적 다중값 컨테이너와 인덱스/타입별 접근, 출력 구현
+				• 템플릿 메타프로그래밍, 커스텀 컨테이너/라이브러리 구조, 타입 리스트, pretty-print 등 실전 활용
 
 			  ※ C++11 이상에서 사용 가능, C++14 이후 std::index_sequence, std::tuple, std::get 등으로 대체 가능
 		*/
