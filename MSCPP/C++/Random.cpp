@@ -1,11 +1,6 @@
 #include "stdafx.h"
 
 
-#include <ctime>
-#include <stdlib.h> // for c standard lib
-#include <cstdlib>
-#include <limits.h>
-
 #include <windows.h> // for win32 api 
 #pragma comment(lib, "advapi32.lib") // for win32 api
 

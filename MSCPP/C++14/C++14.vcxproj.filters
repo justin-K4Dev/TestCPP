@@ -65,5 +65,14 @@
     <ClCompile Include="Literal_add.cpp">
       <Filter>Logic</Filter>
     </ClCompile>
+    <ClCompile Include="TypeTraits_add.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="Mutex_add.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="Memory_add.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

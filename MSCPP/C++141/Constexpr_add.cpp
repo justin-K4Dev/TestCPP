@@ -39,12 +39,21 @@ namespace Constexpr_AddFeature
 		}
 	}
 
+	template<class R>
+	void printReturnType() {
+		if constexpr (std::is_void_v<R>) {
+			// void면 반환값 처리 없음
+		}
+		else {
+			// 값 반환 처리
+		}
+	}
+
 	void constexpr_AddFeature()
 	{
 		/*
 			📚 constexpr 추가 기능 (C++14)
 
-			- constexpr은 "컴파일 타임 상수"로 평가되는 함수와 변수를 정의하는 키워드입니다.
 			- C++11에서는 constexpr 함수는 반드시 한 줄(return)만 가능했고, 제약이 많았습니다.
 			- C++14에서는
 			  + 여러 문장(statement), 지역 변수 선언, 반복문, 조건문 등 복잡한 함수도 constexpr로 작성할 수 있게 개선되었습니다.

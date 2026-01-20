@@ -1,24 +1,5 @@
 ﻿#include "stdafx.h"
 
-#include <map>
-
-#include <typeinfo>
-#include <typeindex>
-
-///////////////////////////////////////////////////////////////////////////////
-/// @file Initialize.cpp
-/// @brief 
-/// @return
-/// @param 
-/// 
-/// @author Justin
-/// @date 7-26-2012 10:51:18
-///////////////////////////////////////////////////////////////////////////////
-
-#include <vector>
-#include <numeric>
-#include <initializer_list>
-
 
 namespace NSDMI // non-static data member initializers
 {

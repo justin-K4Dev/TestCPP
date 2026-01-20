@@ -22,7 +22,7 @@ namespace Thread_AddFeature
                 - `std::thread`의 개선 버전
                 - 생성시 자동 실행되고, 소멸시 자동 join() 수행 → 리소스 누수 방지
                 - `std::stop_token` 을 통해 외부에서 정지 요청(stop request) 가능
-                - 기본적으로 RAII 기반 안전 스레드로 설계됨
+                - 기본적으로 RAII(Resource Acquisition Is Initialization) 기반 안전 스레드로 설계됨
 
               🔹 std::stop_token / stop_source
                 - `stop_source`: 스레드 종료 요청을 트리거하는 객체
@@ -154,8 +154,8 @@ namespace Thread_AddFeature
 
     void Test()
     {
-        cancelable_thread_wait();
+        //cancelable_thread_wait();
 
-        Thread_AddFeature();
+        //Thread_AddFeature();
     }
 }//Thread_AddFeature

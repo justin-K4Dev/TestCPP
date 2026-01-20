@@ -1,7 +1,5 @@
 ﻿#include "stdafx.h"
 
-#include <iostream>
-
 
 namespace StaticAssert
 {

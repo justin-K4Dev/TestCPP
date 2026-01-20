@@ -25,6 +25,6 @@
       <Filter>0.Common</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Simple.cpp" />
+    <ClCompile Include="Test.cpp" />
   </ItemGroup>
 </Project>

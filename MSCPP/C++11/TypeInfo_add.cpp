@@ -1,7 +1,5 @@
 ﻿#include "stdafx.h"
 
-#include <typeinfo>
-#include <typeindex>
 
 namespace TypeInfo_AddFeatures
 {

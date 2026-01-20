@@ -1,8 +1,8 @@
 ﻿#include "stdafx.h"
 
 
-#include <Windows.h>  
-#include <exception>
+#include <Windows.h>
+
 
 namespace Exception
 {

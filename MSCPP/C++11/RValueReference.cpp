@@ -1,11 +1,6 @@
 ﻿#include "stdafx.h"
 
 
-#include <iostream>
-#include <vector>
-
-
-
 namespace RValueReference
 {
 	struct Resource 

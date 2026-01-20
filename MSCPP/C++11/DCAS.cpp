@@ -1,9 +1,5 @@
 ﻿#include "stdafx.h"
 
-#include <vector>
-#include <atomic>
-#include <iostream>
-#include <thread>
 
 #include <boost/thread.hpp>
 

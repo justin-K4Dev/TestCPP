@@ -1,10 +1,5 @@
 ﻿#include "stdafx.h"
 
-#include <locale>
-#include <clocale>
-#include <fstream>
-#include <iosfwd>
-#include <sstream>      // std::istringstream
 
 namespace Locale
 {

@@ -1,12 +1,6 @@
 ﻿#include "stdafx.h"
 
 
-#include <iostream>
-#include <type_traits>
-#include <array>
-#include <map>
-
-
 namespace SFINAE_AddFeatures
 {
 	template<typename T>
@@ -24,7 +18,7 @@ namespace SFINAE_AddFeatures
 	void implicit_conversions()
 	{
 		/*
-			📚 암시적 변환(Implicit Conversion)과 C++14 switch 조건문
+			📚 암시적 변환(Implicit Conversion)과 C++14~ switch 조건문
 
 			  - C++11까지:
 				• 변환 연산자(operator T() / operator T&())가 여러 개면 switch, case 등에서 모호성(ambiguous conversion)으로 컴파일 오류

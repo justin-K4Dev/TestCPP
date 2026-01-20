@@ -1,14 +1,8 @@
 ﻿#include "stdafx.h"
 
 
-#include <iostream>
-#include <string>
-#include <vector>
-#include <any>
 #include <string_view>
 #include <optional>
-#include <variant>
-#include <algorithm>
 
 
 namespace STL_Improvements

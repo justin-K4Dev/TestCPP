@@ -72,6 +72,12 @@
     <ClCompile Include="Explicit_add.cpp">
       <Filter>Logic</Filter>
     </ClCompile>
+    <ClCompile Include="Attribute.cpp">
+      <Filter>Logic\Attribute</Filter>
+    </ClCompile>
+    <ClCompile Include="CoroutineWithThreadPool.cpp">
+      <Filter>Logic\TaskWithThreadPool</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="0.Common">
@@ -83,6 +89,12 @@
     <Filter Include="Logic\Modules">
       <UniqueIdentifier>{4e8a92e7-71a4-4fce-8913-80e438ec011a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Logic\Attribute">
+      <UniqueIdentifier>{9c45dce8-bb18-4df4-ab16-c1dd4578db08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Logic\TaskWithThreadPool">
+      <UniqueIdentifier>{a3a66d42-ed03-40a4-92cc-f3a57cb8e2d3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -92,5 +104,8 @@
       <Filter>0.Common</Filter>
     </ClInclude>
     <ClInclude Include="Function.h" />
+    <ClInclude Include="cpp_attributes.hpp">
+      <Filter>Logic\Attribute</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

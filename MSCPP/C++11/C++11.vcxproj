@@ -206,6 +206,7 @@
     <ClCompile Include="Literal_add.cpp" />
     <ClCompile Include="Loop.cpp" />
     <ClCompile Include="MemoryBarrier.cpp" />
+    <ClCompile Include="Memory_add.cpp" />
     <ClCompile Include="Mutex.cpp" />
     <ClCompile Include="New.cpp" />
     <ClCompile Include="NullPtr.cpp" />

@@ -19,6 +19,10 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	Lambda_AddFeature::Test();
 
+	Memory_AddFeature::Test();
+
+	Mutex_AddFeature::Test();
+
 	NSDMI::Test();
 
 	RValueReferenceWithVariadicTemplate::Test();
@@ -30,6 +34,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	Thread_AddFutures::Test();
 
 	TypeConversion::Test();
+
+	TypeTraits_AddFeature::Test();
 
 	VariadicTemplate::Test();
 	

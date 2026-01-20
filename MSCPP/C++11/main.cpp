@@ -39,6 +39,8 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	Loop::Test();
 
+	Memory_AddFeatures::Test();
+
 	MemoryBarrier::Test();
 
 	Mutex::Test();

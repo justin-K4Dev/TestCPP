@@ -2,8 +2,7 @@
 
 
 #include <thread>
-#include <chrono>
-#include <atomic>
+
 
 namespace MemoryBarrier
 {

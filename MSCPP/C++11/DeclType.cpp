@@ -1,7 +1,6 @@
 ﻿#include "stdafx.h"
 
 
-
 namespace DeclType
 {
 	// decltype keyword example

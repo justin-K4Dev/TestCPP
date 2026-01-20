@@ -1,11 +1,7 @@
 ﻿#include "stdafx.h"
 
 
-
-#include <iostream>
 #include <tuple>
-#include <utility>
-#include <map>
 
 
 namespace IfSwitch_AddFeatures

@@ -1,3 +1,3 @@
 #pragma once
 
-namespace Simple { void Test(); }
+namespace Test { void Run(); }

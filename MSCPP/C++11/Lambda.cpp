@@ -1,14 +1,6 @@
 ﻿#include "stdafx.h"
 
 
-
-#include <iostream>
-#include <vector>
-#include <string>
-#include <algorithm>
-#include <functional>
-
-
 namespace Lambda
 {
 	std::function< void() > f()

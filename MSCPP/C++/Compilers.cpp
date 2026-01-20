@@ -1,266 +1,243 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 
 #include <Windows.h>
 
+
 namespace Compilers
 {
-	/*
-		The essential tools needed to follow these tutorials are a computer and a compiler toolchain able to compile C++ code
-		and build the programs to run on it.
+    /*
+        C++ 컴파일러 개요
 
-		C++ is a language that has evolved much over the years,
-		and these tutorials explain many features added recently to the language.
-		Therefore, in order to properly follow the tutorials, a recent compiler is needed.
-		
-		It shall support (even if only partially) the features introduced by the 2011 standard.
+        1. 컴파일러(Compiler)란?
+          - 사람이 읽는 C++ 소스 코드를 CPU가 실행할 수 있는 기계어(오브젝트 코드)로 변환하는 프로그램.
+          - 보통 다음 단계를 거친다.
 
-		Many compiler vendors support the new features at different degrees.
-		See the bottom of this page for some compilers that are known to support the features needed. Some of them are free!
+        2. 빌드 파이프라인(큰 흐름)
+          (1) 전처리(Preprocess)
+              - #include, #define, #if 등을 처리하여 "하나의 번역 단위(translation unit)"를 만든다.
+          (2) 컴파일(Compile)
+              - C++ 문법/의미 분석 후 .obj(오브젝트 파일) 생성.
+          (3) 링크(Link)
+              - 여러 .obj와 라이브러리(.lib)를 합쳐 최종 실행 파일(.exe) 또는 DLL(.dll)을 만든다.
+              - 이 과정에서 "정의되지 않은 심볼(unresolved external symbol)"이 해결된다.
 
-		If for some reason, you need to use some older compiler,
-		you can access an older version of these tutorials here (no longer updated).
-	*/
+        3. 오브젝트/라이브러리의 역할
+          - .obj : 각 cpp가 컴파일된 결과물(기계어 조각 + 심볼 정보)
+          - .lib : 정적 라이브러리(여러 obj를 묶은 것). 링크 시 exe/dll에 코드가 포함될 수 있다.
+          - .dll : 동적 라이브러리(실행 시 로드). exe는 보통 import lib(.lib)을 통해 호출 진입점을 연결한다.
+    */
 
-	void what_is_a_compiler()
-	{
-		/*
-			Computers understand only one language and that language consists of sets of instructions made of ones and zeros.
-			This computer language is appropriately called machine language.
+    void overview()
+    {
+        /*
+            아래 출력은 "빌드 도구"가 실제로 하는 일을 사람이 이해하기 쉽게 표현한 것이다.
+            (실제 동작은 컴파일러/링커가 수행하며, 이 함수는 그 개념을 요약해준다.)
+        */
+        std::cout << "[C++ Build Overview]\n";
+        std::cout << "1) Preprocess : #include/#define resolved -> translation unit\n";
+        std::cout << "2) Compile    : C++ -> .obj (machine code + symbols)\n";
+        std::cout << "3) Link       : .obj + .lib -> .exe/.dll (resolve externals)\n";
+        std::cout << std::endl;
+    }
 
-			A single instruction to a computer could look like this:
+    //---------------------------------------------------------------------------------------------
+    // 링크 단계 개념: "선언(Declaration) vs 정의(Definition)"
+    //  - 선언만 있고 정의가 없으면 링크 에러가 난다(LNK2019 등)
+    //  - 아래 코드는 "정상 예제"로, 정의까지 포함한다.
+    //---------------------------------------------------------------------------------------------
+    namespace LinkageExample
+    {
+        // 선언(Declaration)
+        int add(int a, int b);
 
-				00000 | 10011110
+        // 정의(Definition)
+        int add(int a, int b)
+        {
+            return a + b;
+        }
 
-			A particular computer's machine language program that allows a user to input two numbers,
-			adds the two numbers together,
-			and displays the total could include these machine code instructions:
+        void run()
+        {
+            int r = add(3, 4);
+            std::cout << "[LinkageExample] add(3,4) = " << r << "\n";
+        }
+    }
 
-				00000 | 10011110
-				00001 | 11110100
-				00010 | 10011110
-				00011 | 11010100
-				00100 | 10111111
-				00101 | 00000000
+    //---------------------------------------------------------------------------------------------
+    // 오버로드와 이름 맹글링(name mangling) 개념
+    //  - C++에서는 함수 오버로드가 가능하므로 링커 심볼이 타입 정보를 포함하도록 변형될 수 있다.
+    //  - extern "C"를 쓰면 이름 맹글링을 끄고 C 링크 규약으로 고정한다
+    //---------------------------------------------------------------------------------------------
+    namespace ManglingExample
+    {
+        int add(int a, int b) { return a + b; }
+        double add(double a, double b) { return a + b; }
 
-			As you can imagine, programming a computer directly in machine language using only ones and zeros is very tedious and error prone.
-			To make programming easier, high level languages have been developed.
-			High level programs also make it easier for programmers to inspect and understand each other's programs easier.
+        // C 링크 규약(오버로드 불가: 같은 이름으로는 1개만 가능)
+        extern "C" int c_add(int a, int b) { return a + b; }
 
-			This is a portion of code written in C++ that accomplishes the exact same purpose:
+        void run()
+        {
+            std::cout << "[ManglingExample] add(int) = " << add(1, 2) << "\n";
+            std::cout << "[ManglingExample] add(double) = " << add(1.5, 2.5) << "\n";
+            std::cout << "[ManglingExample] c_add = " << c_add(10, 20) << "\n";
+        }
 
-				int a, b, sum;
-     
-				std::cin >> a;
-				std::cin >> b;
-             
-				sum = a + b;
-				std::cout << sum << std::endl;
+        /*
+            1. 맹글링(name mangling)이란?
+              
+              - C++ 컴파일러가 링커가 구분할 수 있도록 함수/변수의 “링커 심볼 이름”을 인코딩해서 바꾸는 것이야.
+              
+              * 왜 바꾸냐면 C++에는 다음이 있기 때문:
 
-			Even if you cannot really understand the code above,
-			you should be able to appreciate how much easier it will be to program in the C++ language as opposed to machine language.
+                - 오버로드(같은 함수명, 다른 파라미터)
+                - 네임스페이스/클래스 멤버
+                - 템플릿/특수화 등
 
-			Because a computer can only understand machine language
-			and humans wish to write in high level languages high level languages have to be re-written (translated) into machine language at some point.
-			This is done by special programs called compilers, interpreters,
-			or assemblers that are built into the various programming applications.
+                그래서 소스에서 이게:
 
-			C++ is designed to be a compiled language,
-			meaning that it is generally translated into machine language that can be understood directly by the system,
-			making the generated program highly efficient.
-			For that, a set of tools are needed, known as the development toolchain, whose core are a compiler and its linker.
-		*/
-	}
+                    namespace N {
+                        int add(int, int);
+                    }
 
-	// for linux console
+                C++ 링커 심볼 이름은 컴파일러가 대략 아래와 같은 형태로 인코딩 한다.
 
-	#define RESET		"\033[0m"
-	#define BLACK		"\033[30m"				/* Black */
-	#define RED			"\033[31m"				/* Red */
-	#define GREEN		"\033[32m"				/* Green */
-	#define YELLOW		"\033[33m"				/* Yellow */
-	#define BLUE		"\033[34m"				/* Blue */
-	#define MAGENTA		"\033[35m"				/* Magenta */
-	#define CYAN		"\033[36m"				/* Cyan */
-	#define WHITE		"\033[37m"				/* White */
-	#define BOLDBLACK   "\033[1m\033[30m"		/* Bold Black */
-	#define BOLDRED     "\033[1m\033[31m"		/* Bold Red */
-	#define BOLDGREEN   "\033[1m\033[32m"		/* Bold Green */
-	#define BOLDYELLOW  "\033[1m\033[33m"		/* Bold Yellow */
-	#define BOLDBLUE    "\033[1m\033[34m"		/* Bold Blue */
-	#define BOLDMAGENTA "\033[1m\033[35m"		/* Bold Magenta */
-	#define BOLDCYAN    "\033[1m\033[36m"		/* Bold Cyan */
-	#define BOLDWHITE   "\033[1m\033[37m"		/* Bold White */
+                    MSVC 예: ?add@N@@YAHHH@Z
+                    GCC/Clang(Itanium) 예: _ZN1N3addEii
 
-	#define CLEAR		"\033[2J"				// clear screen escape code 
+                즉, “N::add(int,int)”라는 정보를 문자열로 인코딩한 결과물이야.
 
-	enum Code {
-		FG_RED = 31,
-		FG_GREEN = 32,
-		FG_BLUE = 34,
-		FG_DEFAULT = 39,
-		BG_RED = 41,
-		BG_GREEN = 42,
-		BG_BLUE = 44,
-		BG_DEFAULT = 49
-	};
+            2. "맹글링 방지"가 정확히 뭘 막는 거냐?
 
-	class Modifier
-	{
-	protected:
-		Code code;
+              - extern "C"를 쓰면 C++ 맹글링 규칙을 적용하지 말고, C 방식 링커 심볼 규칙(C linkage)을 쓰라는 의미 !!!
 
-	public:
-		Modifier(Code pCode) : code(pCode) { return; }
+              * 즉, 이 선언:
 
-		friend std::ostream& operator<<(std::ostream& os, const Modifier& mod)
-		{
-			return os << "\033[" << mod.code << "m";
-		}
-	};
+                  extern "C" int add(int, int);
 
-	void console_programs()
-	{
-		/*
-			Console programs are programs that use text to communicate with the user and the environment,
-			such as printing text to the screen or reading input from a keyboard.
+                은 컴파일러에게:
 
-			Console programs are easy to interact with, and generally have a predictable behavior that is identical across all platforms.
-			They are also simple to implement and thus are very useful to learn the basics of a programming language:
-			The examples in these tutorials are all console programs.
+                  "이 함수의 링커 심볼 이름을 C처럼 만들고"
+                  "C++식으로 ?add@@... 같은 이름으로 변형하지마"
 
-			The way to compile console programs depends on the particular tool you are using.
+                라고 지시하는 것 !!!
 
-			The easiest way for beginners to compile C++ programs is by using an Integrated Development Environment (IDE).
-			An IDE generally integrates several development tools,
-			including a text editor and tools to compile programs directly from it.
+              - 결과적으로 export/링커 심볼이 보통 그냥:
+                add (혹은 플랫폼에 따라 _add 같은 단순 접두어 정도)
+                처럼 안정적이고 예측 가능한 이름이 된다.
 
-			Here you have instructions on how to compile
-			and run console programs using different free Integrated Development Interfaces (IDEs):
+            3. 왜 이게 중요해?
+              (1) DLL export 이름을 사람이/다른 언어가 찾을 수 있게
 
-				IDE						Platform				Console programs
-				Code::blocks			Windows/Linux/MacOS		Compile console programs using Code::blocks
-				Visual Studio Express	Windows					Compile	console programs using VS Express 2013
-				Dev-C++					Windows					Compile console programs using Dev-C++
+                GetProcAddress(h, "add")는 문자열 "add"로 심볼을 찾는데,
+                C++ 맹글링이 걸리면 DLL에는 "add"가 아니라 "?add@@YAHHH@Z" 같은 이름이 들어가서 못 찾음.
 
-			If you happen to have a Linux or Mac environment with development features,
-			you should be able to compile any of the examples directly from a terminal just by
-			including C++11 flags in the command for the compiler:
+                ❌ (extern "C" 없음) GetProcAddress("add") 실패 가능
+                ✅ (extern "C" 있음) GetProcAddress("add") 성공
 
-				Compiler				Platform				Command
-				GCC						Linux, among others...	g++ -std=c++0x example.cpp -o example_program
-				Clang					OS X, among others...	clang++ -std=c++11 -stdlib=libc++ example.cpp -o example_program
-		*/
+              (2) 컴파일러/옵션이 바뀌면 심볼 이름도 바뀜(=취약)
 
-		// for linux
-		{
-			{
-				Modifier red(FG_RED);
-				Modifier def(FG_DEFAULT);
-				std::cout << "This ->" << red << "word" << def << "<- is red" << std::endl;
+                C++ 맹글링 포맷은 컴파일러마다 다르고, 같은 컴파일러라도 버전/옵션에 따라 달라질 수 있어.
+                그래서 C++ 이름을 그대로 ABI 경계로 쓰면 “바이너리 호환”이 깨지기 쉬움.
 
-				system("pause");
-				
-				/*
-				output:
-					This -><-[31mword<-[39m<- is red
-				*/
-			}
+                - extern "C"로 이름을 단순화하면 이 위험이 크게 줄어.
 
-			{
-				std::string letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            4. 주의: 맹글링 방지는 “이름”만 고정한다
 
-				std::cout << CLEAR;
-				std::cout << MAGENTA << "Colored " << CYAN << "Text" << RESET << std::endl;
+              * 중요한 포인트:
 
-				for (int i = 0; i < letters.length(); i++) {
-					if (i % 2 == 0) {
-						std::cout << RED << letters[i] << RESET;
-					}
-					else {
-						std::cout << WHITE << letters[i] << RESET;
-					}
-				}
+                - extern "C"는 호출 규약(스택 정리, 레지스터 사용) 을 바꾸는 게 아니라
+                  링커 심볼 이름 규칙만 바꾼다.
+                  그래서 DLL ABI를 정말 고정하려면 보통 같이 명시해:
 
-				std::cout << std::endl;
+                    extern "C" __declspec(dllexport) int __cdecl add(int, int);
 
-				system("pause");
+            5. 한 줄로 정리
+              - "맹글링 방지" 란 extern "C"로 C++ 컴파일러의 이름 변형(name mangling)을 끄고, 
+                DLL/링커 심볼 이름을 ‘add’처럼 단순하고 예측 가능하게 고정하는 것을 의미 !!!
+        */
+    }
 
-				/*
-				output:
-					<-[2J<-[35mColored <-[36mText<-[0m
-					<-[31mA<-[0m<-[37mB<-[0m<-[31mC<-[0m<-[37mD<-[31mE<-[0m<-[37mF<-[0m<-[31mG<-[0m<-[37mH<-[0m
-					<-[31mI<-[0m<-[37mJ<-[0m<-[31mK<-[0m<-[37mL<-[31mM<-[0m<-[37mN<-[0m<-[31mO<-[0m<-[37mP<-[0m
-					<-[31mQ<-[0m<-[37mR<-[0m<-[31mS<-[0m<-[37mT<-[31mU<-[0m<-[37mV<-[0m<-[31mW<-[0m<-[37mX<-[0m
-					<-[31mY<-[0m<-[37mZ<-[0m
-				*/
-			}
-		}
+    //---------------------------------------------------------------------------------------------
+    // 라이브러리(.lib) 개념을 위한 형태
+    //  - 이 파일이 static lib로 빌드되고, exe가 링크한다고 가정하면
+    //    아래의 "lib_function"들이 라이브러리 API가 된다.
+    //  - 실제 static lib 분리는 프로젝트 구성에서 수행(코드 자체는 동일).
+    //---------------------------------------------------------------------------------------------
+    namespace StaticLibShape
+    {
+        int lib_sum_range(int start, int count)
+        {
+            int s = 0;
+            for (int i = 0; i < count; ++i)
+                s += (start + i);
+            return s;
+        }
 
-		// for win32 console
-		{
-			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), NULL);
-			std::cout << "��" << " NULL" << std::endl;
-			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED);
-			std::cout << "��" << " FOREGROUND_RED" << std::endl;
-			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE);
-			std::cout << "��" << " FOREGROUND_BLUE" << std::endl;
-			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_GREEN);
-			std::cout << "��" << " FOREGROUND_GREEN" << std::endl;
-			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_BLUE);
-			std::cout << "��" << " FOREGROUND_RED + FOREGROUND_BLUE" << std::endl;
-			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | FOREGROUND_GREEN);
-			std::cout << "��" << " FOREGROUND_BLUE + FOREGROUND_GREEN" << std::endl;
-			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_GREEN | FOREGROUND_RED);
-			std::cout << "��" << " FOREGROUND_BLUE + FOREGROUND_RED" << std::endl;
-			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN);
-			std::cout << "��" << " FOREGROUND_RED + FOREGROUND_BLUE + FOREGROUND_GREEN" << std::endl;
-			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSITY);
-			std::cout << "��" << " FOREGROUND_INTENSITY" << std::endl;
-			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_INTENSITY);
-			std::cout << "��" << " FOREGROUND_RED + FOREGROUND_INTENSITY" << std::endl;
-			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | FOREGROUND_INTENSITY);
-			std::cout << "��" << " FOREGROUND_BLUE + FOREGROUND_INTENSITY" << std::endl;
-			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_GREEN | FOREGROUND_INTENSITY);
-			std::cout << "��" << " FOREGROUND_GREEN + FOREGROUND_INTENSITY" << std::endl;
-			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
-			std::cout << "��" << " FOREGROUND_RED + FOREGROUND_BLUE + FOREGROUND_INTENSITY" << std::endl;
-			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
-			std::cout << "��" << " FOREGROUND_BLUE + FOREGROUND_GREEN + FOREGROUND_INTENSITY" << std::endl;
-			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY);
-			std::cout << "��" << " FOREGROUND_GREEN + FOREGROUND_RED + FOREGROUND_INTENSITY" << std::endl;
-			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
-			std::cout << "��" << " FOREGROUND_RED + FOREGROUND_BLUE + FOREGROUND_GREEN + FOREGROUND_INTENSITY" << std::endl;
+        void run()
+        {
+            std::cout << "[StaticLibShape] sum_range(1,5) = "
+                << lib_sum_range(1, 5) << "\n"; // 1+2+3+4+5=15
+        }
+    }
 
-			system("pause");
+    //---------------------------------------------------------------------------------------------
+    // 컴파일러/링커 옵션이 만든 결과를 확인하는 간단 출력
+    //  - _MSC_VER : MSVC 버전
+    //  - _DEBUG   : Debug 빌드 여부
+    //  - _DLL     : /MD(/MDd) 여부(동적 CRT)
+    //  - _MT      : 멀티스레드 CRT 여부(대부분 켜짐)
+    //---------------------------------------------------------------------------------------------
+    void print_build_macros()
+    {
+        std::cout << "[Build Macros]\n";
 
-			/*
-			output:
-				�� NULL
-				�� FOREGROUND_RED
-				�� FOREGROUND_BLUE
-				�� FOREGROUND_GREEN
-				�� FOREGROUND_RED + FOREGROUND_BLUE
-				�� FOREGROUND_BLUE + FOREGROUND_GREEN
-				�� FOREGROUND_BLUE + FOREGROUND_RED
-				�� FOREGROUND_RED + FOREGROUND_BLUE + FOREGROUND_GREEN
-				�� FOREGROUND_INTENSITY
-				�� FOREGROUND_RED + FOREGROUND_INTENSITY
-				�� FOREGROUND_BLUE + FOREGROUND_INTENSITY
-				�� FOREGROUND_GREEN + FOREGROUND_INTENSITY
-				�� FOREGROUND_RED + FOREGROUND_BLUE + FOREGROUND_INTENSITY
-				�� FOREGROUND_BLUE + FOREGROUND_GREEN + FOREGROUND_INTENSITY
-				�� FOREGROUND_GREEN + FOREGROUND_RED + FOREGROUND_INTENSITY
-				�� FOREGROUND_RED + FOREGROUND_BLUE + FOREGROUND_GREEN + FOREGROUND_INTENSITY
-			*/
-		}
-	}
+#ifdef _MSC_VER
+        std::cout << "  _MSC_VER = " << _MSC_VER << "\n";
+#else
+        std::cout << "  _MSC_VER = (not MSVC)\n";
+#endif
 
-	void Test()
-	{
-		//what_is_a_compiler();
+#ifdef _DEBUG
+        std::cout << "  _DEBUG   = defined (Debug)\n";
+#else
+        std::cout << "  _DEBUG   = not defined (Release)\n";
+#endif
 
-		//console_programs();
-	}
+#ifdef _DLL
+        std::cout << "  _DLL     = defined (/MD or /MDd)\n";
+#else
+        std::cout << "  _DLL     = not defined (/MT or /MTd)\n";
+#endif
 
-}// end of Compilers
+#ifdef _MT
+        std::cout << "  _MT      = defined (multi-threaded CRT)\n";
+#else
+        std::cout << "  _MT      = not defined\n";
+#endif
+
+        std::cout << std::endl;
+    }
+
+    //=============================================================================================
+
+    void Test()
+    {
+        // 빌드 매크로 확인
+        print_build_macros();
+
+        // static lib 형태 예시
+        StaticLibShape::run();
+
+        // 오버로드/extern "C" 개념
+        ManglingExample::run();
+
+        // 선언/정의/링크 개념
+        LinkageExample::run();
+
+        // 개요 출력
+        overview();
+    }
+
+}//Compilers

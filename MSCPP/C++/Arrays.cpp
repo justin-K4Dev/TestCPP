@@ -1,8 +1,6 @@
 #include "stdafx.h"
 
 
-#include <array>
-
 namespace Arrays
 {
 	void printArray(int arg[], int length)

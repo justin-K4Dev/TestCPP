@@ -1,6 +1,5 @@
 ﻿#include "stdafx.h"
 
-#include <vector>
 
 namespace Constexpr
 {

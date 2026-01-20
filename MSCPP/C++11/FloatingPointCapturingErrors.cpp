@@ -1,8 +1,5 @@
 ﻿#include "stdafx.h"
 
-#include <vector>
-#include <cmath>
-#include <cfloat>
 
 namespace FloatingPointCapturingErrors
 {

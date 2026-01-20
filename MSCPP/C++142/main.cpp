@@ -5,17 +5,18 @@
 #include "Function.h"
 
 
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	Logic::Test();
 
 	//=============================================================================================
 
+	Attribute::Test();
+
 	Compiler_AddFeatures::Test();
 
 	DeductionGuide::Test();
-
-	FallThrough::Test();
 
 	FoldExpression::Test();
 
@@ -25,7 +26,13 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	Literal_AddFeatures::Test();
 
+	Memory_AddFeature::Test();
+
+	Mutex_AddFeature::Test();
+
 	IfSwitch_AddFeatures::Test();
+
+	Invoke_AddFeatures::Test();
 	
 	Optional::Test();
 
@@ -38,6 +45,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	TerseStaticAssert::Test();
 
 	Tuple_AddFeatures::Test();
+
+	TypeTraits_AddFeature::Test();
 
 	Variant::Test();
 

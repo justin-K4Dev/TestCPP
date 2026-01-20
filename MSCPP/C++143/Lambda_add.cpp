@@ -54,6 +54,6 @@ namespace Lambda_AddFeatures
 
 	void Test()
 	{
-		TemplateParameters_in_Lambdas();
+		//TemplateParameters_in_Lambdas();
 	}
 }//Lambda_AddFeatures

@@ -1,20 +1,7 @@
 ﻿#include "stdafx.h"
 
-#include <chrono>
-#include <memory>
-#include <new>
-#include <array>
-#include <vector>
-#include <map>
-#include <type_traits>
-#include <utility>
-#include <functional>
+
 #include <tuple>
-
-#include <typeinfo>
-#include <typeindex>
-
-
 
 
 namespace VariadicTemplate

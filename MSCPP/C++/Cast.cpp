@@ -1,8 +1,6 @@
 ﻿#include "stdafx.h"
 
 
-#include <vector>
-
 namespace Cast
 {
 	void c_style_cast()

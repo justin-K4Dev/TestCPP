@@ -3,7 +3,6 @@
 
 #include <cpprest/http_client.h>
 #include <cpprest/json.h>
-#include <iostream>
 
 
 namespace VCPP_REST_SDK

@@ -3,17 +3,6 @@
 #include <Windows.h>
 #include <atlstr.h> // for MFC CString
 
-#include <clocale>
-#include <wchar.h>
-
-#include <fstream>
-#include <iostream>
-#include <sstream>
-#include <locale>
-#include <codecvt>
-
-#include <fcntl.h>
-#include <io.h>
 
 //#pragma execution_character_set( "utf-8" )
 

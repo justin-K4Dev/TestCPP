@@ -50,6 +50,6 @@ namespace MemorySpan
 
 	void Test()
 	{
-		span_use();
+		//span_use();
 	}
 }//MemorySpan

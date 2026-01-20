@@ -1,6 +1,8 @@
 ﻿#include "stdafx.h"
 
+
 #include <tuple>
+
 
 namespace Tuple
 {

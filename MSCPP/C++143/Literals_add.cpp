@@ -115,7 +115,7 @@ namespace Literal_AddFeatures
 
 	void Test()
 	{
-		StringLiterals_AddFeature();
+		//StringLiterals_AddFeature();
 	}
 
 }//Literal_AddFeatures

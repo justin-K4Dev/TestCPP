@@ -160,4 +160,4 @@ namespace Constants
 
 		//preprocessor_definitions();
 	}
-}// end of Constants
+}//Constants

@@ -1,9 +1,9 @@
 ﻿#include "stdafx.h"
 
 
+#include <ppl.h>
+#include <concurrent_unordered_map.h>
 
-#include <atomic>
-#include <bitset>
 
 namespace CAS
 {

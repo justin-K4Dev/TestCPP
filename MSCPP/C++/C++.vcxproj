@@ -47,7 +47,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>false</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -202,8 +202,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AdvancedMacro.cpp" />
+    <ClCompile Include="Attribute.cpp" />
+    <ClCompile Include="Console.cpp" />
+    <ClCompile Include="ABI.cpp" />
+    <ClCompile Include="DeadLockAvoidanceTips.cpp" />
     <ClCompile Include="Function.cpp" />
+    <ClCompile Include="Initialization.cpp" />
     <ClCompile Include="Integer128.cpp" />
+    <ClCompile Include="Introduction.cpp" />
     <ClCompile Include="Locale.cpp" />
     <ClCompile Include="MacroTipsAndTricks.cpp" />
     <ClCompile Include="Program32bit264bit.cpp" />
@@ -251,6 +257,8 @@
     <ClCompile Include="TestCode.cpp" />
     <ClCompile Include="Thread.cpp" />
     <ClCompile Include="ThreadLocalStorage.cpp" />
+    <ClCompile Include="ThreadSyncWithInterlock.cpp" />
+    <ClCompile Include="ThreadSyncWithSRWLock.cpp" />
     <ClCompile Include="ThreadSyncWithVolatile.cpp" />
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="TypeConversions.cpp" />

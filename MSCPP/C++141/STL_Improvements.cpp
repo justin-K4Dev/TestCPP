@@ -1,14 +1,6 @@
 ﻿#include "stdafx.h"
 
 
-#include <iostream>
-#include <string>
-#include <vector>
-#include <any>
-#include <variant>
-#include <algorithm>
-
-
 namespace STL_Improvements
 {
 	void STL_improvements()

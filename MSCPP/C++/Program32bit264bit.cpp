@@ -1,5 +1,6 @@
 #include "stdafx.h"
 
+
 namespace Program32Bit264Bit
 {
 	void print_type_size()

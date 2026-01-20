@@ -13,9 +13,17 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	CRTMemoryCheck::Test();
 
+	Introduction::Test();
+
 	Compilers::Test();
 
+	CRT_LinkType::Test();
+
+	Console::Test();
+
 	ByteOrder::Test();
+
+	Initialization::Test();
 
 	StructureOfProgram::Test();
 
@@ -77,11 +85,18 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	TypeConversions::Test();
 
+
 	ExplicitMutable::Test();
 
 	Thread::Test();
 
 	ThreadLocalStorage::Test();
+
+	ThreadSyncWithInterLock::Test();
+
+	ThreadSyncWithSRWLock::Test();
+
+	ThreadSyncWithVolatile::Test();
 
 	Exception::Test();
 
@@ -102,6 +117,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	Function::Test();
 
 	Integer128::Test();
+
+	Attribute::Test();
 
     return 0;
 }

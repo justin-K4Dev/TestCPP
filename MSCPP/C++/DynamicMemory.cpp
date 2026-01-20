@@ -1,8 +1,7 @@
 ﻿#include "stdafx.h"
 
 #include <windows.h>  
-#include <malloc.h>  
-
+ 
 
 namespace DynamicMemory
 {

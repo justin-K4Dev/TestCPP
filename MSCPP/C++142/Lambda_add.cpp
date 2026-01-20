@@ -2,23 +2,6 @@
 
 
 
-///////////////////////////////////////////////////////////////////////////////
-/// @file Lambda.cpp
-/// @brief 
-/// @return
-/// @param 
-/// 
-/// @author justin
-/// @date 7-26-2012 23:30:21
-///////////////////////////////////////////////////////////////////////////////
-
-#include <iostream>
-#include <vector>
-#include <string>
-#include <algorithm>
-#include <functional>
-#include <memory>
-
 namespace Lambda_AddFeatures
 {
 	void Lambda_AddFeatures()

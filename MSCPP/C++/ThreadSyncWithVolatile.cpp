@@ -1,6 +1,5 @@
 ﻿#include "stdafx.h"
 
-#include <process.h>
 #include <Windows.h>
 
 

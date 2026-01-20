@@ -18,6 +18,10 @@ namespace Inheritance_AddFeatures { void Test(); }
 
 namespace Lambda_AddFeature { void Test(); }
 
+namespace Memory_AddFeature { void Test(); }
+
+namespace Mutex_AddFeature { void Test(); }
+
 namespace NSDMI { void Test(); }
 
 namespace Random { void Test(); }
@@ -31,6 +35,8 @@ namespace String_AddFeatures { void Test(); }
 namespace Thread_AddFutures { void Test(); }
 
 namespace TypeConversion { void Test(); }
+
+namespace TypeTraits_AddFeature { void Test(); }
 
 namespace VariadicTemplate { void Test(); }
 

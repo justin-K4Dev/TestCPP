@@ -1,281 +1,301 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
+
+
 #include <Windows.h>
 
-#include <ctime>
-#include <sstream>
 
 namespace Time
 {
-	void printTimeByMacro()
+	//=============================================================================================
+	// 공통: thread-unsafe tm 변환
+	// 
+	//     auto p = unsafe_localtime_ptr(t);
+	//     
+	//     ... 여기서 다른 스레드가 localtime/gmtime 호출할 경우
+	//     p가 가리키는 내용이 바뀔 수 있다 !!!
+	//     
+	//     이유: 반환받은 p는 공유 버퍼 주소이고,
+	//           다른 스레드가 std::localtime 또는 std::gmtime 호출시
+	//           같은 공유 버퍼가 갱신/덮어쓰기 발생 !!!
+	// 
+	//     auto p1 = std::localtime(&t1);
+	//     auto p2 = std::localtime(&t2); // 같은 버퍼를 다시 써버림
+	//     p1 내용도 이제 t2 기준으로 바뀜 !!!
+	//=============================================================================================
+	static bool unsafe_localtime(std::time_t tt, std::tm& out)
 	{
-		const char* buildString = "This build was compiled at " __DATE__ ", " __TIME__ ".";
+		std::tm* p = std::localtime(&tt); // ❌ thread-unsafe
+		if (!p) return false;
 
-		std::cout << "build time : " << buildString << std::endl;
-		std::cout << "local time : " << __TIMESTAMP__ << std::endl;
-		/*
-		output:
-			build time : This build was compiled at Jun 24 2018, 16:46:48.
-			local time : Sun Jun 24 16:46:48 2018
-		*/
-
-		system("pause");
+		// out으로 복사해도, 복사 시점에 다른 스레드가 덮으면 깨질 수 있다 !!!
+		out = *p;
+		return true;
 	}
 
-	std::string getTimeStamp()
+	static bool unsafe_gmtime(std::time_t tt, std::tm& out)
 	{
-		time_t now = time(nullptr);
-		tm* gmt_time = gmtime(&now);
+		std::tm* p = std::gmtime(&tt); // ❌ thread-unsafe
+		if (!p) return false;
 
-		std::ostringstream oss;
-		oss << std::put_time(gmt_time, "%Y-%m-%d %H:%M:%S");
-
-		return oss.str();
+		// out으로 복사해도, 복사 시점에 다른 스레드가 덮으면 깨질 수 있다 !!!
+		out = *p;
+		return true;
 	}
 
-	void utc_time()
-	{
-		std::cout << "UTC : " << getTimeStamp() << std::endl;
-		/*
-		output:
-			UTC : 2018-06-24 05:26:30
-		*/
+    //=============================================================================================
+    // 공통: thread-safe tm 변환
+    //=============================================================================================
+    static bool safe_localtime(std::time_t tt, std::tm& out)
+    {
+        return localtime_s(&out, &tt) == 0;
+    }
 
-		system("pause");
-	}
+    static bool safe_gmtime(std::time_t tt, std::tm& out)
+    {
+        return gmtime_s(&out, &tt) == 0;
+    }
 
-	void utc_time_2_time_t()
-	{
-		/*
-			struct tm
-			{
-				int tm_sec;		//seconds after the minute - [0, 59]
-				int tm_min;		//minutes after the hour - [0, 59]
-				int tm_hour;	//hours since midnight - [0, 23]
+    static std::string format_tm(const std::tm& t, const char* fmt)
+    {
+        char buf[128];
+        if (std::strftime(buf, sizeof(buf), fmt, &t) == 0)
+            return "<strftime failed>";
 
-				int tm_mday;	//day of the month - [1, 31]
-				int tm_mon;		//months since January - [0, 11]
-				int tm_year;	//years since 1900
-
-				int tm_wday;	//days since Sunday - [0, 6]
-				int tm_yday;	//days since January 1 - [0, 365]
-				int tm_isdst;	//daylight savings time flag
-			};	
-		*/
-
-		//current date/time based on current system
-		std::time_t now = std::time(nullptr);
-
-		std::cout << "sec since epoch: "	<< now << std::endl;
-		std::cout << "year : "				<< std::localtime(&now)->tm_year + 1900		<< std::endl;
-		std::cout << "month : "				<< std::localtime(&now)->tm_mon + 1			<< std::endl;
-		std::cout << "day : "				<< std::localtime(&now)->tm_mday << "\n"	<< std::endl;
-		std::cout << "hour : "				<< std::localtime(&now)->tm_hour			<< std::endl;
-		std::cout << "minute : "			<< std::localtime(&now)->tm_min				<< std::endl;
-		std::cout << "sec : "				<< std::localtime(&now)->tm_sec				<< std::endl;
-
-		std::cout << "day of the week, month, day, h:m:s year : " << std::asctime(std::localtime(&now)) << std::endl;
-
-		/*
-		output:
-			sec since epoch: 1529727716
-			year : 2018
-			month : 6
-			day : 23
-
-			hour : 13
-			minute : 21
-			sec : 56
-			day of the week, month, day, h:m:s year : Sat Jun 23 13:21:56 2018
-		*/
-
-		system("pause");
-	}
-
-	void utc_tm_2_time_t()
-	{
-		//current date/time based on current system
-		time_t now = std::time(nullptr);
-
-		std::tm currentDate;
-
-		currentDate.tm_year = std::localtime(&now)->tm_year;	//years since 1900
-		currentDate.tm_mon = std::localtime(&now)->tm_mon;		//months since January - [0, 11]
-		currentDate.tm_mday = std::localtime(&now)->tm_mday;	//day of the month - [1, 31]
-		currentDate.tm_hour = 0;								//hours since midnight - [0, 23]
-		currentDate.tm_min = 0;									//minutes after the hour - [0, 59]
-		currentDate.tm_sec = 0;									//seconds after the minute - [0, 59]
-
-		//00:00:00 on the current date
-		std::time_t currentDay = std::mktime(&currentDate);	//convert tm -> time_t
-
-		std::cout << "seconds elapsed since 00:00 today : " << std::difftime(now, currentDay) << std::endl;
-		/*
-		output:
-			seconds elapsed since 00:00 today : 71703
-		*/
-
-		system("pause");
-	}
-
-	time_t mkgmtime(struct tm* tm)
-	{
-#if defined(_WIN32)
-		return _mkgmtime(tm); // for visual c++
-#elif defined(linux)
-		return timegm(tm);
-#endif
-	}
-
-	void custom_tm_2_time_t()
-	{
-		std::tm customDate;
-
-		//set to a custom time
-		customDate.tm_year = 2015 - 1900;	//years since 1900
-		customDate.tm_mon = 3 - 1;			//months since January - [0, 11]
-		customDate.tm_mday = 17;			//day of the month - [1, 31]
-		customDate.tm_hour = 13;			//hours since midnight - [0, 23]
-		customDate.tm_min = 35;				//minutes after the hour - [0, 59]
-		customDate.tm_sec = 25;				//seconds after the minute - [0, 59]
-
-		std::time_t customDay = mkgmtime(&customDate); //convert tm -> time_t
-
-		std::cout << "day of the week, month, day, h:m:s year : " << std::asctime(std::localtime(&customDay)) << std::endl;
-
-		/*
-		output:
-			day of the week, month, day, h:m:s year : Tue Mar 17 13:35:25 2015
-		*/
-
-		system("pause");
-	}
-
-	void utc_2_localtime()
-	{
-		//current date/time based on current system
-		time_t now = std::time(nullptr);
-
-		//convert now to tm struct for local timezone
-		tm* localtm = std::localtime(&now);
-		std::cout << "The local date and time is : " << std::asctime(localtm) << std::endl;
-
-		//Converts given time since epoch as std::time_t value into calendar time,
-		//expressed in Coordinated Universal Time (UTC).
-		//convert now to tm struct for UTC
-		tm* gmtm = std::gmtime(&now);
-		if (gmtm != NULL) {
-			std::cout << "The UTC date and time is : " << std::asctime(gmtm) << std::endl;
-		}
-		else {
-			std::cerr << "Failed to get the UTC date and time" << std::endl;
-			return;
-		}
-
-		char buf[512];
-		
-		//Visit http://en.cppreference.com/w/cpp/chrono/c/strftime
-		//for more information about date/time format
-		std::strftime(buf, sizeof(buf), "%Y-%m-%d.%X", gmtm);
-
-		//print current date/time, format is YYYY-MM-DD.HH:mm:ss
-		std::cout << "UTC : " << buf << std::endl;
-
-		/*
-		output:
-			The local date and time is : Sat Jun 23 20:03:09 2018
-			The UTC date and time is : Sat Jun 23 11:03:09 2018
-			UTC : 2018-06-23.11:03:09
-		*/
-
-		system("pause");
-	}
-
-	void utc_localtime_offset()
-	{
-		std::time_t now = std::time(nullptr);
-
-		std::time_t local = std::mktime(std::localtime(&now));
-		std::time_t utc = std::mktime(std::gmtime(&now));
-
-		long timezone = static_cast<long> (utc - local);
-
-		std::cout << "time zone offset : " << timezone << std::endl;
-		/*
-		output:
-			time zone offset : -32400
-		*/
-	}
-
-	#define MST (-7)
-	#define UTC (0)
-	#define CCT (+8)
-	#define KST (+9)
-
-	void major_country_utc()
-	{
-		time_t rawtime;
-		tm* ptm;
-
-		std::time(&rawtime);
-		ptm = std::gmtime(&rawtime);
-
-		puts("Current time around the World:");
-
-		printf("Phoenix, AZ (U.S.) :  %2d:%02d\n", (ptm->tm_hour + MST) % 24, ptm->tm_min);
-		printf("Reykjavik (Iceland) : %2d:%02d\n", (ptm->tm_hour + UTC) % 24, ptm->tm_min);
-		printf("Beijing (China) :     %2d:%02d\n", (ptm->tm_hour + CCT) % 24, ptm->tm_min);
-		printf("Seoul (Korea) :       %2d:%02d\n", (ptm->tm_hour + KST) % 24, ptm->tm_min);
-
-		/*
-		output:
-			Current time around the World:
-			Phoenix, AZ (U.S.) :  11:09
-			Reykjavik (Iceland) : 18:09
-			Beijing (China) :      2:09
-			Seoul (Korea) :        3:09
-		*/
-
-		system("pause");
-	}
-
-	void make_local_time_from_utc()
-	{
-		for(int i = 0; i < 5; ++i) {
-
-			//returns seconds since midnight on January 1, 1970
-			int totalSeconds = time(nullptr);
-			//calculate the seconds of the current time(second)
-			int currentSecond = totalSeconds % 60;
-			//calculate total minutes
-			int totalMinutes = totalSeconds / 60;
-			//minute calculation of current time(minutes)
-			int currentMinute = totalMinutes % 60;
-
-			//total time(hours) calculation
-			//UTC -> KST Add 9 to change
-			int totalHours = totalMinutes / 60 + KST;
-			//calculate current time(hours)
-			int currentHour = totalHours % 24;
-
-			//print
-			std::cout << "Time " << currentHour << ":" << currentMinute << ":" << currentSecond << std::endl;
-
-			Sleep(1000);
-		}
-		/*
-		output:
-			Time 3:10:57
-			Time 3:10:58
-			Time 3:10:59
-			Time 3:11:0
-			Time 3:11:1	
-		*/
-
-		system("pause");
-	}
+        return std::string(buf);
+    }
 
 
-	int setenv(const char *name, const char *value, int overwrite)
+
+    //=============================================================================================
+
+    void printTimeByMacro()
+    {
+        const char* buildString = "This build was compiled at " __DATE__ ", " __TIME__ ".";
+
+        std::cout << "build time : " << buildString << "\n";
+        std::cout << "local time : " << __TIMESTAMP__ << "\n";
+
+        system("pause");
+    }
+
+    //=============================================================================================
+
+    std::string getTimeStamp()
+    {
+        std::time_t now = std::time(nullptr);
+
+        std::tm tm_utc{};
+        if (!safe_gmtime(now, tm_utc)) return "<gmtime_s failed>";
+
+        // put_time은 구현/설정에 따라 C++11에서 애매할 수 있어 strftime로 통일
+        return format_tm(tm_utc, "%Y-%m-%d %H:%M:%S");
+    }
+
+    //=============================================================================================
+
+    void utc_time()
+    {
+        std::cout << "UTC : " << getTimeStamp() << "\n";
+        
+        system("pause");
+    }
+
+    //=============================================================================================
+
+    void utc_time_2_time_t()
+    {
+        std::time_t now = std::time(nullptr);
+
+        std::tm tm_local{};
+        if (!safe_localtime(now, tm_local)) {
+            std::cout << "localtime_s failed\n";
+            return;
+        }
+
+        std::cout << "sec since epoch: " << now << "\n";
+        std::cout << "year : " << tm_local.tm_year + 1900 << "\n";
+        std::cout << "month : " << tm_local.tm_mon + 1 << "\n";
+        std::cout << "day : " << tm_local.tm_mday << "\n\n";
+        std::cout << "hour : " << tm_local.tm_hour << "\n";
+        std::cout << "minute : " << tm_local.tm_min << "\n";
+        std::cout << "sec : " << tm_local.tm_sec << "\n";
+
+        // asctime(localtime()) 대신 strftime 사용
+        std::cout << "day of the week, month, day, h:m:s year : "
+            << format_tm(tm_local, "%a %b %d %H:%M:%S %Y") << "\n";
+
+        system("pause");
+    }
+
+    //=============================================================================================
+    // 오늘 00:00:00 로컬 시각의 time_t 생성 후, now와 diff
+    //=============================================================================================
+    void utc_tm_2_time_t()
+    {
+        std::time_t now = std::time(nullptr);
+
+        std::tm tm_local{};
+        if (!safe_localtime(now, tm_local)) {
+            std::cout << "localtime_s failed\n";
+            return;
+        }
+
+        std::tm currentDate{};
+        currentDate.tm_year = tm_local.tm_year;
+        currentDate.tm_mon = tm_local.tm_mon;
+        currentDate.tm_mday = tm_local.tm_mday;
+        currentDate.tm_hour = 0;
+        currentDate.tm_min = 0;
+        currentDate.tm_sec = 0;
+        currentDate.tm_isdst = tm_local.tm_isdst; // DST 힌트
+
+        std::time_t currentDay = std::mktime(&currentDate);
+
+        std::cout << "seconds elapsed since 00:00 today : "
+            << std::difftime(now, currentDay) << "\n";
+
+        system("pause");
+    }
+
+    //=============================================================================================
+    // UTC tm -> time_t 반환
+    //=============================================================================================
+    std::time_t mkgmtime(std::tm* tm)
+    {
+        return _mkgmtime(tm);
+    }
+
+    //=============================================================================================
+
+    void custom_tm_2_time_t()
+    {
+        std::tm customDate{};
+        customDate.tm_year = 2015 - 1900;
+        customDate.tm_mon = 3 - 1;
+        customDate.tm_mday = 17;
+        customDate.tm_hour = 13;
+        customDate.tm_min = 35;
+        customDate.tm_sec = 25;
+        customDate.tm_isdst = 0;
+
+        std::time_t customDay = mkgmtime(&customDate);
+
+        std::tm tm_local{};
+        if (!safe_localtime(customDay, tm_local)) {
+            std::cout << "localtime_s failed\n";
+            return;
+        }
+
+        std::cout << "day of the week, month, day, h:m:s year : "
+            << format_tm(tm_local, "%a %b %d %H:%M:%S %Y") << "\n";
+
+        system("pause");
+    }
+
+    //=============================================================================================
+    // 현재 UTC => 로컬 시간으로 변환 출력
+    //=============================================================================================
+    void utc_2_localtime()
+    {
+        std::time_t now = std::time(nullptr);
+
+        std::tm tm_local{};
+        if (!safe_localtime(now, tm_local)) {
+            std::cerr << "localtime_s failed\n";
+            return;
+        }
+        std::cout << "The local date and time is : "
+            << format_tm(tm_local, "%a %b %d %H:%M:%S %Y") << "\n";
+
+        std::tm tm_utc{};
+        if (!safe_gmtime(now, tm_utc)) {
+            std::cerr << "gmtime_s failed\n";
+            return;
+        }
+        std::cout << "The UTC date and time is : "
+            << format_tm(tm_utc, "%a %b %d %H:%M:%S %Y") << "\n";
+
+        std::cout << "UTC : " << format_tm(tm_utc, "%Y-%m-%d.%H:%M:%S") << "\n";
+
+        system("pause");
+    }
+
+    //=============================================================================================
+    // 8) utc_localtime_offset
+    //=============================================================================================
+    void utc_localtime_offset()
+    {
+        std::time_t now = std::time(nullptr);
+
+        std::tm tm_local{};
+        std::tm tm_utc{};
+        if (!safe_localtime(now, tm_local) || !safe_gmtime(now, tm_utc)) {
+            std::cout << "time convert failed\n";
+            return;
+        }
+
+        std::time_t local = std::mktime(&tm_local);
+        std::time_t utc_as_local = std::mktime(&tm_utc);
+
+        long timezone = static_cast<long>(utc_as_local - local);
+        std::cout << "time zone offset : " << timezone << "\n";
+    }
+
+    //=============================================================================================
+    // 9) major_country_utc
+    //=============================================================================================
+    #define MST (-7)
+    #define UTC (0)
+    #define CCT (+8)
+    #define KST (+9)
+
+    void major_country_utc()
+    {
+        std::time_t rawtime = 0;
+        std::time(&rawtime);
+
+        std::tm tm_utc{};
+        if (!safe_gmtime(rawtime, tm_utc)) {
+            std::cout << "gmtime_s failed\n";
+            return;
+        }
+
+        puts("Current time around the World:");
+
+        printf("Phoenix, AZ (U.S.) :  %2d:%02d\n", (tm_utc.tm_hour + MST + 24) % 24, tm_utc.tm_min);
+        printf("Reykjavik (Iceland) : %2d:%02d\n", (tm_utc.tm_hour + UTC + 24) % 24, tm_utc.tm_min);
+        printf("Beijing (China) :     %2d:%02d\n", (tm_utc.tm_hour + CCT + 24) % 24, tm_utc.tm_min);
+        printf("Seoul (Korea) :       %2d:%02d\n", (tm_utc.tm_hour + KST + 24) % 24, tm_utc.tm_min);
+
+        system("pause");
+    }
+
+    //=============================================================================================
+    // 10) make_local_time_from_utc
+    //=============================================================================================
+    void make_local_time_from_utc()
+    {
+        for (int i = 0; i < 5; ++i) {
+            int totalSeconds = static_cast<int>(std::time(nullptr));
+            int currentSecond = totalSeconds % 60;
+            int totalMinutes = totalSeconds / 60;
+            int currentMinute = totalMinutes % 60;
+
+            int totalHours = totalMinutes / 60 + KST;
+            int currentHour = totalHours % 24;
+
+            std::cout << "Time " << currentHour << ":" << currentMinute << ":" << currentSecond << "\n";
+            Sleep(1000);
+        }
+
+        system("pause");
+    }
+
+	//=============================================================================================
+	// TimeZone 을 변경 한다.
+	//=============================================================================================
+
+	int setenv(const char* name, const char* value, int overwrite)
 	{
 		int errcode = 0;
 		if (!overwrite) {
@@ -841,7 +861,7 @@ namespace Time
 			UTC												+00:00		+00:00
 			WET												+00:00		+01:00
 			W-SU											+04:00		+04:00
-			Zulu											+00:00		+00:00	
+			Zulu											+00:00		+00:00
 		*/
 
 		{
@@ -863,14 +883,14 @@ namespace Time
 			tm		i;
 			time_t	stamp;	//Can be negative, so works before 1970
 
-			_putenv("TZ=UTC");	//Begin work in Greenwich ��
+			_putenv("TZ=UTC");	//Begin work in Greenwich …
 
 			i.tm_year = 2018 - 1900;	//Populate struct members with
-			i.tm_mon  = 8 - 1;			//the UTC time details, we use
+			i.tm_mon = 8 - 1;			//the UTC time details, we use
 			i.tm_mday = 29;				//29th August, 2018 12:34:56
 			i.tm_hour = 12;				//in this example
-			i.tm_min  = 34;
-			i.tm_sec  = 56;
+			i.tm_min = 34;
+			i.tm_sec = 56;
 
 			stamp = std::mktime(&i);		//Convert to a time_t
 
@@ -878,7 +898,7 @@ namespace Time
 
 			printf("UTC   : %s", std::asctime(std::gmtime(&stamp)));
 			printf("Local : %s", std::asctime(std::localtime(&stamp)));
-			
+
 			/*
 			output:
 				UTC   : Sat Aug 29 20:34:56 2018
@@ -888,7 +908,7 @@ namespace Time
 
 		{
 			time_t t;
-			struct tm * now;
+			struct tm* now;
 
 			_putenv("TZ=PST8PDT"); // for pacific standard time, there is no problem
 			_tzset();
@@ -916,52 +936,320 @@ namespace Time
 		system("pause");
 	}
 
-	void time_zone_change_win32()
-	{
-		_tzset();
-		int daylight;
-		_get_daylight(&daylight);
-		printf("_daylight = %d\n", daylight);
-		long timezone;
-		_get_timezone(&timezone);
-		printf("_timezone = %ld\n", timezone); //32400 = 60 sec * 60 min * * 9 hour
-		size_t s;
-		char tzname[100];
-		_get_tzname(&s, tzname, sizeof(tzname), 0);
-		printf("_tzname[0] = %s\n", tzname);
+	//=============================================================================================
+    // UTC 시간 + 대상 TimeZone의 로컬시간을 tm으로 변환해서 출력
+    //=============================================================================================
 
-		/*
-		output:
-			_daylight = 0
-			_timezone = -32400
-			_tzname[0] = ���ѹα� ǥ�ؽ�
-		*/
+	//---------------------------------------------------------------------------------------------
+	// Wide -> UTF-8 간단 변환
+	//---------------------------------------------------------------------------------------------
+	static std::string wide_to_utf8(const wchar_t* ws)
+	{
+		if (!ws) return {};
+		int len = WideCharToMultiByte(CP_UTF8, 0, ws, -1, nullptr, 0, nullptr, nullptr);
+		if (len <= 0) return {};
+		std::string s(len - 1, '\0');
+		WideCharToMultiByte(CP_UTF8, 0, ws, -1, &s[0], len, nullptr, nullptr);
+		return s;
+	}
+
+	//---------------------------------------------------------------------------------------------
+	// Win32로 "현재 시스템 TZ" 정보만 출력
+	//---------------------------------------------------------------------------------------------
+	static void print_current_windows_tz_info()
+	{
+		DYNAMIC_TIME_ZONE_INFORMATION dtzi{};
+		DWORD r = GetDynamicTimeZoneInformation(&dtzi);
+
+		std::cout << "Windows current TZ\n";
+		std::cout << "  KeyName : " << wide_to_utf8(dtzi.TimeZoneKeyName) << "\n";
+		std::cout << "  StdName : " << wide_to_utf8(dtzi.StandardName) << "\n";
+		std::cout << "  DltName : " << wide_to_utf8(dtzi.DaylightName) << "\n";
+		std::cout << "  Bias(min) : " << dtzi.Bias << " (utc = local + bias)\n";
+		std::cout << "  status : " << r << "\n";
+	}
+
+	//---------------------------------------------------------------------------------------------
+	// "Pacific Standard Time" 같은 Windows TZ KeyName 으로 DYNAMIC_TIME_ZONE_INFORMATION 찾기
+	//---------------------------------------------------------------------------------------------
+	static bool find_dynamic_tz_by_keyname(const wchar_t* keyName, DYNAMIC_TIME_ZONE_INFORMATION& out)
+	{
+		for (DWORD i = 0;; ++i) {
+			DYNAMIC_TIME_ZONE_INFORMATION dtzi{};
+			DWORD r = EnumDynamicTimeZoneInformation(i, &dtzi);
+			if (r == ERROR_NO_MORE_ITEMS) return false;
+			if (r != ERROR_SUCCESS) continue;
+
+			if (wcscmp(dtzi.TimeZoneKeyName, keyName) == 0) {
+				out = dtzi;
+				return true;
+			}
+		}
+	}
+
+	//---------------------------------------------------------------------------------------------
+	// (선택) 시스템 TZ 변경을 위한 권한 활성화 (필요한 경우)
+	//  - 보통 "SeTimeZonePrivilege" 가 필요할 수 있음.
+	//---------------------------------------------------------------------------------------------
+	static bool enable_time_zone_privilege()
+	{
+		HANDLE token = nullptr;
+		if (!OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &token))
+			return false;
+
+		LUID luid{};
+		if (!LookupPrivilegeValueW(nullptr, SE_TIME_ZONE_NAME, &luid)) {
+			CloseHandle(token);
+			return false;
+		}
+
+		TOKEN_PRIVILEGES tp{};
+		tp.PrivilegeCount = 1;
+		tp.Privileges[0].Luid = luid;
+		tp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
+
+		BOOL ok = AdjustTokenPrivileges(token, FALSE, &tp, sizeof(tp), nullptr, nullptr);
+		DWORD err = GetLastError();
+		CloseHandle(token);
+
+		// AdjustTokenPrivileges는 ok여도 GetLastError로 ERROR_NOT_ALL_ASSIGNED가 뜰 수 있음
+		return ok && (err != ERROR_NOT_ALL_ASSIGNED);
+	}
+
+	//---------------------------------------------------------------------------------------------
+	// 시스템 TimeZone을 "실제로" 변경한다. (OS 전체 영향, 관리자/권한 필요)
+	//---------------------------------------------------------------------------------------------
+	void time_zone_change_by_win32()
+	{
+		std::cout << "==== BEFORE ====\n";
+		print_current_windows_tz_info();
+
+		// 필요하면 권한 활성화 시도 (실패해도 계속 시도는 가능)
+		if (!enable_time_zone_privilege()) {
+			std::cout << "[warn] enable_time_zone_privilege failed (may still work if already permitted)\n";
+		}
+
+		// 원복을 위해 기존 TZ 저장
+		DYNAMIC_TIME_ZONE_INFORMATION oldTz{};
+		GetDynamicTimeZoneInformation(&oldTz);
+
+		// 목표 TZ 선택
+		const wchar_t* targetKey = L"Pacific Standard Time";
+		DYNAMIC_TIME_ZONE_INFORMATION target{};
+		if (!find_dynamic_tz_by_keyname(targetKey, target)) {
+			std::cout << "cannot find tz key: " << wide_to_utf8(targetKey) << "\n";
+			return;
+		}
+
+		// ⚠️ 시스템 TZ 변경
+		if (!SetDynamicTimeZoneInformation(&target)) {
+			std::cout << "SetDynamicTimeZoneInformation failed. err=" << GetLastError() << "\n";
+			std::cout << "(Run as administrator or ensure the account has permission to change time zone)\n";
+			return;
+		}
+
+		std::cout << "\n==== AFTER (changed to " << wide_to_utf8(targetKey) << ") ====\n";
+		print_current_windows_tz_info();
+
+		// 데모: 잠깐 대기 후 원복
+		std::cout << "\nPress Enter to restore old time zone...\n";
+		std::cin.get();
+
+		if (!SetDynamicTimeZoneInformation(&oldTz)) {
+			std::cout << "restore SetDynamicTimeZoneInformation failed. err=" << GetLastError() << "\n";
+			return;
+		}
+
+		std::cout << "\n==== RESTORED ====\n";
+		print_current_windows_tz_info();
+	}
+
+
+	//=============================================================================================
+    // UTC 시간 + 대상 TimeZone의 로컬시간을 tm으로 변환해서 출력
+    //=============================================================================================
+
+	static void print_tm(const char* label, const std::tm& t)
+	{
+		std::cout << label << " : "
+			<< (t.tm_year + 1900) << "-"
+			<< (t.tm_mon + 1 < 10 ? "0" : "") << (t.tm_mon + 1) << "-"
+			<< (t.tm_mday < 10 ? "0" : "") << t.tm_mday << " "
+			<< (t.tm_hour < 10 ? "0" : "") << t.tm_hour << ":"
+			<< (t.tm_min < 10 ? "0" : "") << t.tm_min << ":"
+			<< (t.tm_sec < 10 ? "0" : "") << t.tm_sec
+			<< "\n";
+	}
+
+	static void print_time_in_zone_by_fixed_offset_utc_now(const char* label, int offsetMinutes)
+	{
+		// 1) UTC now (epoch)
+		std::time_t utcNow = std::time(nullptr);
+
+		// 2) offset 적용 (예: KST = +9h => +540min)
+		const std::int64_t offsetSeconds = (std::int64_t)offsetMinutes * 60;
+		std::time_t pseudoLocalEpoch = (std::time_t)((std::int64_t)utcNow + offsetSeconds);
+
+		// 3) gmtime_s로 "그 epoch를 UTC 달력"으로 변환하면
+		//    결과가 곧 "UTC+offset 타임존의 로컬 달력"이 됨
+		std::tm local{};
+		if (!safe_gmtime(pseudoLocalEpoch, local)) {
+			std::cout << "[" << label << "] gmtime_s failed\n";
+			return;
+		}
+
+		print_tm(label, local);
+	}
+
+	//---------------------------------------------------------------------------------------------
+
+	void time_zone_to_utc()
+	{
+		// UTC 기준 고정 오프셋(분)
+		//  - Seoul: +9h
+		//  - Beijing: +8h
+		//  - UTC/GMT: 0
+		//  - Pacific (US): -8h (※ DST 반영 안됨)
+		//  - Stockholm: +1h (※ DST 반영 안됨)
+
+		print_time_in_zone_by_fixed_offset_utc_now("Seoul (Korea)   ", +9 * 60);
+		print_time_in_zone_by_fixed_offset_utc_now("Beijing (China) ", +8 * 60);
+		print_time_in_zone_by_fixed_offset_utc_now("UTC/GMT         ", 0);
+		print_time_in_zone_by_fixed_offset_utc_now("Pacific (US)    ", -8 * 60);
+		print_time_in_zone_by_fixed_offset_utc_now("Stockholm (SE)  ", +1 * 60);
 
 		system("pause");
 	}
 
+
+    //=============================================================================================
+    // 현재 UTC 시간 + 대상 TimeZone의 로컬시간을 SYSTEMTIME으로 변환해서 출력
+    //=============================================================================================
+    static void print_time_in_zone_utc_now(const wchar_t* tzKeyName, const char* label)
+    {
+        // 1) UTC now
+        SYSTEMTIME utcNow{};
+        GetSystemTime(&utcNow); // UTC
+
+        // 2) TZ 정보 찾기
+        DYNAMIC_TIME_ZONE_INFORMATION dtzi{};
+        if (!find_dynamic_tz_by_keyname(tzKeyName, dtzi)) {
+            std::cout << "[" << label << "] cannot find tz: " << wide_to_utf8(tzKeyName) << "\n";
+            return;
+        }
+
+        // 3) 해당 연도 규칙(TZI) 얻기 (DST 포함)
+        TIME_ZONE_INFORMATION tzi{};
+        DWORD year = (DWORD)utcNow.wYear;
+        if (!GetTimeZoneInformationForYear(year, &dtzi, &tzi)) {
+            std::cout << "[" << label << "] GetTimeZoneInformationForYear failed. err=" << GetLastError() << "\n";
+            return;
+        }
+
+        // 4) UTC -> local(SYSTEMTIME)
+        SYSTEMTIME local{};
+        if (!SystemTimeToTzSpecificLocalTime(&tzi, &utcNow, &local)) {
+            std::cout << "[" << label << "] SystemTimeToTzSpecificLocalTime failed. err=" << GetLastError() << "\n";
+            return;
+        }
+
+        // 5) 출력
+        std::cout << label << " : "
+            << local.wYear << "-"
+            << (local.wMonth < 10 ? "0" : "") << local.wMonth << "-"
+            << (local.wDay < 10 ? "0" : "") << local.wDay << " "
+            << (local.wHour < 10 ? "0" : "") << local.wHour << ":"
+            << (local.wMinute < 10 ? "0" : "") << local.wMinute << ":"
+            << (local.wSecond < 10 ? "0" : "") << local.wSecond
+            << " (key=" << wide_to_utf8(tzKeyName) << ")\n";
+    }
+
+    //---------------------------------------------------------------------------------------------
+
+    void time_zone_to_utc_by_win32()
+    {
+        // UTC now를 각 타임존 로컬로 계산
+        print_time_in_zone_utc_now(L"Korea Standard Time", "Seoul (Korea)");
+        print_time_in_zone_utc_now(L"China Standard Time", "Beijing (China)");
+        print_time_in_zone_utc_now(L"Greenwich Standard Time", "UTC/GMT");
+        print_time_in_zone_utc_now(L"Pacific Standard Time", "Pacific (US)");
+        print_time_in_zone_utc_now(L"W. Europe Standard Time", "Stockholm (SE)");
+
+        // 참고: Windows 타임존 KeyName은 OS에 따라 다를 수 있음
+        // (예: "W. Europe Standard Time" 등)
+
+        system("pause");
+    }
+
+	//=============================================================================================
+    // CRT(MSVC C Runtime) 기반 "현재 시스템 TZ" 정보 추출
+	//=============================================================================================
+    void print_current_tz_info()
+    {
+        _tzset();
+        int daylight;
+        _get_daylight(&daylight);
+        printf("_daylight = %d\n", daylight);
+        long timezone;
+        _get_timezone(&timezone);
+        printf("_timezone = %ld\n", timezone); //32400 = 60 sec * 60 min * * 9 hour
+        size_t s;
+        char tzname[100];
+        _get_tzname(&s, tzname, sizeof(tzname), 0);
+        printf("_tzname[0] = %s\n", tzname);
+
+        /*
+        output:
+            _daylight = 0
+            _timezone = -32400
+            _tzname[0] = 대한민국 표준시
+        */
+
+        system("pause");
+    }
+
+	//=============================================================================================
+    // Win32로 "현재 시스템 TZ" 정보 출력
+	//=============================================================================================
+    void print_current_tz_info_by_win32()
+    {
+        print_current_windows_tz_info();
+
+        system("pause");
+    }
+
+    //=============================================================================================
+
 	void Test()
 	{
-		//printTimeByMacro();
+        printTimeByMacro();
 
-		//utc_time();
+        utc_time();
 
-		//utc_time_2_time_t();
+        utc_time_2_time_t();
 
-		//utc_tm_2_time_t();
+        utc_tm_2_time_t();
 
-		//custom_tm_2_time_t();
+        custom_tm_2_time_t();
 
-		//utc_2_localtime();
+        utc_2_localtime();
 
-		//utc_localtime_offset();
+        utc_localtime_offset();
 
-		//major_country_utc();
+        major_country_utc();
 
-		//make_local_time_from_utc();
+        make_local_time_from_utc();
 
-		//time_zone_change();
+		time_zone_change();
 
-		//time_zone_change_win32();
+		time_zone_change_by_win32();
+
+		time_zone_to_utc();
+
+		time_zone_to_utc_by_win32();
+
+		print_current_tz_info();
+
+		print_current_tz_info_by_win32();
 	}
 }

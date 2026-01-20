@@ -5,10 +5,11 @@
 #include "function.h"
 
 
-
 int _tmain(int argc, _TCHAR* argv[])
 {
-	Simple::Test();
+	Test::Run();
+
+	system("pause");
 
 	return 0;
 }

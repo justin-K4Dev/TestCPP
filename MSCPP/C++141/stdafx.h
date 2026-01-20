@@ -7,24 +7,74 @@
 
 #include "targetver.h"
 
-#include <stdio.h>
-#include <tchar.h>
 
+#include <limits.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <malloc.h> 
+#include <conio.h>
+#include <io.h>
+#include <fcntl.h>
+#include <string.h>
+#include <math.h>
+#include <wchar.h>
+#include <tchar.h>
+#include <time.h>
+#include <process.h>
 
 
 // TODO: 프로그램에 필요한 추가 헤더는 여기에서 참조합니다.
-
-#include <conio.h>
-#include <stdio.h>
+#include <exception>
+#include <stdexcept>
+#include <cassert>
+#include <cstdarg>
+#include <cstdio>
+#include <cstdlib>
+#include <cstddef>
+#include <cctype>
+#include <type_traits>
+#include <typeinfo>
+#include <typeindex>
+#include <codecvt>
+#include <memory>
+#include <new>
 #include <iostream>
 #include <ostream>
-#include <string>
-#include <memory>
-#include <array>
-
-#include <atomic>
-#include <type_traits>
+#include <sstream>
+#include <fstream>
+#include <iosfwd>
 #include <utility>
-#include <cstddef>
+#include <locale>
+#include <clocale>
+#include <ctime>
+#include <chrono>
+#include <cmath>
+#include <cfloat>
+#include <numeric>
+#include <cstring>
+#include <xstring>
+#include <string>
+#include <algorithm>
+#include <iterator>
+#include <array>
+#include <vector>
+#include <list>
+#include <stack>
+#include <queue>
+#include <deque>
+#include <set>
+#include <map>
+#include <unordered_set>
+#include <unordered_map>
+#include <bitset>
+#include <iomanip>
+#include <atomic>
+#include <functional>
+#include <initializer_list>
+
+
+// C++ v141 추가 헤더들...
 #include <any>
+#include <variant>
+
 

@@ -7,6 +7,7 @@
 
 #define _CRT_SECURE_NO_WARNINGS
 
+
 #include "targetver.h"
 
 #include <assert.h>
@@ -15,6 +16,8 @@
 
 // TODO: 프로그램에 필요한 추가 헤더는 여기에서 참조합니다.
 
+#include <new>
+#include <utility>
 #include <conio.h>
 #include <iostream>
 #include <string>
@@ -22,4 +25,11 @@
 #include <vector>
 #include <map>
 #include <deque>
+#include <queue>
 #include <unordered_map>
+#include <type_traits>
+#include <functional>
+#include <optional>
+#include <atomic>
+#include <thread>
+#include <mutex>

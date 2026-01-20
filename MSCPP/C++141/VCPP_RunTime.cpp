@@ -1,7 +1,6 @@
 ﻿#include "stdafx.h"
 
 
-#include <iostream>
 #include <windows.h>
 #include <cfguard.h> // CFG 관련 심볼 포함 (Windows 10 SDK 이상)
 

@@ -1,16 +1,5 @@
 #include "stdafx.h"
 
-#include <string.h>
-#include <cstdio>
-#include <vector>
-#include <cstdarg>
-#include <cstring>
-#include <xstring>
-#include <sstream>
-#include <iterator>
-#include <cctype>
-
-
 
 namespace StringHelper
 {

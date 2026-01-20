@@ -1,9 +1,6 @@
 ﻿#include "stdafx.h"
 
 
-#include <type_traits>
-
-
 namespace SFINAE_AddFeature
 {
 	// 이 오버로드는 항상 오버로드 집합에 포함됩니다.

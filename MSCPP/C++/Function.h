@@ -10,13 +10,19 @@ namespace Logic { void Test(); }
 /// @date 7-26-2012 10:50:48
 ///////////////////////////////////////////////////////////////////////////////
 
-// Instroduction
+// Introduction
 
-namespace Compilers { void Test(); }
+namespace Introduction { void Test(); }
+
+// Platform
+
+namespace Console { void Test(); }
 
 // Basic of C++
 
 namespace ByteOrder { void Test(); }
+
+namespace Initialization { void Test(); }
 
 namespace StructureOfProgram { void Test(); }
 
@@ -80,19 +86,27 @@ namespace Polymorphism { void Test(); }
 
 namespace Exception { void Test(); }
 
-namespace Thread { void Test(); }
-
-namespace ThreadSyncWithVolatile { void Test(); }
-
-namespace ThreadLocalStorage { void Test(); }
-
-namespace TypeConversions { void Test(); }
-
 namespace PreprocessorDirectives { void Test(); }
 
 namespace Random { void Test(); }
 
+namespace Thread { void Test(); }
+
+namespace ThreadLocalStorage { void Test(); }
+
+namespace ThreadSyncWithInterLock { void Test(); }
+
+namespace ThreadSyncWithSRWLock { void Test(); }
+
+namespace ThreadSyncWithVolatile { void Test(); }
+
+namespace TypeConversions { void Test(); }
+
 // Etc
+
+namespace Attribute { void Test(); }
+
+namespace DeadLockAvoidanceTips { void Test(); }
 
 namespace StringHelper { void Test(); }
 
@@ -123,5 +137,13 @@ namespace InputOutputWithFiles { void Test(); }
 // Memory Check
 
 namespace CRTMemoryCheck { void Test(); }
+
+// Build
+
+namespace Compilers { void Test(); }
+
+namespace CRT_LinkType { void Test(); }
+
+
 
 

@@ -1,7 +1,6 @@
 #include "stdafx.h"
 
 
-
 namespace TypeConversions
 {
 	void implicit_conversion()

@@ -1,17 +1,5 @@
 ﻿#include "stdafx.h"
 
-///////////////////////////////////////////////////////////////////////////////
-/// @file RValueReference.cpp
-/// @brief 
-/// @return
-/// @param 
-/// 
-/// @author Justin
-/// @date 7-26-2012 12:26:09
-///////////////////////////////////////////////////////////////////////////////
-
-#include <iostream>
-#include <vector>
 
 namespace RValueReferenceWithVariadicTemplate
 {

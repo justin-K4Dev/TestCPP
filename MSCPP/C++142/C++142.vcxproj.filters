@@ -27,9 +27,6 @@
     <ClCompile Include="TerseStaticAssert.cpp">
       <Filter>Logic</Filter>
     </ClCompile>
-    <ClCompile Include="FallThrough.cpp">
-      <Filter>Logic</Filter>
-    </ClCompile>
     <ClCompile Include="GeneralizedRangeBasedForLoops.cpp">
       <Filter>Logic</Filter>
     </ClCompile>
@@ -49,6 +46,21 @@
       <Filter>Logic</Filter>
     </ClCompile>
     <ClCompile Include="IfSwitch_add.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="Attribute.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="Invoke_add.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="TypeTraits_add.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="Mutex_add.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
+    <ClCompile Include="Memory_add.cpp">
       <Filter>Logic</Filter>
     </ClCompile>
   </ItemGroup>

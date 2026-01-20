@@ -1,10 +1,6 @@
 ﻿#include "stdafx.h"
 
 
-#include <vector>
-#include <iostream>
-
-
 namespace GeneralizedRangeBasedForLoops
 {
     // Custom iterator/sentinel example

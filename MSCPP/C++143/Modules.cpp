@@ -1,6 +1,5 @@
 #include "stdafx.h"
 
-
 import CustomModule;
 
 #include <iostream>
@@ -30,7 +29,7 @@ namespace Modules
               - 시작 메뉴에서 "Developer Command Prompt" 검색하여 실행
               - 해당 콘솔 진입 후 아래와 같이 컴파일:
                   cl /std:c++20 /c custom_module.ixx
-                  cl /std:c++20 main.cpp custom_module.obj
+                  cl /std:c++20 main.cpp custom_module.obj`
 
 
             [C++20 Module 빌드 과정 개요]
@@ -101,6 +100,6 @@ namespace Modules
 
     void Test()
     {
-        module_use();
+        //module_use();
     }
 }

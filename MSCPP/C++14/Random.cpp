@@ -1,20 +1,8 @@
 ﻿#include "stdafx.h"
 
 
-///////////////////////////////////////////////////////////////////////////////
-/// @file Random.cpp
-/// @brief 
-/// @return
-/// @param 
-/// 
-/// @author Justin
-/// @date 7-26-2012 10:51:18
-///////////////////////////////////////////////////////////////////////////////
-
 #include <random>
-#include <chrono>
-#include <functional>
-#include <array>
+
 
 namespace Random
 {

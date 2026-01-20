@@ -86,6 +86,6 @@ namespace NSDMI_AddFeatures
 
 	void Test()
 	{
-		NSDMI_AddFeatures();
+		//NSDMI_AddFeatures();
 	}
 }//NSDMI_AddFeatures

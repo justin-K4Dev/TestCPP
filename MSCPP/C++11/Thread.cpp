@@ -1,9 +1,8 @@
 ﻿#include "stdafx.h"
 
 
-#include <thread>
-#include <chrono>
 #include <mutex>
+#include <thread>
 
 
 namespace Thread

@@ -1,8 +1,6 @@
 #include "stdafx.h"
 
 
-#include <sstream>
-
 namespace StreamIO
 {
 	void basic_input_output()

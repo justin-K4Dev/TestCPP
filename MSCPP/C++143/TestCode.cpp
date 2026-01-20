@@ -1,8 +1,9 @@
 #include "stdafx.h"
 
-namespace Logic
+namespace Test
 {
-	void Test()
+
+	void Run()
 	{
 
 		system("pause");

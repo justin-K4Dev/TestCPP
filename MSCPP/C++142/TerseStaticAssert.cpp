@@ -1,8 +1,6 @@
 ﻿#include "stdafx.h"
 
 
-#include <vector>
-#include <iostream>
 
 namespace TerseStaticAssert
 {

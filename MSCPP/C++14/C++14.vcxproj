@@ -191,6 +191,8 @@
   <ItemGroup>
     <ClCompile Include="Constructor.cpp" />
     <ClCompile Include="Inheritance_add.cpp" />
+    <ClCompile Include="Memory_add.cpp" />
+    <ClCompile Include="Mutex_add.cpp" />
     <ClCompile Include="NSDMI.cpp" />
     <ClCompile Include="Lambda_add.cpp" />
     <ClCompile Include="Random.cpp" />
@@ -205,6 +207,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="String_add.cpp" />
     <ClCompile Include="Literal_add.cpp" />
+    <ClCompile Include="TypeTraits_add.cpp" />
     <ClCompile Include="VariadicTemplate.cpp" />
     <ClCompile Include="Alias.cpp" />
     <ClCompile Include="TestCode.cpp" />

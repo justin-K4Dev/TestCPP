@@ -1,7 +1,5 @@
 ﻿#include "stdafx.h"
 
-#include <vector>
-
 namespace Auto
 {
 	int x = 100;

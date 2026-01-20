@@ -68,6 +68,6 @@ namespace TypeBasedDeductionGuide
 
 	void Test()
 	{
-		TypeBased_DeductionGuide();
+		//TypeBased_DeductionGuide();
 	}
 }

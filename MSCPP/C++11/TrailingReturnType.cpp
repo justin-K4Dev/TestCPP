@@ -1,11 +1,8 @@
 ﻿#include "stdafx.h"
 
-#include <vector>
-#include <atomic>
-#include <ctime>
-#include <time.h>
-#include <chrono>
+
 #include <Windows.h>
+
 
 namespace TrailingReturnType
 {
@@ -17,7 +14,7 @@ namespace TrailingReturnType
 	void TrailingReturnType_what()
 	{
 		/*
-			📚 트레일링 리턴 타입(Trailing Return Type) 개요 (C++11~)
+			📚 후행 반환 타입(Trailing Return Type) 개요 (C++11~)
 
 			  - 함수 선언에서 반환 타입을 괄호 뒤에 '-> 반환타입' 형식으로 명시하는 C++11 표준 문법
 			  - 주로 템플릿 함수에서 파라미터에 의존하는 복잡한 타입(예: decltype(a + b))을 반환해야 할 때 사용

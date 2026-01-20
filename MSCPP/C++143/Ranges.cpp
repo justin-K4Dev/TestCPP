@@ -203,8 +203,8 @@ namespace Ranges
 
     void Test()
     {
-        split_join_enumerate_use();
+        //split_join_enumerate_use();
 
-        Ranges_what();
+        //Ranges_what();
     }
 }//Ranges

@@ -64,7 +64,7 @@ namespace VCPP_Improvements
 
     void Test()
     {
-        VCPP_Improvements();
+        //VCPP_Improvements();
     }
 
 }//VCPP_Improvements

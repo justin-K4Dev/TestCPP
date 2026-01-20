@@ -49,6 +49,9 @@ namespace Literal_AddFeatures { void Test(); }
 /// @brief Loop 관련 구현 예제 - justin 7/26/2012 23:30:58
 namespace Loop { void Test(); }
 
+/// @brief Memory 관련 구현 예제 - justin 7/26/2015 23:30:58
+namespace Memory_AddFeatures { void Test(); }
+
 /// @brief Memory Barrier 필요성과 구현 예제 - justin 7/27/2012 2:51:54
 namespace MemoryBarrier { void Test(); }
 

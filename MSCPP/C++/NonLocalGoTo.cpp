@@ -1,9 +1,6 @@
 #include "stdafx.h"
 
-#include <cstdio>
-#include <vector>
-#include <cstdarg>
-#include <cstring>
+
 #include <csetjmp>
 
 

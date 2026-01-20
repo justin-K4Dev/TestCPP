@@ -40,6 +40,12 @@
     <Filter Include="Logic\Etc\Locale">
       <UniqueIdentifier>{9c21bdbf-bf98-4963-93fc-82297cebbce5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Logic\Build">
+      <UniqueIdentifier>{f571b1d3-95d5-438e-87ff-0abefab8dd63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Logic\Platform">
+      <UniqueIdentifier>{8e2a3fb1-8001-49bb-82ee-640b4cedba10}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -73,9 +79,6 @@
       <Filter>0.Common</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="CRT_MemoryCheck.cpp">
-      <Filter>Logic</Filter>
-    </ClCompile>
     <ClCompile Include="VariablesAndTypes.cpp">
       <Filter>Logic\Basic of C++</Filter>
     </ClCompile>
@@ -139,9 +142,6 @@
     <ClCompile Include="InputOutputWithFiles.cpp">
       <Filter>Logic\Standard library</Filter>
     </ClCompile>
-    <ClCompile Include="Compilers.cpp">
-      <Filter>Logic\Introduction</Filter>
-    </ClCompile>
     <ClCompile Include="StructureOfProgram.cpp">
       <Filter>Logic\Basic of C++</Filter>
     </ClCompile>
@@ -193,9 +193,6 @@
     <ClCompile Include="Unicode.cpp">
       <Filter>Logic\Etc</Filter>
     </ClCompile>
-    <ClCompile Include="Time.cpp">
-      <Filter>Logic\Etc</Filter>
-    </ClCompile>
     <ClCompile Include="Locale.cpp">
       <Filter>Logic\Etc\Locale</Filter>
     </ClCompile>
@@ -213,6 +210,39 @@
       <Filter>Logic\Other language features</Filter>
     </ClCompile>
     <ClCompile Include="SFINAE.cpp">
+      <Filter>Logic\Etc</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadSyncWithInterlock.cpp">
+      <Filter>Logic\Other language features</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadSyncWithSRWLock.cpp">
+      <Filter>Logic\Other language features</Filter>
+    </ClCompile>
+    <ClCompile Include="DeadLockAvoidanceTips.cpp">
+      <Filter>Logic\Etc</Filter>
+    </ClCompile>
+    <ClCompile Include="Initialization.cpp">
+      <Filter>Logic\Basic of C++</Filter>
+    </ClCompile>
+    <ClCompile Include="Attribute.cpp">
+      <Filter>Logic\Etc</Filter>
+    </ClCompile>
+    <ClCompile Include="Introduction.cpp">
+      <Filter>Logic\Introduction</Filter>
+    </ClCompile>
+    <ClCompile Include="ABI.cpp">
+      <Filter>Logic\Build</Filter>
+    </ClCompile>
+    <ClCompile Include="Console.cpp">
+      <Filter>Logic\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Compilers.cpp">
+      <Filter>Logic\Build</Filter>
+    </ClCompile>
+    <ClCompile Include="CRT_MemoryCheck.cpp">
+      <Filter>Logic\Other language features</Filter>
+    </ClCompile>
+    <ClCompile Include="Time.cpp">
       <Filter>Logic\Etc</Filter>
     </ClCompile>
   </ItemGroup>

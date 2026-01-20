@@ -50,6 +50,6 @@ namespace Bit
 
     void Test()
     {
-        Bit_what();
+        //Bit_what();
     }
 }//Bit

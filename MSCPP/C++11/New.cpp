@@ -1,11 +1,5 @@
 ﻿#include "stdafx.h"
 
-#include <algorithm>
-#include <cstdlib>
-#include <iostream>
-#include <new>
-#include <string>
-#include <vector>
 
 
 // 전역 할당 트래킹 컨테이너

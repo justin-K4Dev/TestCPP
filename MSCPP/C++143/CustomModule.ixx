@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 export module CustomModule;
 
 export int add(int a, int b) {

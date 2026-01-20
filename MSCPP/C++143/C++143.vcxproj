@@ -70,6 +70,25 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)\out\</OutDir>
+    <IntDir>$(ProjectDir)$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)_d</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)\out\</OutDir>
+    <IntDir>$(ProjectDir)$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)\out\</OutDir>
+    <IntDir>$(ProjectDir)$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)_d64</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)\out\</OutDir>
+    <IntDir>$(ProjectDir)$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)_64</TargetName>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -112,6 +131,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>E:\Library\Boost\1_88_0\msvc-14.3\c++20\x64\boost-1_88;</AdditionalIncludeDirectories>
+      <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -129,6 +149,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>E:\Library\Boost\1_88_0\msvc-14.3\c++20\x64\boost-1_88;</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -140,12 +161,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Atomic_add.cpp" />
+    <ClCompile Include="Attribute.cpp" />
     <ClCompile Include="Bit.cpp" />
     <ClCompile Include="Chrono_add.cpp" />
     <ClCompile Include="Concepts.cpp" />
     <ClCompile Include="Concurrency_add.cpp" />
     <ClCompile Include="Container_add.cpp" />
     <ClCompile Include="Coroutine.cpp" />
+    <ClCompile Include="CoroutineWithThreadPool.cpp" />
     <ClCompile Include="CustomModule.ixx" />
     <ClCompile Include="Explicit_add.cpp" />
     <ClCompile Include="FileSystem_add.cpp" />
@@ -156,7 +179,12 @@
     <ClCompile Include="NSDMI_add.cpp" />
     <ClCompile Include="Numbers.cpp" />
     <ClCompile Include="Ranges.cpp" />
-    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="StringFormat_add.cpp" />
     <ClCompile Include="Literals_add.cpp" />
     <ClCompile Include="TestCode.cpp" />
@@ -166,6 +194,7 @@
     <ClCompile Include="VCPP_Improvements.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="cpp_attributes.hpp" />
     <ClInclude Include="Function.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />

@@ -1,10 +1,12 @@
 #pragma once
 
-namespace Logic { void Test(); }
+namespace Test { void Run(); }
 
 //=================================================================================================
 
 namespace Atomic_AddFeatures { void Test(); }
+
+namespace Attribute { void Test(); }
 
 namespace Bit { void Test(); }
 
@@ -30,11 +32,15 @@ namespace MemorySpan { void Test(); }
 
 namespace NSDMI_AddFeatures { void Test(); }
 
+namespace Numbers { void Test(); }
+
 namespace Ranges { void Test(); }
 
 namespace StringFormat_AddFeatures { void Test(); }
 
 namespace Literal_AddFeatures { void Test(); }
+
+namespace TaskWithThreadPool { void Test(); }
 
 namespace Thread_AddFeatures { void Test(); }
 

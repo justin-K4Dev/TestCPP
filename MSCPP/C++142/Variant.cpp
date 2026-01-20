@@ -1,10 +1,6 @@
 ﻿#include "stdafx.h"
 
 
-#include <iostream>
-#include <variant>
-#include <string>
-
 
 namespace Variant
 {

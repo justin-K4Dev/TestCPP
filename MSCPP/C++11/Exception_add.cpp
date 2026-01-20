@@ -1,8 +1,6 @@
 ﻿#include "stdafx.h"
 
 
-#include <exception>
-
 namespace Exception_AddFeatures
 {
 	void Exception_AddFeatures()
@@ -14,7 +12,7 @@ namespace Exception_AddFeatures
 			  - 기본 구조: throw로 예외(객체)를 발생, try-catch로 예외를 포착/처리
 
 			  - 표준 예외 계층(std::exception, std::runtime_error 등)과 사용자 정의 예외 지원
-			  - 예외 안전(예외 발생시 자원 해제, 강력 예외 보장, RAII 등)이 중요
+			  - 예외 안전(예외 발생시 자원 해제, 강력 예외 보장, RAII(Resource Acquisition Is Initialization) 등)이 중요
 
 			  - C++11 이후 주요 변화:
 				• noexcept 지정자: 함수가 예외를 던지지 않을 것임을 명시(예전 throw()와 동일, 성능 최적화/코드 의도 명확)

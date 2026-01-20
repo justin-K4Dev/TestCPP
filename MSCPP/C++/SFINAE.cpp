@@ -1,9 +1,6 @@
 ﻿#include "stdafx.h"
 
 
-#include <iostream>
-#include <type_traits>
-
 
 namespace SFINAE
 {

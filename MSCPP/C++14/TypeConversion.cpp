@@ -1,8 +1,5 @@
 ﻿#include "stdafx.h"
 
-#include <map>
-#include <typeinfo>
-#include <typeindex>
 
 namespace TypeConversion
 {

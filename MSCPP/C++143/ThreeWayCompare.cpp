@@ -51,6 +51,6 @@ namespace ThreeWayCompare
 
     void Test()
     {
-        ThreeWay_Comparison();
+        //ThreeWay_Comparison();
     }
 }

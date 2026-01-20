@@ -1,8 +1,6 @@
 #include "stdafx.h"
 
 
-#include <sstream>
-
 namespace DataStructures
 {
 	// Data Structures example

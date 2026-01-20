@@ -1,8 +1,5 @@
 ﻿#include "stdafx.h"
 
-#include <locale>
-#include <codecvt>
-
 
 namespace String_AddFeatures
 {

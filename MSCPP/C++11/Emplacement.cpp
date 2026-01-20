@@ -1,13 +1,7 @@
 ﻿#include "stdafx.h"
 
-#include <vector>
-#include <deque>
-#include <forward_list>
-#include <set>
-#include <map>
-#include <unordered_map>
-#include <unordered_set>
 
+#include <forward_list>
 
 
 namespace Emplacement

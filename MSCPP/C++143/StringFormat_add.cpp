@@ -167,17 +167,17 @@ namespace StringFormat_AddFeatures
 
 	void Test()
 	{
-		format_options_use();
+		//format_options_use();
 
-		vformat_use();
+		//vformat_use();
 
-		format_to_n_use();
+		//format_to_n_use();
 
-		format_to_use();
+		//format_to_use();
 
-		format_use();
+		//format_use();
 
-		StringFormat_AddFeatures();
+		//StringFormat_AddFeatures();
 	}
 
 }//StringFormat_AddFeatures

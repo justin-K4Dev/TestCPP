@@ -1,9 +1,7 @@
 ﻿#include "stdafx.h"
 
 
-#include <iostream>
 #include <optional>
-#include <string>
 
 
 namespace Optional

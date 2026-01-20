@@ -1,9 +1,6 @@
 ﻿#include "stdafx.h"
 
 
-#include <vector>
-#include <atomic>
-
 #include <boost/thread.hpp> // C++11 thread_group 대체시 std::thread + vector로 가능
 
 

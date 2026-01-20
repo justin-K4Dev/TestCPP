@@ -107,5 +107,8 @@
     <ClCompile Include="Tuple.cpp">
       <Filter>Logic</Filter>
     </ClCompile>
+    <ClCompile Include="Memory_add.cpp">
+      <Filter>Logic</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
