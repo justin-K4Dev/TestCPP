@@ -142,7 +142,7 @@ namespace CRTMemoryCheck { void Test(); }
 
 namespace Compilers { void Test(); }
 
-namespace CRT_LinkType { void Test(); }
+namespace ABI { void Test(); }
 
 
 

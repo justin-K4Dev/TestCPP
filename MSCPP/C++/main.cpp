@@ -17,7 +17,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	Compilers::Test();
 
-	CRT_LinkType::Test();
+	ABI::Test();
 
 	Console::Test();
 
