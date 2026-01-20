@@ -103,7 +103,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>E:\Library\Boost\1_70_0\msvc-14.0\c++14\x86\boost-1_78;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\Library\Boost\1_70_0\msvc-14.0\c++14\x86\boost-1_70;</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4101;4244;4267;4290;4333;</DisableSpecificWarnings>
     </ClCompile>
     <Link>

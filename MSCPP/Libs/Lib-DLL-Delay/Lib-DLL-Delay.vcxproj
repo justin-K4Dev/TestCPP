@@ -103,7 +103,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>E:\Library\Boost\1_70_0\msvc-14.0\c++14\x86\boost-1_78;..\Libs\;..\Libs\Lib-CPP-static\;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\Library\Boost\1_70_0\msvc-14.0\c++14\x86\boost-1_70;..\;..\Lib-CPP-static\;</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4101;4244;4267;4290;4333;</DisableSpecificWarnings>
     </ClCompile>
     <Link>
@@ -152,7 +152,7 @@
       <SDLCheck>true</SDLCheck>
       <TreatWarningAsError>true</TreatWarningAsError>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>E:\Library\Boost\1_70_0\msvc-14.0\c++14\x86\boost-1_70;..\Libs\;..\Libs\Lib-CPP-static\;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\Library\Boost\1_70_0\msvc-14.0\c++14\x86\boost-1_70;..\;..\Lib-CPP-static\;</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4101;4244;4267;4290;4333;</DisableSpecificWarnings>
     </ClCompile>
     <Link>
@@ -177,7 +177,7 @@
       <SDLCheck>true</SDLCheck>
       <TreatWarningAsError>false</TreatWarningAsError>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>E:\Library\Boost\1_70_0\msvc-14.0\c++14\x64\boost-1_70;..\Libs\;..\Libs\Lib-CPP-static\;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\Library\Boost\1_70_0\msvc-14.0\c++14\x64\boost-1_70;..\;..\Lib-CPP-static\;</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4101;4244;4267;4290;4333;4302;4311;</DisableSpecificWarnings>
     </ClCompile>
     <Link>
