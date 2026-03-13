@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 
 namespace StreamIO
@@ -6,315 +6,531 @@ namespace StreamIO
 	void basic_input_output()
 	{
 		/*
-			Basic Input/Output
+			📚 기본 입출력 (Basic Input/Output)
 
-			The example programs of the previous sections provided little interaction with the user, if any at all.
-			They simply printed simple values on screen,
-			but the standard library provides many additional ways to interact with the user via its input/output features.
-			This section will present a short introduction to some of the most useful.
+			앞의 예제들은 대부분 화면에 값만 출력했지만,
+			표준 라이브러리는 사용자와 상호작용할 수 있는 다양한 입력/출력 기능을 제공한다.
 
-			C++ uses a convenient abstraction called streams to perform input
-			and output operations in sequential media such as the screen, the keyboard or a file.
-			A stream is an entity where a program can either insert or extract characters to/from.
-			There is no need to know details about the media associated to the stream
-			or any of its internal specifications.
-			All we need to know is that streams are a source/destination of characters,
-			and that these characters are provided/accepted sequentially (i.e., one after another).
+			C++에서는 화면, 키보드, 파일 같은 순차적 매체와 데이터를 주고받기 위해
+			스트림(stream)이라는 개념을 사용한다.
 
-			The standard library defines a handful of stream objects
-			that can be used to access what are considered the standard sources
-			and destinations of characters by the environment where the program runs:
+			스트림은
+			- 프로그램이 문자를 넣을 수도 있고(insert)
+			- 프로그램이 문자를 꺼낼 수도 있는(extract)
+			하나의 흐름이라고 생각하면 된다.
 
-				stream		description
-				cin			standard input stream
-				cout		standard output stream
-				cerr		standard error (output) stream
-				clog		standard logging (output) stream
+			중요한 표준 스트림 객체:
+				cin   : 표준 입력 스트림 (보통 키보드)
+				cout  : 표준 출력 스트림 (보통 화면)
+				cerr  : 표준 에러 출력 스트림
+				clog  : 표준 로그 출력 스트림
 
-			We are going to see in more detail only cout and cin (the standard output and input streams);
-			cerr and clog are also output streams, so they essentially work like cout,
-			with the only difference being that they identify streams for specific purposes:
-			error messages and logging; which, in many cases, in most environment setups,
-			they actually do the exact same thing: they print on screen,
-			although they can also be individually redirected.
+			입문 단계에서는 주로 cout 과 cin 을 가장 많이 사용한다.
 		*/
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 1] 기본 출력 예제" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << "Hello World!" << std::endl;
+			std::cout << "C++ basic input/output example" << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				cout 은 표준 출력 스트림이다.
+				보통 콘솔 화면에 텍스트를 출력한다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] 기본 입력 예제" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int number = 0;
+
+			std::cout << "정수를 하나 입력하세요: ";
+			std::cin >> number;
+
+			std::cout << "입력한 값은 " << number << " 입니다." << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				cin 은 표준 입력 스트림이다.
+				보통 키보드 입력을 받는다.
+			*/
+		}
+
+		system("pause");
 	}
 
 	void standard_output()
 	{
 		/*
-			Standard output (cout)
+			📚 표준 출력 (Standard output : cout)
 
-			On most program environments, the standard output by default is the screen,
-			and the C++ stream object defined to access it is cout.
+			대부분의 프로그램 실행 환경에서
+			표준 출력은 기본적으로 화면(console)이다.
 
-			For formatted output operations, cout is used together with the insertion operator,
-			which is written as << (i.e., two "less than" signs).
+			C++에서 표준 출력에 접근하는 스트림 객체는 cout 이다.
 
-				cout << "Output sentence"; // prints Output sentence on screen
-				cout << 120;               // prints number 120 on screen
-				cout << x;                 // prints the value of x on screen  
+			cout 은 삽입 연산자 << 와 함께 사용한다.
 
-			The << operator inserts the data that follows it into the stream that precedes it.
-			In the examples above, it inserted the literal string Output sentence, the number 120,
-			and the value of variable x into the standard output stream cout.
-			Notice that the sentence in the first statement is enclosed in double quotes (")
-			because it is a string literal, while in the last one, x is not.
-			The double quoting is what makes the difference; when the text is enclosed between them,
-			the text is printed literally; when they are not,
-			the text is interpreted as the identifier of a variable, and its value is printed instead.
-			For example, these two sentences have very different results:
+				cout << "문자열";
+				cout << 120;
+				cout << x;
 
-				cout << "Hello";  // prints Hello
-				cout << Hello;    // prints the content of variable Hello 
+			의미:
+			<< 뒤에 오는 값을
+			<< 앞에 있는 스트림(cout)으로 보낸다.
 
-			Multiple insertion operations (<<) may be chained in a single statement:
+			즉:
+				cout << "Hello";
+			는 "Hello"를 화면에 출력한다.
 
-				cout << "This " << " is a " << "single C++ statement";
+			중요:
+			문자열 리터럴은 반드시 큰따옴표(")로 묶어야 한다.
 
-			This last statement would print the text This is a single C++ statement.
-			Chaining insertions is especially useful to mix literals and variables in a single statement:
-
-				cout << "I am " << age << " years old and my zipcode is " << zipcode;
-
-			Assuming the age variable contains the value 24 and the zipcode variable contains 90064,
-			the output of the previous statement would be: 
-
-			I am 24 years old and my zipcode is 90064 
-			What cout does not do automatically is add line breaks at the end, unless instructed to do so.
-			For example, take the following two statements inserting into cout:
-
-				cout << "This is a sentence.";
-				cout << "This is another sentence."; 
-
-			The output would be in a single line, without any line breaks in between.
-			Something like:
-
-			This is a sentence.
-			This is another sentence. 
-			To insert a line break, a new-line character shall be inserted at the exact position the line should be broken.
-			In C++, a new-line character can be specified as \n (i.e., a backslash character followed by a lowercase n).
-			For example:
-
-				cout << "First sentence.\n";
-				cout << "Second sentence.\nThird sentence.";
-
-			This produces the following output: 
-
-			First sentence.
-			Second sentence.
-			Third sentence.
-
-			Alternatively, the endl manipulator can also be used to break lines.
-			For example: 
-
-				cout << "First sentence." << endl;
-				cout << "Second sentence." << endl;
-
-			This would print:
-
-			First sentence.
-			Second sentence.
-
-			The endl manipulator produces a newline character, exactly as the insertion of '\n' does;
-			but it also has an additional behavior: the stream's buffer (if any) is flushed,
-			which means that the output is requested to be physically written to the device,
-			if it wasn't already. This affects mainly fully buffered streams,
-			and cout is (generally) not a fully buffered stream. Still,
-			it is generally a good idea to use endl only when flushing the stream would be a feature and '\n'
-			when it would not. Bear in mind that a flushing operation incurs a certain overhead,
-			and on some devices it may produce a delay.
+				cout << "Hello";   // 문자열 Hello 출력
+				cout << Hello;     // 변수 Hello를 찾으려고 함
 		*/
+
 		{
-			system("pause");
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 1] 문자열 출력" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << "Output sentence" << std::endl;
+			std::cout << "Hello World!" << std::endl;
+			std::cout << std::endl;
 		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] 숫자 출력" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << 120 << std::endl;
+
+			int x = 50;
+			std::cout << x << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				cout 은 문자열뿐 아니라 숫자, 변수 값도 출력할 수 있다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 3] 여러 << 연산을 연결해서 사용" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << "This " << "is " << "a " << "single C++ statement." << std::endl;
+
+			int age = 24;
+			int zipcode = 90064;
+
+			std::cout << "I am " << age << " years old and my zipcode is " << zipcode << "." << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				<< 연산자는 여러 번 연결(chaining)해서 사용할 수 있다.
+				이 방식은 문자열과 변수 값을 섞어 출력할 때 매우 편하다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 4] 줄바꿈 없는 출력" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << "This is a sentence.";
+			std::cout << "This is another sentence.";
+			std::cout << std::endl << std::endl;
+
+			/*
+				설명:
+				cout 은 자동으로 줄바꿈을 넣지 않는다.
+				따라서 두 문장이 같은 줄에 이어서 출력된다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 5] \\n 사용한 줄바꿈" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << "First sentence.\n";
+			std::cout << "Second sentence.\nThird sentence.\n";
+			std::cout << std::endl;
+
+			/*
+				설명:
+				\n 은 줄바꿈 문자(new-line character)이다.
+				원하는 위치에서 줄을 바꿀 수 있다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 6] endl 사용한 줄바꿈" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << "First sentence." << std::endl;
+			std::cout << "Second sentence." << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				endl 도 줄바꿈을 수행한다.
+				추가로 출력 버퍼를 비우는(flush) 동작도 한다.
+
+				간단한 줄바꿈만 필요하면 \n 을 자주 쓰고,
+				즉시 출력 반영까지 의도할 때 endl 이 유용하다.
+			*/
+		}
+
+		system("pause");
 	}
 
 	void standard_input()
 	{
 		/*
-			Standard input(cin)
+			📚 표준 입력 (Standard input : cin)
 
-			In most program environments, the standard input by default is the keyboard,
-			and the C++ stream object defined to access it is cin.
+			대부분의 프로그램 실행 환경에서
+			표준 입력은 기본적으로 키보드이다.
 
-			For formatted input operations, cin is used together with the extraction operator,
-			which is written as >> (i.e., two "greater than" signs).
-				
-			This operator is then followed by the variable where the extracted data is stored.
-			For example:
+			C++에서 표준 입력에 접근하는 스트림 객체는 cin 이다.
+
+			cin 은 추출 연산자 >> 와 함께 사용한다.
 
 				int age;
 				cin >> age;
 
-			The first statement declares a variable of type int called age,
-			and the second extracts from cin a value to be stored in it.
-				
-			This operation makes the program wait for input from cin; generally,
-			this means that the program will wait for the user to enter some sequence with the keyboard.
-				
-			In this case, note that the characters introduced using the keyboard are only transmitted to the program
-			when the ENTER (or RETURN) key is pressed.
-				
-			Once the statement with the extraction operation on cin is reached,
-			the program will wait for as long as needed until some input is introduced.
+			의미:
+			사용자가 입력한 값을 읽어서
+			변수 age 에 저장한다.
 
-			The extraction operation on cin uses the type of the variable after the >> operator to determine
-			how it interprets the characters read from the input; if it is an integer,
-			the format expected is a series of digits, if a string a sequence of characters, etc.
+			프로그램은 cin >> 변수; 문장을 만나면
+			사용자가 값을 입력하고 Enter를 누를 때까지 기다린다.
+
+			중요:
+			cin 은 변수의 타입에 맞게 입력을 해석한다.
+			예를 들어 int 변수면 정수 형태를 기대한다.
+
+			주의:
+			잘못된 형식의 값이 들어오면 입력 실패가 발생할 수 있다.
+			그래서 실무에서는 cin만 바로 믿고 쓰기보다는
+			getline + stringstream 방식이 더 안전한 경우가 많다.
 		*/
+
 		{
 			int i;
 
 			std::cout << "Please enter an integer value: ";
 			std::cin >> i;
+
 			std::cout << "The value you entered is " << i;
 			std::cout << " and its double is " << i * 2 << ".\n";
-
-			system("pause");
+			std::cout << std::endl;
 
 			/*
-			output:
-				Please enter an integer value: 702
-				The value you entered is 702 and its double is 1404.
+				예시 입력:
+					702
+
+				예시 출력:
+					The value you entered is 702 and its double is 1404.
 			*/
 		}
-		/*
-			As you can see, extracting from cin seems to make the task of getting input
-			from the standard input pretty simple and straightforward.
-			But this method also has a big drawback. What happens in the example above
-			if the user enters something else that cannot be interpreted as an integer?
-			Well, in this case, the extraction operation fails.
-			And this, by default, lets the program continue without setting a value for variable i,
-			producing undetermined results if the value of i is used later.
 
-			This is very poor program behavior.
-			Most programs are expected to behave in an expected manner no matter what the user types,
-			handling invalid values appropriately.
-			Only very simple programs should rely on values extracted directly from cin without further checking.
-			A little later we will see how stringstreams can be used to have better control over user input. 
-			Extractions on cin can also be chained to request more than one datum in a single statement:
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] 여러 값 한 번에 입력" << std::endl;
+			std::cout << "============================================" << std::endl;
 
+			int a = 0;
+			int b = 0;
+
+			std::cout << "정수 2개를 입력하세요: ";
+			std::cin >> a >> b;
+
+			std::cout << "a = " << a << ", b = " << b << std::endl;
+			std::cout << "a + b = " << a + b << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
 				cin >> a >> b;
-
-			This is equivalent to:
-
+				는
 				cin >> a;
 				cin >> b;
+				와 같은 의미이다.
 
-			In both cases, the user is expected to introduce two values, one for variable a,
-			and another for variable b. Any kind of space is used to separate two consecutive input operations;
-			this may either be a space, a tab, or a new-line character.
-		*/
+				입력값은 공백, 탭, 줄바꿈으로 구분될 수 있다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 3] cin 사용 시 주의점 안내" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << "cin >> int 변수; 형태는 간단하지만" << std::endl;
+			std::cout << "사용자가 정수가 아닌 값을 입력하면 실패할 수 있다." << std::endl;
+			std::cout << "실제 프로그램에서는 입력 검증이 중요하다." << std::endl;
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
 
 	void cin_n_strings()
 	{
 		/*
-			cin and strings
+			📚 cin 과 문자열 (cin and strings)
 
-			The extraction operator can be used on cin to get strings of
-			characters in the same way as with fundamental data types:
+			cin >> 문자열변수;
+			형태로 문자열도 입력받을 수 있다.
 
-				string mystring;
-				cin >> mystring;
+			예:
+				std::string mystring;
+				std::cin >> mystring;
 
-			However, cin extraction always considers spaces (whitespaces, tabs, new-line...)
-			as terminating the value being extracted,
-			and thus extracting a string means to always extract a single word,
-			not a phrase or an entire sentence.
+			하지만 중요한 특징이 있다.
 
-			To get an entire line from cin, there exists a function, called getline,
-			that takes the stream (cin) as first argument, and the string variable as second.
-			For example:
+			cin >> 문자열변수; 는
+			공백(space), 탭(tab), 줄바꿈(new-line)을 만나면
+			입력을 끝낸다.
+
+			즉:
+			한 단어(word)는 잘 읽지만,
+			문장(sentence) 전체는 읽지 못한다.
+
+			문장 한 줄 전체를 입력받으려면
+			getline 함수를 사용한다.
+
+				std::getline(std::cin, 문자열변수);
+
+			getline 은 Enter를 누를 때까지 한 줄 전체를 읽는다.
 		*/
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 1] cin >> string 은 한 단어만 입력" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::string word;
+
+			std::cout << "한 단어를 입력하세요: ";
+			std::cin >> word;
+
+			std::cout << "입력한 단어: " << word << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				예를 들어 "Homer Simpson" 을 입력하면
+				cin >> word; 는 보통 Homer 까지만 읽는다.
+			*/
+		}
+
+		// 앞선 cin >> 입력 뒤에 남아 있는 개행 문자 정리
+		std::cin.ignore(10000, '\n');
+
 		{
 			std::string mystr;
+
 			std::cout << "What's your name? ";
 			std::getline(std::cin, mystr);
 			std::cout << "Hello " << mystr << ".\n";
+
 			std::cout << "What is your favorite team? ";
 			std::getline(std::cin, mystr);
 			std::cout << "I like " << mystr << " too!\n";
 
-			system("pause");
+			std::cout << std::endl;
 
 			/*
-			output:
-				What's your name? Homer Simpson
-				Hello Homer Simpson.
-				What is your favorite team? The Isotopes
-				I like The Isotopes too!
+				예시 입력:
+					Homer Simpson
+					The Isotopes
+
+				예시 출력:
+					Hello Homer Simpson.
+					I like The Isotopes too!
+
+				설명:
+				getline 은 공백 포함 한 줄 전체를 읽는다.
+				따라서 이름이나 문장 입력에 적합하다.
 			*/
 		}
-		/*
-			Notice how in both calls to getline, we used the same string identifier (mystr).
-			What the program does in the second call is simply replace the previous content with the new one
-			that is introduced.
 
-			The standard behavior that most users expect from a console program is that each time the program
-			queries the user for input, the user introduces the field, and then presses ENTER (or RETURN).
-			That is to say, input is generally expected to happen in terms of lines on console programs,
-			and this can be achieved by using getline to obtain input from the user.
-			Therefore, unless you have a strong reason not to,
-			you should always use getline to get input in your console programs instead of extracting from cin.
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 3] 같은 문자열 변수 재사용" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << "getline 을 여러 번 호출하면" << std::endl;
+			std::cout << "같은 문자열 변수에 새로운 내용이 덮어써진다." << std::endl;
+			std::cout << std::endl;
+		}
+
+		/*
+			실무 팁:
+			콘솔 프로그램에서는
+			사용자가 보통 "한 줄 입력 후 Enter" 방식에 익숙하므로
+
+			가능하면
+				getline 으로 먼저 한 줄 전체를 읽고
+			그 다음 필요하면 숫자로 변환하는 방식이
+			더 안정적이고 사용자 친화적이다.
 		*/
+
+		system("pause");
 	}
+
+#include <sstream>
 
 	void stringstream_func()
 	{
 		/*
-			stringstream
+			📚 stringstream
 
-			The standard header <sstream> defines a type called stringstream
-			that allows a string to be treated as a stream, and thus allowing extraction
-			or insertion operations from/to strings in the same way as they are performed on cin and cout.
-			This feature is most useful to convert strings to numerical values and vice versa.
-			For example, in order to extract an integer from a string we can write:
+			<sstream> 헤더에는 stringstream 이라는 타입이 있다.
 
-				string mystr ("1204");
+			stringstream 은 문자열을
+			cin / cout 처럼 스트림처럼 다룰 수 있게 해준다.
+
+			즉:
+			- 문자열에서 값을 추출할 수도 있고
+			- 문자열에 값을 넣을 수도 있다.
+
+			특히 많이 쓰이는 용도:
+			1) 문자열 -> 숫자 변환
+			2) 숫자 -> 문자열 조합
+			3) 한 줄 입력을 세부 값들로 분리
+
+			예:
+				std::string mystr("1204");
 				int myint;
-				stringstream(mystr) >> myint;
+				std::stringstream(mystr) >> myint;
 
-			This declares a string with initialized to a value of "1204", and a variable of type int.
-			Then, the third line uses this variable to extract from a stringstream constructed from the string.
-			This piece of code stores the numerical value 1204 in the variable called myint.
+			결과:
+				myint = 1204
 		*/
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 1] 문자열을 정수로 변환" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::string mystr("1204");
+			int myint = 0;
+
+			std::stringstream(mystr) >> myint;
+
+			std::cout << "mystr = " << mystr << std::endl;
+			std::cout << "myint = " << myint << std::endl;
+			std::cout << std::endl;
+		}
+
 		{
 			std::string mystr;
-			float price = 0;
+			float price = 0.0f;
 			int quantity = 0;
 
 			std::cout << "Enter price: ";
 			std::getline(std::cin, mystr);
 			std::stringstream(mystr) >> price;
+
 			std::cout << "Enter quantity: ";
 			std::getline(std::cin, mystr);
 			std::stringstream(mystr) >> quantity;
-			std::cout << "Total price: " << price*quantity << std::endl;
 
-			system("pause");
+			std::cout << "Total price: " << price * quantity << std::endl;
+			std::cout << std::endl;
 
 			/*
-			output:
-				Enter price: 22.25
-				Enter quantity: 7
-				Total price: 155.75
+				예시 입력:
+					22.25
+					7
+
+				예시 출력:
+					Total price: 155.75
+
+				설명:
+				직접 cin >> price; cin >> quantity; 를 쓰지 않고,
+				먼저 getline 으로 문자열 한 줄을 받은 뒤
+				stringstream 으로 숫자로 변환했다.
+
+				이 방식은
+				입력 받기와 해석하기를 분리할 수 있어서 더 유연하다.
 			*/
 		}
-		/*
-			In this example, we acquire numeric values from the standard input indirectly:
-			Instead of extracting numeric values directly from cin, we get lines from it into a string object (mystr),
-			and then we extract the values from this string into the variables price and quantity.
-				
-			Once these are numerical values, arithmetic operations can be performed on them,
-			such as multiplying them to obtain a total price.
 
-			With this approach of getting entire lines and extracting their contents,
-			we separate the process of getting user input from its interpretation as data,
-			allowing the input process to be what the user expects,
-			and at the same time gaining more control over the transformation of its content into useful data by the program.
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 3] 문자열을 여러 값으로 분리" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::string line = "100 200 300";
+			int a = 0, b = 0, c = 0;
+
+			std::stringstream ss(line);
+			ss >> a >> b >> c;
+
+			std::cout << "line = " << line << std::endl;
+			std::cout << "a = " << a << ", b = " << b << ", c = " << c << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				stringstream 은 문자열을 입력 스트림처럼 다룰 수 있으므로
+				공백으로 구분된 값들을 손쉽게 분리할 수 있다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 4] 값들을 문자열로 합치기" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int id = 101;
+			float score = 95.5f;
+
+			std::stringstream ss;
+			ss << "ID=" << id << ", Score=" << score;
+
+			std::string result = ss.str();
+
+			std::cout << "result = " << result << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				stringstream 은 출력 스트림처럼도 사용할 수 있다.
+				여러 값을 이어 붙여 문자열을 만들 때도 유용하다.
+			*/
+		}
+
+		/*
+			핵심 장점:
+			1) getline 으로 한 줄 전체 입력
+			2) stringstream 으로 필요한 타입으로 변환
+
+			이 방식은
+			사용자 입력 처리와 데이터 변환을 분리해 주므로
+			더 안정적인 콘솔 프로그램을 만들 때 유용하다.
 		*/
+
+		system("pause");
 	}
 
 	void Test()

@@ -1,4 +1,11 @@
-﻿#include "stdafx.h"
+﻿#if defined(_MSC_VER)
+	#pragma fenv_access(on)   // MSVC 전용(가능하면 /fp:strict도 같이)
+#endif
+#pragma STDC FENV_ACCESS ON  // 컴파일러가 FP 환경을 고려하도록 힌트(반드시 보장되진 않음)
+
+#include "stdafx.h"
+
+#include <cfenv>   // fenv.h (C++11), MSVC에서 일부 제약이 있을 수 있음
 
 
 namespace VariablesAndTypes
@@ -6,115 +13,635 @@ namespace VariablesAndTypes
 	void variables_n_types()
 	{
 		/*
-			Variables and types
+			📚 변수와 타입(자료형) 개요
 
-			The usefulness of the "Hello World" programs shown in the previous chapter is rather questionable.
-			We had to write several lines of code, compile them, and then execute the resulting program,
-			just to obtain the result of a simple sentence written on the screen.
+			프로그래밍이 처리하는 핵심은,
+			값(데이터)을 저장해두고, 그 값을 다시 꺼내 계산하고, 조건을 판단하고,
+			결과를 다른 곳으로 전달하는 과정입니다.
+			이때 “값을 저장하는 상자”가 변수(variable)이고,
+			“그 상자에 어떤 종류의 값이 들어가는지에 대한 규칙”이 타입(type, 자료형)입니다.
 
-			It certainly would have been much faster to type the output sentence ourselves.
+			---------------------------------------------------------------------------------------
+			1) 변수(variable)란?
+			---------------------------------------------------------------------------------------
+			- 변수는 메모리의 어떤 공간을 대표하는 이름입니다.
+			- 그 공간에 값을 “저장(대입)”할 수 있고, 나중에 “읽어서” 계산에 사용할 수 있습니다.
+			- 즉, 변수는 값 자체가 아니라, 값을 담는 ‘주소가 있는 자리’를 사람이 다루기 쉽게 이름 붙인 것입니다.
 
-			However, programming is not limited only to printing simple texts on the screen.
-			In order to go a little further on and to become able to write programs that perform useful tasks that really save us work,
-			we need to introduce the concept of variables.
+			예)
+				a = 5;        // a라는 변수 공간에 5 저장
+				b = 2;        // b라는 변수 공간에 2 저장
+				a = a + 1;    // a에 들어있던 값을 읽어서 1 더한 뒤 다시 a에 저장
+				result = a - b; // a와 b를 읽어서 빼고 result에 저장
 
-			Let's imagine that I ask you to remember the number 5, and then I ask you to also memorize the number 2 at the same time.
-			You have just stored two different values in your memory (5 and 2).
-			Now, if I ask you to add 1 to the first number I said, you should be retaining the numbers 6 (that is 5+1) and 2 in your memory.
-			Then we could, for example, subtract these values and obtain 4 as result.
+			이런 흐름은 “기억해둔 숫자를 다시 꺼내 바꾸는 과정”과 동일합니다.
 
-			The whole process described above is a simile of what a computer can do with two variables.
-			The same process can be expressed in C++ with the following set of statements:
+			---------------------------------------------------------------------------------------
+			2) 왜 타입(type, 자료형)이 필요한가?
+			---------------------------------------------------------------------------------------
+			컴퓨터 메모리는 결국 ‘0과 1’의 나열이지만,
+			그 비트들을 어떤 의미로 해석할지는 규칙이 필요합니다.
 
-				a = 5;
-				b = 2;
-				a = a + 1;
-				result = a - b;
+			- 01000001 이라는 비트가
+			  * 정수 65일 수도 있고
+			  * 문자 'A'일 수도 있고
+			  * 어떤 구조체의 일부일 수도 있습니다.
 
-			Obviously, this is a very simple example, since we have only used two small integer values,
-			but consider that your computer can store millions of numbers like these at the same time and conduct sophisticated mathematical operations with them.
+			C++에서 타입은 다음을 결정합니다.
+			- 메모리 크기(몇 바이트를 쓰는가)
+			- 값의 해석 방식(정수? 실수? 문자? 주소?)
+			- 가능한 연산(더하기/비교/비트연산/포인터연산 등)
+			- 오버플로우/정밀도/부호 같은 표현 범위 특성
 
-			We can now define variable as a portion of memory to store a value.
+			---------------------------------------------------------------------------------------
+			3) C++의 대표적인 기본 타입들(감 잡기)
+			---------------------------------------------------------------------------------------
+			(1) 정수형
+			- int          : 가장 흔한 “정수”
+			- short, long, long long : 더 작은/더 큰 범위의 정수
+			- unsigned int : 음수가 없는 정수(0 이상만)
 
-			Each variable needs a name that identifies it and distinguishes it from the others.
-			For example, in the previous code the variable names were a, b, and result,
-			but we could have called the variables any names we could have come up with,
-			as long as they were valid C++ identifiers.
+			(2) 실수형
+			- float  : 단정도(메모리 적게, 정밀도 상대적으로 낮음)
+			- double : 배정도(기본 실수처럼 가장 많이 사용)
+			- long double : 더 높은 정밀도(플랫폼 의존)
+
+			(3) 문자/문자열 관련
+			- char          : 1바이트 문자/바이트 값
+			- wchar_t, char16_t, char32_t : 유니코드 문자 표현용 타입들
+			- 문자열은 보통 std::string / std::wstring 같은 라이브러리 타입으로 다룹니다.
+
+			(4) 논리형
+			- bool : true / false
+
+			(5) “주소”를 다루는 포인터
+			- int* p;  // int가 저장된 메모리 주소를 담는 변수
+			포인터는 “값”이 아니라 “어딘가를 가리키는 주소”를 저장합니다.
+
+			---------------------------------------------------------------------------------------
+			4) 변수 선언(define)과 초기화(initialization)
+			---------------------------------------------------------------------------------------
+			C++에서는 보통 “타입 + 이름”으로 변수를 선언합니다.
+
+			예)
+				int a;        // int 타입 변수 a 선언 (초기값은 정해져 있지 않을 수 있음)
+				int b = 2;    // 선언과 동시에 2로 초기화
+				double pi = 3.14159;
+				bool ok = true;
+
+			중요한 포인트:
+			- “선언”은 변수를 만들고 타입을 정하는 행위
+			- “초기화”는 처음 값을 넣는 행위
+			- “대입(assignment)”은 이미 존재하는 변수에 값을 다시 넣는 행위
+
+			---------------------------------------------------------------------------------------
+			5) 식별자(identifier) 이름 규칙/관례
+			---------------------------------------------------------------------------------------
+			- 영문자/숫자/언더스코어(_) 사용 가능
+			- 숫자로 시작 불가
+			- C++ 예약어(int, class, return 등)는 사용 불가
+			- 보통 의미 있는 이름을 권장:
+			  * count, totalScore, playerId, resultValue 등
+
+			---------------------------------------------------------------------------------------
+			6) 타입이 다르면 연산 결과도 달라질 수 있다
+			---------------------------------------------------------------------------------------
+			같은 “나눗셈”이라도 타입에 따라 결과가 달라집니다.
+
+			예)
+				int a = 5, b = 2;
+				int x = a / b;        // 정수 나눗셈 -> 2 (소수점 버림)
+				double y = a / b;     // 여전히 2 (a/b가 먼저 int로 계산됨)
+				double z = (double)a / b; // 2.5
+
+			즉, “어떤 타입으로 계산하느냐”는 결과에 직접 영향을 줍니다.
+
+			---------------------------------------------------------------------------------------
+			7) 한 줄 결론
+			---------------------------------------------------------------------------------------
+			- 변수는 “값을 저장하는 메모리 공간의 이름”
+			- 타입은 “그 공간에 들어있는 비트를 어떤 값으로 해석하고 어떻게 다룰지 정하는 규칙”
+			이 두 가지가 결합되어 C++ 프로그램이 데이터를 저장하고, 계산하고, 제어 흐름을 만들 수 있습니다.
 		*/
-	}
 
-	void identifiers()
-	{
-		/*
-			Identifiers
-
-			A valid identifier is a sequence of one or more letters, digits, or underscore characters (_). Spaces,
-			punctuation marks, and symbols cannot be part of an identifier. In addition, identifiers shall always begin with a letter.
-			They can also begin with an underline character (_),
-			but such identifiers are -on most cases- considered reserved for compiler-specific keywords or external identifiers,
-			as well as identifiers containing two successive underscore characters anywhere.
-			In no case can they begin with a digit.
-
-			C++ uses a number of keywords to identify operations and data descriptions;
-			therefore, identifiers created by a programmer cannot match these keywords.
-
-			The standard reserved keywords that cannot be used for programmer created identifiers are:
-
-				alignas, alignof, and, and_eq, asm, auto, bitand, bitor, bool, break, case, catch, char, char16_t, char32_t, class, compl,
-				const, constexpr, const_cast, continue, decltype, default, delete, do, double, dynamic_cast, else, enum, explicit, export,
-				extern, false, float, for, friend, goto, if, inline, int, long, mutable, namespace, new, noexcept, not, not_eq,
-				nullptr, operator, or, or_eq, private, protected, public, register, reinterpret_cast, return, short, signed, sizeof,
-				static, static_assert, static_cast, struct, switch, template, this, thread_local, throw, true, try, typedef, typeid,
-				typename, union, unsigned, using, virtual, void, volatile, wchar_t, while, xor, xor_eq
-
-			Specific compilers may also have additional specific reserved keywords.
-
-			Very important: The C++ language is a "case sensitive" language.
-			That means that an identifier written in capital letters is not equivalent to another one with the same name but written in small letters.
-			Thus, for example, the RESULT variable is not the same as the result variable or the Result variable.
-			These are three different identifiers identifiying three different variables.
-		*/
+		//-----------------------------------------------------------------------------------------
+		// 1) 변수: 저장/읽기/대입(갱신) 테스트
+		//-----------------------------------------------------------------------------------------
 		{
+			std::cout << "\n[1] Variables: store/read/assign\n";
+
+			int a = 5;            // 초기화
+			int b = 2;
+			int result = 0;
+
+			std::cout << "init: a=" << a << ", b=" << b << ", result=" << result << "\n";
+
+			a = a + 1;            // 대입(갱신)
+			result = a - b;
+
+			std::cout << "after: a=" << a << " (a=a+1), result=" << result << " (a-b)\n";
+
+			system("pause");
+		}
+
+		//-----------------------------------------------------------------------------------------
+		// 2) 타입이 필요한 이유(같은 비트, 다른 해석) 테스트
+		//   - union을 이용해 같은 메모리(비트)를 int/float로 해석
+		//-----------------------------------------------------------------------------------------
+		{
+			std::cout << "\n[2] Type meaning: same bits, different interpretation\n";
+
+			union Bits
+			{
+				unsigned int u;
+				float f;
+			};
+
+			Bits x;
+			x.u = 0x3F800000u; // IEEE-754 float에서 1.0f의 비트 패턴으로 널리 알려진 값
+
+			std::cout << "bits (hex) = 0x" << std::hex << x.u << std::dec << "\n";
+			std::cout << "as float   = " << x.f << "\n";
+
+			// 반대로 float 넣고 정수 비트로 보기
+			Bits y;
+			y.f = 2.5f;
+			std::cout << "float 2.5f as bits (hex) = 0x" << std::hex << y.u << std::dec << "\n";
+
+			system("pause");
+		}
+
+		//-----------------------------------------------------------------------------------------
+		// 3) 기본 타입들 테스트 (크기/범위, 출력)
+		//-----------------------------------------------------------------------------------------
+		{
+			std::cout << "\n[3] Built-in types: size and range\n";
+
+			std::cout << "sizeof(bool)        = " << sizeof(bool) << "\n";
+			std::cout << "sizeof(char)        = " << sizeof(char) << "\n";
+			std::cout << "sizeof(int)         = " << sizeof(int) << "\n";
+			std::cout << "sizeof(long)        = " << sizeof(long) << "\n";
+			std::cout << "sizeof(long long)   = " << sizeof(long long) << "\n";
+			std::cout << "sizeof(float)       = " << sizeof(float) << "\n";
+			std::cout << "sizeof(double)      = " << sizeof(double) << "\n";
+
+			std::cout << "int min/max         = "
+				<< std::numeric_limits<int>::min() << " / "
+				<< std::numeric_limits<int>::max() << "\n";
+
+			std::cout << "unsigned int max    = "
+				<< std::numeric_limits<unsigned int>::max() << "\n";
+
+			std::cout << "float min/max       = "
+				<< std::numeric_limits<float>::lowest() << " / "
+				<< std::numeric_limits<float>::max() << "\n";
+
+			std::cout << "double min/max      = "
+				<< std::numeric_limits<double>::lowest() << " / "
+				<< std::numeric_limits<double>::max() << "\n";
+
+			system("pause");
+		}
+
+		//-----------------------------------------------------------------------------------------
+		// 4) 선언 vs 초기화 vs 대입 테스트
+		//-----------------------------------------------------------------------------------------
+		{
+			std::cout << "\n[4] Declaration vs Initialization vs Assignment\n";
+
+			int a;        // 선언 (주의: 초기값이 정해져있지 않을 수 있음)
+			// cout << a << "\n"; // 안전하지 않으니 출력하지 않는 것을 권장
+
+			int b = 10;   // 초기화
+			std::cout << "b initialized = " << b << "\n";
+
+			b = 20;       // 대입
+			std::cout << "b assigned    = " << b << "\n";
+
+			int c{ 30 };    // 중괄호 초기화(Uniform init)
+			std::cout << "c initialized with {} = " << c << "\n";
+
+			system("pause");
+		}
+
+		//-----------------------------------------------------------------------------------------
+		// 5) 식별자 규칙 테스트(컴파일되는 예)
+		//   - “컴파일 오류 예”는 주석으로 남겨둠
+		//-----------------------------------------------------------------------------------------
+		{
+			std::cout << "\n[5] Identifier rules (compile-safe examples)\n";
+
+			int _value = 1;
+			int value2 = 2;
+			int player_id = 3;
+
+			std::cout << "_value=" << _value << ", value2=" << value2 << ", player_id=" << player_id << "\n";
+
+			// 아래는 컴파일 에러 예시(주석 해제하면 오류)
+			// int 2value = 10;     // 숫자로 시작 불가
+			// int class = 3;       // 예약어 사용 불가
+			// int value-1 = 0;     // '-' 사용 불가
+
+			system("pause");
+		}
+
+		//-----------------------------------------------------------------------------------------
+		// 6) 타입에 따라 결과가 달라지는 연산 테스트 (정수/실수 나눗셈)
+		//-----------------------------------------------------------------------------------------
+		{
+			std::cout << "\n[6] Operation depends on type: integer vs floating division\n";
+
+			int a = 5, b = 2;
+
+			int x = a / b;               // 정수 나눗셈
+			double y = a / b;            // (a/b)가 먼저 int로 계산됨
+			double z = (double)a / b;    // 실수 나눗셈
+
+			std::cout << "int x = a/b              = " << x << "\n";
+			std::cout << "double y = a/b           = " << y << "\n";
+			std::cout << "double z = (double)a/b   = " << z << "\n";
+
+			system("pause");
+		}
+
+		//-----------------------------------------------------------------------------------------
+		// 7) 오버플로우(정수) / 정밀도(실수) 테스트
+		//   - signed 오버플로우는 C++에서 정의되지 않은 동작(UB)이 될 수 있어
+		//     여기서는 unsigned로 “랩어라운드” 관찰
+		//-----------------------------------------------------------------------------------------
+		{
+			std::cout << "\n[7] Overflow (unsigned wrap) & Precision\n";
+
+			unsigned int u = std::numeric_limits<unsigned int>::max();
+			std::cout << "unsigned max = " << u << "\n";
+			u = u + 1; // 랩어라운드(모듈러 연산처럼 동작)
+			std::cout << "unsigned max + 1 = " << u << " (wrap-around)\n";
+
+			// 실수 정밀도
+			float f = 0.1f;
+			double d = 0.1;
+
+			std::cout << "float  0.1f * 10 = " << (f * 10) << "\n";
+			std::cout << "double 0.1  * 10 = " << (d * 10) << "\n";
+
+			// 0.1을 10번 더했을 때 오차
+			float fs = 0.0f;
+			double ds = 0.0;
+			for (int i = 0; i < 10; ++i) { fs += 0.1f; ds += 0.1; }
+
+			std::cout << "float  sum 0.1f x10 = " << fs << "\n";
+			std::cout << "double sum 0.1  x10 = " << ds << "\n";
+
+			system("pause");
+		}
+
+		//-----------------------------------------------------------------------------------------
+		// 8) 포인터(주소) 타입 테스트
+		//-----------------------------------------------------------------------------------------
+		{
+			std::cout << "\n[8] Pointer: address vs value\n";
+
+			int value = 42;
+			int* p = &value; // value의 주소를 저장
+
+			std::cout << "value      = " << value << "\n";
+			std::cout << "&value     = " << &value << "\n";
+			std::cout << "p (address)= " << p << "\n";
+			std::cout << "*p (value) = " << *p << "\n";
+
+			*p = 100; // 포인터로 원본 값 변경
+			std::cout << "after *p=100, value = " << value << "\n";
+
+			system("pause");
+		}
+
+		//-----------------------------------------------------------------------------------------
+		// 9) 문자열 타입 테스트(std::string)
+		//-----------------------------------------------------------------------------------------
+		{
+			std::cout << "\n[9] std::string basics\n";
+
+			std::string s = "Hello";
+			s += ", C++";
+
+			std::cout << "s = " << s << "\n";
+			std::cout << "length = " << s.size() << "\n";
+			std::cout << "s[0] = " << s[0] << "\n";
+
+			system("pause");
+		}
+
+		//-----------------------------------------------------------------------------------------
+		// 10) 간단한 타입 추론(auto) 테스트
+		//-----------------------------------------------------------------------------------------
+		{
+			std::cout << "\n[10] auto type deduction\n";
+
+			auto a = 10;       // int로 추론
+			auto b = 3.14;     // double로 추론
+			auto c = 3.14f;    // float로 추론
+			auto d = true;     // bool로 추론
+			auto e = "ABC";    // const char* 로 추론(문자열 리터럴)
+
+			std::cout << "a=" << a << " (type: " << typeid(a).name() << ")\n";
+			std::cout << "b=" << b << " (type: " << typeid(b).name() << ")\n";
+			std::cout << "c=" << c << " (type: " << typeid(c).name() << ")\n";
+			std::cout << "d=" << d << " (type: " << typeid(d).name() << ")\n";
+			std::cout << "e=" << e << " (type: " << typeid(e).name() << ")\n";
+
+			// typeid().name() 출력은 컴파일러마다 문자열이 다를 수 있음(테스트 목적)
+
 			system("pause");
 		}
 	}
 
-	/*
-		use on based ANSI-C 
-		int checkFPClassAnsiC(double x, __out std::string& s)
-		{
-			int i = fpclassify(x);
+	//---------------------------------------------------------------------------------------------
 
-			switch (i)
+	void identifiers()
+	{
+		/*
+			📚 식별자(Identifiers)
+
+			C++에서 "식별자(identifier)"는 변수/함수/클래스/네임스페이스 등
+			프로그래머가 이름을 붙여야 하는 대상에 사용하는 “이름”입니다.
+
+			---------------------------------------------------------------------------------------
+			1) 식별자에 사용할 수 있는 문자
+			---------------------------------------------------------------------------------------
+			일반적으로 식별자는 다음 문자의 조합으로 구성됩니다.
+
+			- 영문자(A~Z, a~z)
+			- 숫자(0~9)
+			- 밑줄(언더스코어) '_'
+
+			하지만 다음은 식별자에 포함될 수 없습니다.
+			- 공백(space)
+			- 구두점/특수기호(예: '-', '+', '!', '@', '#', '.', ',' 등)
+			- 기타 기호 문자들
+
+			---------------------------------------------------------------------------------------
+			2) 시작 규칙(첫 글자 규칙)
+			---------------------------------------------------------------------------------------
+			- 식별자는 숫자로 시작할 수 없습니다.
+			  예) 2value  (X)
+
+			- 일반적으로는 영문자 또는 '_' 로 시작할 수 있습니다.
+			  예) value, _value
+
+			---------------------------------------------------------------------------------------
+			3) '_' 로 시작하는 이름에 대한 주의(관례 + 표준 예약 영역)
+			---------------------------------------------------------------------------------------
+			C++ 표준 라이브러리/컴파일러는 내부적으로 특정 패턴의 이름을 “예약”해 두는 경우가 있습니다.
+			특히 다음은 피하는 것이 좋습니다.
+
+			- '_' 로 시작하면서, 두 번째 문자가 대문자인 경우: _Xxx
+			- '__' (연속된 밑줄 두 개)가 포함되는 경우: __something
+
+			이런 이름들은 구현(컴파일러/표준 라이브러리)이 사용할 가능성이 있어
+			충돌/예상치 못한 문제를 유발할 수 있습니다.
+
+			결론:
+			- 사용자 코드에서는 _ 로 시작하는 이름 자체를 가급적 피하고,
+			  필요하면 suffix(뒤에 붙이는 방식)나 명확한 접두어(prefix)를 쓰는 편이 안전합니다.
+			  예) my_value, player_id, cfgPath 등
+
+			---------------------------------------------------------------------------------------
+			4) 예약어(키워드)는 식별자로 사용할 수 없다
+			---------------------------------------------------------------------------------------
+			int, class, return 같은 C++ 키워드(keyword)는 언어 문법에서 이미 의미가 정해져 있습니다.
+			따라서 프로그래머가 만든 식별자는 키워드와 동일한 이름을 사용할 수 없습니다.
+
+			예) int int = 3;   (X)  // int는 키워드
+
+			(참고) 컴파일러/표준에 따라 추가 예약어/확장 키워드가 있을 수도 있습니다.
+
+			---------------------------------------------------------------------------------------
+			5) 대소문자 구분(case-sensitive)
+			---------------------------------------------------------------------------------------
+			C++는 대소문자를 구분하는 언어입니다.
+			따라서 다음은 모두 다른 이름입니다.
+
+				result
+				Result
+				RESULT
+
+			즉, 철자가 같아 보여도 대소문자가 다르면 완전히 다른 식별자입니다.
+
+			---------------------------------------------------------------------------------------
+			6) 실무에서의 추천 네이밍 규칙(가독성/유지보수 관점)
+			---------------------------------------------------------------------------------------
+			- 의미가 드러나는 이름을 사용하기:
+			  a, b 같은 이름은 작은 예제에는 좋지만, 실제 코드에서는 맥락이 사라집니다.
+			  예) totalCount, maxHp, playerId
+
+			- 관례를 팀/프로젝트 기준으로 통일하기:
+			  * camelCase  : playerId, totalCount
+			  * PascalCase : PlayerId, TotalCount (클래스/함수에 많이 사용)
+			  * snake_case : player_id, total_count
+
+			- 약어 남발을 피하기:
+			  dev가 아닌 사람이 봐도 이해되는 정도의 약어만 사용하기.
+
+			---------------------------------------------------------------------------------------
+			7) “가능”과 “권장”은 다르다
+			---------------------------------------------------------------------------------------
+			문법적으로 가능한 이름과, 유지보수에 좋은 이름은 다를 수 있습니다.
+			컴파일은 되지만 읽기 어려운 이름(예: l1I0O, __tmp__)은 피하는 것이 좋습니다.
+		*/
+
+		//-----------------------------------------------------------------------------------------
+		// 1) 컴파일되는 것/안 되는 것을 분리해서 확인하기
+		//-----------------------------------------------------------------------------------------
+		{
+			// 컴파일 되는 것들...
 			{
-			case FP_NAN:		s = "NaN";					break;
-			case FP_ZERO:		s = "zero (0)";				break;
-			case FP_NORMAL:		s = "normalized";			break;
-			case FP_SUBNORMAL:  s = "subnormal";			break;
-			case FP_INFINITE:	s = "infinity (INF)";		break;
+				std::cout << "\n[Test] Identifiers that compile OK\n";
+
+				int value = 10;
+				int value2 = 20;
+				int player_id = 30;
+				int totalCount = 40;
+				int Result = 50;       // result와 다름(대소문자 구분)
+				int result = 60;
+
+				std::cout << "value=" << value << "\n";
+				std::cout << "value2=" << value2 << "\n";
+				std::cout << "player_id=" << player_id << "\n";
+				std::cout << "totalCount=" << totalCount << "\n";
+				std::cout << "Result=" << Result << "\n";
+				std::cout << "result=" << result << "\n";
+
+				// '_' 로 시작하는 식별자도 문법상 가능하긴 함(권장X)
+				int _temp = 123;
+				std::cout << "_temp=" << _temp << " (valid but usually not recommended)\n";
+
+				system("pause");
 			}
 
-			return i;
+			// 컴파일 에러 예제 모음 (주석 해제하면 직접 확인 가능)
+			{
+				// int 2value = 10;       // (X) 숫자로 시작 불가
+				// int value - 1 = 20;    // (X) '-' 사용 불가
+				// int my value = 30;     // (X) 공백 사용 불가
+				// int class = 40;        // (X) 키워드 사용 불가
+				// int return = 50;       // (X) 키워드 사용 불가
+				// int __tmp = 60;        // (주의) 구현 예약 가능성(피하는 게 좋음)
+				// int _X = 70;           // (주의) _ + 대문자 패턴은 예약 영역 가능성
+			}
 		}
-	*/
-	
 
-	int checkFPClassWin32(double x, __out std::string& s)
+		//-----------------------------------------------------------------------------------------
+		// 2) “대소문자 구분” 테스트: 서로 다른 변수임을 보여줌
+		//-----------------------------------------------------------------------------------------
+		{
+			std::cout << "\n[Test] Case sensitivity\n";
+
+			int score = 1;
+			int Score = 2;
+			int SCORE = 3;
+
+			std::cout << "score=" << score << "\n";
+			std::cout << "Score=" << Score << "\n";
+			std::cout << "SCORE=" << SCORE << "\n";
+
+			system("pause");
+		}
+
+		//-----------------------------------------------------------------------------------------
+		// 3) “가독성” 테스트: 같은 기능이라도 이름이 의미를 얼마나 주는지 비교
+		//-----------------------------------------------------------------------------------------
+		{
+			std::cout << "\n[Test] Readability comparison\n";
+
+			// 나쁜 예(예제에서만)
+			int a = 100;
+			int b = 20;
+			int c = a - b;
+
+			// 좋은 예(같은 의미지만 맥락이 살아남)
+			int maxHp = 100;
+			int damage = 20;
+			int remainingHp = maxHp - damage;
+
+			std::cout << "bad naming: c=" << c << "\n";
+			std::cout << "good naming: remainingHp=" << remainingHp << "\n";
+
+			system("pause");
+		}
+	}
+
+	void printLine(const char* title)
 	{
-		int i = _fpclass(x);
+		std::cout << "\n============================================================================\n";
+		std::cout << title << "\n";
+		std::cout << "============================================================================\n";
+	}
 
+	//---------------------------------------------------------------------------------------------
+
+	int checkFPClassAnsiC(double x, __out std::string& s)
+	{
+		/*
+			📚 ANSI-C(표준 C/C++) 방식의 부동소수점 분류
+
+			  - fpclassify(x)는 <cmath>에서 제공되는 매크로/함수로,
+				부동소수점 값 x를 다음 5가지 범주 중 하나로 분류합니다.
+
+				FP_NAN        : NaN (Not-a-Number)
+				FP_ZERO       : +0 또는 -0
+				FP_NORMAL     : 정규화(normalized) 값
+				FP_SUBNORMAL  : 비정규화(subnormal/denormal) 값
+				FP_INFINITE   : +INF 또는 -INF
+
+			  - 반환값은 위 FP_* 상수 중 하나이며,
+				s에는 사람이 보기 쉬운 설명 문자열을 저장합니다.
+
+			  - 장점:
+				* 표준 함수라 플랫폼 독립적(이식성 좋음)
+				* C/C++ 전반에서 공통적으로 사용할 수 있음
+
+			  - 단점/차이점:
+				* Windows/MSVC의 _fpclass처럼 “세부 분류”는 하지 않습니다.
+					예) Signaling NaN vs Quiet NaN 구분 X
+						+0 vs -0 구분 X
+						+INF vs -INF 구분 X
+				* 즉, “표준 수준의 큰 분류”만 필요할 때 적합합니다.
+		*/
+
+		// (1) fpclassify로 부동소수점 상태 분류
+		//     결과는 FP_NAN / FP_ZERO / FP_NORMAL / FP_SUBNORMAL / FP_INFINITE 중 하나
+		int i = fpclassify(x);
+
+		// (2) 분류 결과에 따라 설명 문자열 설정
 		switch (i)
 		{
-		case _FPCLASS_SNAN: s = "Signaling NaN";                break;
-		case _FPCLASS_QNAN: s = "Quiet NaN";                    break;
-		case _FPCLASS_NINF: s = "Negative infinity (-INF)";     break;
-		case _FPCLASS_NN:   s = "Negative normalized non-zero"; break;
-		case _FPCLASS_ND:   s = "Negative denormalized";        break;
-		case _FPCLASS_NZ:   s = "Negative zero (-0)";           break;
-		case _FPCLASS_PZ:   s = "Positive 0 (+0)";              break;
-		case _FPCLASS_PD:   s = "Positive denormalized";        break;
-		case _FPCLASS_PN:   s = "Positive normalized non-zero"; break;
-		case _FPCLASS_PINF: s = "Positive infinity (+INF)";     break;
+		case FP_NAN:
+			// NaN: 수학적으로 정의되지 않은 결과(0/0, sqrt(-1) 등)에서 발생
+			s = "NaN";
+			break;
+
+		case FP_ZERO:
+			// 0: +0 또는 -0 (표준 분류에서는 부호를 따로 구분하지 않음)
+			s = "zero (0)";
+			break;
+
+		case FP_NORMAL:
+			// 정규화(normalized): 일반적인 대부분의 실수 값
+			s = "normalized";
+			break;
+
+		case FP_SUBNORMAL:
+			// 비정규화(subnormal/denormal): 0에 매우 가까운 아주 작은 값(정밀도 손실 가능)
+			s = "subnormal";
+			break;
+
+		case FP_INFINITE:
+			// 무한대: 오버플로우(너무 큰 값) 또는 1.0/0.0 같은 연산에서 발생 가능
+			// 표준 분류에서는 +INF/-INF를 구분하지 않음
+			s = "infinity (INF)";
+			break;
+
+		default:
+			// 이론상 거의 없지만 안전을 위해 처리
+			s = "unknown fpclassify result";
+			break;
+		}
+
+		// (3) 분류 결과 상수 반환
+		return i;
+	}
+	
+	int checkFPClassWin32(double x, __out std::string& s)
+	{
+		/*
+			📚 Windows/MSVC 방식의 부동소수점 분류
+
+			  - _fpclass()를 사용해서 double 값이 NaN/INF/정규/비정규/±0 인지 분류합니다.
+			  - 반환값은 _FPCLASS_* 상수 중 하나이며, s에는 사람이 읽을 설명 문자열을 넣습니다.
+		*/
+
+		// MSVC CRT의 _fpclass는 부동소수점의 상태를 세밀하게 분류해줍니다.
+		// (ANSI-C의 fpclassify보다 상세: SNaN/QNaN, +0/-0, +INF/-INF 등)
+		int i = _fpclass(x);
+
+		// 분류 결과에 따라 설명 문자열을 저장
+		switch (i)
+		{
+		case _FPCLASS_SNAN: s = "Signaling NaN";                break; // 신호 NaN
+		case _FPCLASS_QNAN: s = "Quiet NaN";                    break; // 조용한 NaN
+		case _FPCLASS_NINF: s = "Negative infinity (-INF)";     break; // -무한대
+		case _FPCLASS_NN:   s = "Negative normalized non-zero"; break; // 음수 정규값(0 아님)
+		case _FPCLASS_ND:   s = "Negative denormalized";        break; // 음수 비정규(denormal/subnormal)
+		case _FPCLASS_NZ:   s = "Negative zero (-0)";           break; // -0
+		case _FPCLASS_PZ:   s = "Positive 0 (+0)";              break; // +0
+		case _FPCLASS_PD:   s = "Positive denormalized";        break; // 양수 비정규
+		case _FPCLASS_PN:   s = "Positive normalized non-zero"; break; // 양수 정규값(0 아님)
+		case _FPCLASS_PINF: s = "Positive infinity (+INF)";     break; // +무한대
+
+		default:
+			// (이론상) 여기로 들어오지 않는 것이 일반적이지만, 확장/예외 상황 대비
+			s = "Unknown FP class";
+			break;
 		}
 		
 		return i;
@@ -123,28 +650,44 @@ namespace VariablesAndTypes
 	template<typename T>
 	bool CheckValue(T v, std::string& outString)
 	{
+		/*
+			📚 타입별 출력 문자열 준비 + (float/double) 특수값 필터링
+
+			  - 템플릿 타입 T를 보고 "타입명"과 "printf 포맷"을 결정합니다.
+			  - float/double이라면 NaN/INF/denormal 같은 특수 상태는
+			    정상 출력 대신 설명 문자열만 반환하고 false를 리턴합니다.
+			  - 정상 값이면 "<값> : <타입명> = " 형태의 헤더 문자열을 만들어 outString에 담고 true 리턴.
+		*/
+
+		// float/double일 때만 FP 특수값 검사 실행
 		bool isCheckFP = false;
 
+		// 사람이 보기 좋은 타입 이름(문자열)
 		std::string type;
 
+		// printf 포맷 문자열을 만들 버퍼
+		// 예: "%d : %s = "  또는 "%f : %s = "
 		char buffer[1024];
-		buffer[0] = '0';
+		buffer[0] = 0; // 빈 문자열로 초기화(원본은 '0'였는데, 실제로는 0이 안전)
 
+		// ------------------------------------------------------------
+		// (1) 타입 판별 + 타입명/포맷 결정
+		// ------------------------------------------------------------
 		if (typeid(T) == typeid(char)) {
 			type = "char";
 			strcpy_s(buffer, "%c");
 		}
 		else if (typeid(T) == typeid(unsigned char)) {
 			type = "unsigned char";
-			strcpy_s(buffer, "%c");
+			strcpy_s(buffer, "%c"); // 출력 목적이면 %u가 더 적절할 수 있음(원본 의도 유지)
 		}
 		else if (typeid(T) == typeid(short)) {
-			type = "short : ";
+			type = "short";
 			strcpy_s(buffer, "%d");
 		}
 		else if (typeid(T) == typeid(unsigned short)) {
 			type = "unsigned short";
-			strcpy_s(buffer, "%d");
+			strcpy_s(buffer, "%u");
 		}
 		else if (typeid(T) == typeid(int)) {
 			type = "int";
@@ -152,7 +695,7 @@ namespace VariablesAndTypes
 		}
 		else if (typeid(T) == typeid(unsigned int)) {
 			type = "unsigned int";
-			strcpy_s(buffer, "%d");
+			strcpy_s(buffer, "%u");
 		}
 		else if (typeid(T) == typeid(__int64)) {
 			type = "__int64";
@@ -160,77 +703,110 @@ namespace VariablesAndTypes
 		}
 		else if (typeid(T) == typeid(unsigned __int64)) {
 			type = "unsigned __int64";
-			strcpy_s(buffer, "%I64d");
+			strcpy_s(buffer, "%I64u"); // 원본은 %I64d였지만 unsigned는 u가 정확
 		}
 		else if (typeid(T) == typeid(float)) {
 			type = "float";
 			strcpy_s(buffer, "%f");
-
-			isCheckFP = true;
+			isCheckFP = true; // float는 FP 특수값 검사
 		}
 		else if (typeid(T) == typeid(double)) {
 			type = "double";
 			strcpy_s(buffer, "%f");
-
-			isCheckFP = true;
+			isCheckFP = true; // double도 FP 특수값 검사
 		}
 		else {
+			// 지원하지 않는 타입이면 실패 처리
 			outString = "unknown type !!!";
 			return false;
 		}
 
-		if (true == isCheckFP) {
+		// ------------------------------------------------------------
+		// (2) float/double 특수값 검사
+		// ------------------------------------------------------------
+		if (isCheckFP)
+		{
 			std::string strResult;
-			int fp_result = checkFPClassWin32(v, __out strResult);
+			int fp_result = checkFPClassWin32((double)v, __out strResult);
+
+			// 특수값을 “정상 숫자 출력”에서 제외
+			// - INF / NaN / denormal 등은 출력 목적에 따라 별도 취급하는 것이 안전
 			if (   _FPCLASS_PINF == fp_result
 				|| _FPCLASS_NINF == fp_result
-				|| _FPCLASS_PD   == fp_result
+				|| _FPCLASS_PD == fp_result
+				|| _FPCLASS_ND == fp_result
 				|| _FPCLASS_QNAN == fp_result
-				|| _FPCLASS_SNAN == fp_result
-			) {
-				outString = strResult.c_str();
+				|| _FPCLASS_SNAN == fp_result )
+			{
+				outString = strResult; // 설명 문자열만 내보냄
 				return false;
 			}
 		}
 
-		strcpy(buffer + strlen(buffer), " : %s = ");
+		// ------------------------------------------------------------
+		// (3) 출력용 헤더 문자열 생성
+		// ------------------------------------------------------------
+		// buffer는 현재 "%d" 또는 "%f" 같은 포맷만 들어있습니다.
+		// 여기 뒤에 " : %s = "를 붙여서,
+		//   예) "%d : %s = "  또는 "%f : %s = "
+		// 형태로 만든 다음 sprintf로 value와 type을 넣습니다.
+		strcat_s(buffer, " : %s = ");
 
 		char message[1024];
-		sprintf(message, buffer, v, type.c_str());
-		outString = message;
 
+		// message 예:
+		//   "10 : int = "
+		//   "0.100000 : float = "
+		sprintf_s(message, buffer, v, type.c_str());
+
+		outString = message;
 		return true;
 	}
 
 	template<typename T>
 	void printBits(T value)
 	{
+		/*
+			📚 값의 “순수 비트열” 출력(4비트마다 공백)
+
+			  - 값이 메모리에 어떤 0/1 패턴으로 저장되는지 그대로 출력합니다.
+			  - float/double의 NaN/INF/denormal은 CheckValue에서 걸러서 설명만 출력합니다.
+		*/
+
 		std::string outString;
-		if (true != CheckValue(value, __out outString)) {
+
+		// (1) 출력 가능한 정상 값인지 확인 + 헤더 문자열 얻기
+		if (!CheckValue(value, __out outString)) {
+			// 특수값이거나 지원하지 않는 타입이면 설명만 출력하고 종료
 			printf("%s\n", outString.c_str());
 			return;
 		}
 
+		// (2) "값 : 타입 = " 헤더 먼저 출력
 		printf("%s", outString.c_str());
 
-		unsigned char *b = (unsigned char*)&value;
-		unsigned char byte;
+		// (3) value의 메모리 내용을 바이트 배열로 해석
+		//     unsigned char는 1바이트이므로 raw byte 읽기에 적합
+		unsigned char* b = (unsigned char*)&value;
+
 		bool begin = true;
 
-		for (int i = (int)sizeof(T) - 1; i >= 0; i--)
+		// (4) MSB(가장 높은 바이트) -> LSB 순으로 출력
+		for (int i = (int)sizeof(T) - 1; i >= 0; --i)
 		{
-			for (int j = 7; j >= 0; j--)
+			// 각 바이트의 bit7..bit0을 출력
+			for (int j = 7; j >= 0; --j)
 			{
-				byte = b[i] & (1 << j);
-				byte >>= j;
+				// (1<<j)로 해당 비트만 마스킹한 뒤 0/1로 정리
+				unsigned char bit = (b[i] >> j) & 1;
 
-				if (   false == begin 
-					&& 0 == ((j + 1) % 4)) {
+				// 보기 좋게 4비트마다 공백(첫 출력은 제외)
+				if (!begin && ((j + 1) % 4 == 0)) {
 					printf(" ");
 				}
 				begin = false;
 
-				printf("%u", byte);
+				printf("%u", (unsigned)bit);
 			}
 		}
 		puts("");
@@ -239,254 +815,371 @@ namespace VariablesAndTypes
 	template<typename T>
 	void printBitFormatOfType(T value)
 	{
+		/*
+			📚 타입별 “의미 경계”를 구분해서 비트 출력
+
+			  - int 계열 : 최상위 비트(부호 비트 위치) 뒤에 공백, 이후 4비트 그룹
+			  - float    : [sign 1][exp 8][mantissa 23] 경계에 공백을 넣어 보기 쉽게 출력
+			  - double   : [sign 1][exp 11][mantissa 52] 경계에 공백을 넣어 보기 쉽게 출력
+
+			  * 주의
+			    - float/double이 IEEE-754라는 전제 하에 시각화하는 출력입니다.
+				- mantissa를 5비트 단위로 끊는 것은 표준 경계가 아니라 “가독성 목적”입니다.
+		*/
+
 		std::string outString;
+
+		// (1) 출력 가능 여부 확인 + 헤더 문자열 얻기
 		if (true != CheckValue(value, __out outString)) {
 			printf("%s\n", outString.c_str());
 			return;
 		}
 
+		// (2) 헤더 출력
 		printf("%s", outString.c_str());
 
-		unsigned char *b = (unsigned char*)&value;
-		unsigned char byte;
+		// (3) 바이트 포인터로 메모리 읽기
+		unsigned char* b = (unsigned char*)&value;
 
-		for (int i = (int)sizeof(T) - 1, bitPos = 0; i >= 0; --i) {
-			
-			for (int j = 7; j >= 0; --j, ++bitPos) {
+		// bitPos는 전체 비트에서 “몇 번째 비트를 출력 중인지” (0부터 증가)
+		for (int i = (int)sizeof(T) - 1, bitPos = 0; i >= 0; --i)
+		{
+			for (int j = 7; j >= 0; --j, ++bitPos)
+			{
+				unsigned char bit = (b[i] >> j) & 1;
 
-				byte = b[i] & (1 << j);
-				byte >>= j;
-
-				if (   typeid(T) == typeid(int)
+				// ----------------------------
+				// 타입별 공백 삽입 규칙
+				// ----------------------------
+				if (typeid(T) == typeid(int)
 					|| typeid(T) == typeid(unsigned int)
-					|| typeid(T) == typeid(__int64) 
-					|| typeid(T) == typeid(unsigned __int64) ) {
-					if (1 == bitPos) {
+					|| typeid(T) == typeid(__int64)
+					|| typeid(T) == typeid(unsigned __int64))
+				{
+					// 정수 계열:
+					// - bitPos==1일 때: 최상위 1비트(부호 위치) 뒤 구분
+					// - 그 외: 4비트(니블) 단위로 구분
+					if (bitPos == 1) {
 						printf(" ");
 					}
-					else {
-						if (   0 < bitPos
-							&& 0 == ((j + 1) % 4) ) {
-							printf(" ");
-						}
+					else if (bitPos > 0 && ((j + 1) % 4 == 0)) {
+						printf(" ");
 					}
 				}
-				else if (typeid(T) == typeid(float)) {
-					if (1 == bitPos || 9 == bitPos) {
+				else if (typeid(T) == typeid(float))
+				{
+					// float(32bit) = sign(1) + exponent(8) + mantissa(23)
+					// - bitPos==1: sign 뒤
+					// - bitPos==9: exponent(8bit) 뒤 (1 + 8 = 9)
+					if (bitPos == 1 || bitPos == 9) {
 						printf(" ");
 					}
-					else {
-						if (   9 < bitPos
-							&& 0 == ((bitPos - 9) % 5) ) {
-							printf(" ");
-						}
+					else if (bitPos > 9 && ((bitPos - 9) % 5 == 0)) {
+						// mantissa 가독성용 5비트 그룹
+						printf(" ");
 					}
 				}
-				else if (typeid(T) == typeid(double)) {
-					if (1 == bitPos || 12 == bitPos) {
+				else if (typeid(T) == typeid(double))
+				{
+					// double(64bit) = sign(1) + exponent(11) + mantissa(52)
+					// - bitPos==1 : sign 뒤
+					// - bitPos==12: exponent(11bit) 뒤 (1 + 11 = 12)
+					if (bitPos == 1 || bitPos == 12) {
 						printf(" ");
 					}
-					else {
-						if (   12 < bitPos
-							&& 0 == ((bitPos - 12) % 5) ) {
-							printf(" ");
-						}
+					else if (bitPos > 12 && ((bitPos - 12) % 5 == 0)) {
+						// mantissa 가독성용 5비트 그룹
+						printf(" ");
 					}
 				}
 
-				printf("%u", byte);
+				// 현재 비트 출력
+				printf("%u", (unsigned)bit);
 			}
 		}
 		puts("");
 	}
-
 	
-	/*
-		FP2BIN_STRING_MAX covers the longest binary string
-		(2^-1074 plus "0." and string terminator)
-	*/
+	// FP2BIN_STRING_MAX:
+	//   - double에서 극단적으로 작은 subnormal(2^-1074) 같은 경우까지 고려하면
+	//     소수부 비트가 매우 길어질 수 있어 큰 버퍼를 잡아둔 것입니다.
+	//   - 다만 아래 fp2bin_f는 반복 종료 조건이 fp_frac > 0이라,
+	//     0.1 같은 무한 이진 소수는 무한 루프가 될 수 있습니다.
+	//     => 실전/학습용으로도 "최대 자릿수 제한"을 추가하는 것을 권장합니다.
 	#define FP2BIN_STRING_MAX 1074
 
 	void fp2bin_i(double fp_int, char* binString)
 	{
+		/*
+			📚 정수부를 2진 문자열로 변환
+			
+			  - 2로 나누면서 나머지(0/1)를 얻어 역순으로 저장
+			  - 마지막에 문자열을 뒤집어서 정방향 2진 문자열 완성
+		*/
+
 		int bitCount = 0;
-		int i;
 		char binString_temp[FP2BIN_STRING_MAX];
 
+		// fp_int가 0보다 큰 동안 나머지를 뽑아 저장
+		// fmod(fp_int, 2)는 (fp_int % 2)와 유사한 역할
 		do {
 			binString_temp[bitCount++] = '0' + (int)fmod(fp_int, 2);
 			fp_int = floor(fp_int / 2);
 		} while (fp_int > 0);
 
-		/* Reverse the binary string */
-		for (i = 0; i < bitCount; i++) {
+		// 역순으로 쌓였으므로 뒤집어서 최종 문자열로
+		for (int i = 0; i < bitCount; ++i) {
 			binString[i] = binString_temp[bitCount - i - 1];
 		}
 
-		binString[bitCount] = 0; //Null terminator
+		binString[bitCount] = 0; // 문자열 종료
 	}
 
 	void fp2bin_f(double fp_frac, char* binString)
 	{
-		int bitCount = 0;
-		double fp_int;
+		/*
+			📚 소수부를 2진 문자열로 변환
 
-		while (fp_frac > 0) {
+			  - 소수부에 2를 곱한다.
+			  - 그 결과의 정수부가 1이면 다음 비트는 1, 0이면 다음 비트는 0.
+			  - 정수부를 떼고 남은 소수부로 반복.
+
+			  ★주의:
+			    - 0.1 같은 값은 이진수로 유한하게 끝나지 않습니다(무한 반복 소수).
+			    - 또한 부동소수점 오차 때문에 0이 정확히 되지 않아 while(fp_frac > 0)이
+			      사실상 끝나지 않을 수 있습니다.
+			      => 반드시 최대 길이 제한을 두는 것이 안전합니다.
+		*/
+
+		int bitCount = 0;
+		double fp_int = 0.0;
+
+		while (fp_frac > 0)
+		{
 			fp_frac *= 2;
+
+			// modf는 fp_frac를 (정수부 fp_int) + (소수부 반환값)으로 분리
 			fp_frac = modf(fp_frac, &fp_int);
+
+			// 정수부가 1이면 다음 비트는 '1', 0이면 '0'
 			binString[bitCount++] = '0' + (int)fp_int;
+
+			// (안전장치 없음) -> 실제로는 bitCount 제한이 필요
 		}
-		binString[bitCount] = 0; //Null terminator
+
+		binString[bitCount] = 0; // 문자열 종료
 	}
 
-	//vc style
 	void fp2bin(double fp, __out std::string& s)
 	{
+		/*
+			📚 실수를 "정수부.소수부" 2진 문자열로 변환
+
+			  - 먼저 NaN/INF/denormal 같은 특수값은 변환하지 않고 설명 문자열만 반환
+			  - modf로 정수부(fp_int) / 소수부(fp_frac) 분리
+			  - 정수부를 fp2bin_i로 변환 (없으면 "0")
+			  - '.' 추가
+			  - 소수부를 fp2bin_f로 변환 (없으면 "0")
+
+			  ★주의:
+				- fp2bin_f가 무한 루프 될 수 있으므로,
+				  실제 사용 시에는 “최대 소수 비트 수” 제한을 넣는 것을 권장합니다.
+		*/
+
 		char bitList[FP2BIN_STRING_MAX];
 
+		// (1) 특수값 필터링
 		std::string strResult;
 		int fp_result = checkFPClassWin32(fp, __out strResult);
+
 		if (   _FPCLASS_PINF == fp_result
 			|| _FPCLASS_NINF == fp_result
-			|| _FPCLASS_PD   == fp_result
+			|| _FPCLASS_PD == fp_result
+			|| _FPCLASS_ND == fp_result
 			|| _FPCLASS_QNAN == fp_result
-			|| _FPCLASS_SNAN == fp_result
-		) {
-			s = strResult.c_str();
+			|| _FPCLASS_SNAN == fp_result)
+		{
+			s = strResult; // 변환 대신 설명 문자열 반환
 			return;
 		}
 
-		double fp_int, fp_frac;
-
-		/* Separate integer and fractional parts */
+		// (2) 정수부/소수부 분리
+		double fp_int = 0.0, fp_frac = 0.0;
 		fp_frac = modf(fp, &fp_int);
 
-		/* Convert integer part, if any */
+		// (3) 정수부 변환
 		if (fp_int != 0) {
 			fp2bin_i(fp_int, bitList);
 		}
 		else {
-			strcpy(bitList, "0");
+			strcpy_s(bitList, "0");
 		}
 
-		strcat(bitList, "."); // Radix point
+		// (4) 소수점 추가
+		strcat_s(bitList, FP2BIN_STRING_MAX, ".");
 
-		/* Convert fractional part, if any */
+		// (5) 소수부 변환
 		if (fp_frac != 0) {
-			fp2bin_f(fp_frac, bitList + strlen(bitList)); //Append
+			fp2bin_f(fp_frac, bitList + strlen(bitList)); // 뒤에 이어 붙임
 		}
 		else {
-			strcpy(bitList + strlen(bitList), "0");
+			strcat_s(bitList, FP2BIN_STRING_MAX, "0");
 		}
 
+		// (6) 결과 저장
 		s = bitList;
 	}	
 
 	void fundamental_data_types()
 	{
 		/*
-			Fundamental data types
+			📚 Fundamental data types (기본 데이터 타입)
 
-			The values of variables are stored somewhere in an unspecified location in the computer memory as zeros and ones.
-			Our program does not need to know the exact location where a variable is stored; it can simply refer to it by its name.
-			What the program needs to be aware of is the kind of data stored in the variable.
-			It's not the same to store a simple integer as it is to store a letter or a large floating-point number;
-			even though they are all represented using zeros and ones, they are not interpreted in the same way,
-			and in many cases, they don't occupy the same amount of memory.
+			---------------------------------------------------------------------------------------
+			[1] 메모리와 타입의 관계
+			---------------------------------------------------------------------------------------
+			- 변수의 값은 컴퓨터 메모리 어딘가에 0과 1(비트)로 저장된다.
+			- 프로그램은 그 값이 “어디에 저장되어 있는지(주소)”를 몰라도 된다.
+			  => 변수 이름으로 참조하면 된다.
+			- 하지만 프로그램이 반드시 알아야 하는 것은 “어떤 종류의 데이터인가(타입)”이다.
+			  예) 정수, 문자, 큰 실수(부동소수점) 등은
+				  모두 0/1로 저장되지만 해석 방식이 다르고,
+				  보통 메모리 사용량도 서로 다르다.
 
-			Fundamental data types are basic types implemented directly by the language that represent the basic storage units supported natively by most systems.
-			They can mainly be classified into:
-			Character types:	They can represent a single character, such as 'A' or '$'.
-								The most basic type is char, which is a one-byte character.
-								Other types are also provided for wider characters.
-			Numerical integer types:	They can store a whole number value, such as 7 or 1024.
-										They exist in a variety of sizes, and can either be signed or unsigned,
-										depending on whether they support negative values or not.
-			Floating-point types:	They can represent real values, such as 3.14 or 0.01, with different levels of precision,
-									depending on which of the three floating-point types is used.
-			Boolean type:	The boolean type, known in C++ as bool, can only represent one of two states, true or false.
+			---------------------------------------------------------------------------------------
+			[2] 기본 데이터 타입(Fundamental types)이란?
+			---------------------------------------------------------------------------------------
+			- C++ 언어가 직접 제공하는 가장 기본적인 타입들.
+			- 대부분의 시스템이 네이티브로 다루는 “기본 저장 단위”를 표현한다.
+			- 크게 다음 그룹으로 분류할 수 있다.
 
+			  1) 문자 타입(Character types)
+				 - 한 글자(예: 'A', '$')를 표현
+				 - 가장 기본은 char (정확히 1바이트)
+				 - 더 넓은 문자 집합을 위한 타입들도 존재
 
-			Here is the complete list of fundamental types in C++:
+			  2) 정수 타입(Integer types)
+				 - 7, 1024 같은 “정수(whole number)”를 저장
+				 - 크기가 여러 가지이며, signed/unsigned로 나뉜다
+				   * signed  : 음수/양수 모두 가능
+				   * unsigned: 0 이상의 값만 가능
 
-				Group						Type names*				Notes on size / precision
+			  3) 부동소수점 타입(Floating-point types)
+				 - 3.14, 0.01 같은 “실수(real number)”를 표현
+				 - float / double / long double에 따라 정밀도가 달라진다
 
-				Character types				char					Exactly one byte in size. At least 8 bits.
-											char16_t				Not smaller than char. At least 16 bits.
-											char32_t				Not smaller than char16_t. At least 32 bits.
-											wchar_t					Can represent the largest supported character set.
-				Integer types (signed)		signed char				Same size as char. At least 8 bits.
-											signed short int		Not smaller than char. At least 16 bits.
-											signed int				Not smaller than short. At least 16 bits.
-											signed long int			Not smaller than int. At least 32 bits.
-											signed long long int	Not smaller than long. At least 64 bits.
-				Integer types (unsigned)	unsigned char			(same size as their signed counterparts)
-											unsigned short int
-											unsigned int
-											unsigned long int
-											unsigned long long int
-				Floating-point types		float
-											double					Precision not less than float
-											long double				Precision not less than double
-				Boolean type				bool
-				Void type					void					no storage
-				Null pointer				decltype(nullptr)
+			  4) 불리언 타입(Boolean type)
+				 - bool: true / false 두 상태만 표현
 
-			* The names of certain integer types can be abbreviated without their signed
-			and int components - only the part not in italics is required to identify the type, the part in italics is optional.
-			I.e., signed short int can be abbreviated as signed short, short int,
-			or simply short; they all identify the same fundamental type.
+			---------------------------------------------------------------------------------------
+			[3] C++ 기본 타입 전체 목록(요약)
+			---------------------------------------------------------------------------------------
+			1) 문자 타입
+			   - char       : 정확히 1바이트(최소 8비트)
+			   - char16_t   : char보다 작지 않음(최소 16비트)
+			   - char32_t   : char16_t보다 작지 않음(최소 32비트)
+			   - wchar_t    : 더 큰 문자 집합 표현용(크기는 구현/플랫폼 의존)
 
-			Within each of the groups above, the difference between types is only their size (i.e., how much they occupy in memory):
-			the first type in each group is the smallest, and the last is the largest,
-			with each type being at least as large as the one preceding it in the same group.
-			Other than that, the types in a group have the same properties.
+			2) 정수 타입(부호 있음: signed)
+			   - signed char
+			   - signed short int
+			   - signed int
+			   - signed long int
+			   - signed long long int
 
-			Note in the panel above that other than char (which has a size of exactly one byte),
-			none of the fundamental types has a standard size specified (but a minimum size, at most).
-			Therefore, the type is not required (and in many cases is not) exactly this minimum size.
-			This does not mean that these types are of an undetermined size, but that there is no standard size across all compilers and machines;
-			each compiler implementation may specify the sizes for these types that fit the best the architecture where the program is going to run.
-			This rather generic size specification for types gives the C++ language a lot of flexibility
-			to be adapted to work optimally in all kinds of platforms, both present and future.
+			3) 정수 타입(부호 없음: unsigned)
+			   - unsigned char
+			   - unsigned short int
+			   - unsigned int
+			   - unsigned long int
+			   - unsigned long long int
+			   * (각각의 크기는 signed 대응 타입과 동일)
 
-			Type sizes above are expressed in bits; the more bits a type has, the more distinct values it can represent,
-			but at the same time, also consumes more space in memory:
+			4) 부동소수점 타입
+			   - float
+			   - double      : 정밀도는 float 이상
+			   - long double : 정밀도는 double 이상
 
-			Type sizes above are expressed in bits; the more bits a type has,
-			the more distinct values it can represent,
-			but at the same time, also consumes more space in memory:
+			5) 기타
+			   - bool
+			   - void              : 저장 공간 없음(값/타입이 “없음”을 의미)
+			   - decltype(nullptr) : 널 포인터 전용 타입
 
-				Size	Unique representable values		Notes
-				8-bit							256	=	2^8
-				16-bit						 65,536	=	2^16
-				32-bit				  4,294,967,296	=	2^32 (~4 billion)
-				64-bit	 18,446,744,073,709,551,616	=	2^64 (~18 billion billion)
+			---------------------------------------------------------------------------------------
+			[4] 정수 타입 이름은 축약 가능
+			---------------------------------------------------------------------------------------
+			- 일부 정수 타입은 signed / int를 생략해도 같은 타입을 의미한다.
+			  예)
+				signed short int == signed short == short int == short
 
+			---------------------------------------------------------------------------------------
+			[5] 같은 그룹 내에서의 차이 = 주로 크기(size)
+			---------------------------------------------------------------------------------------
+			- 각 그룹에서 “첫 타입이 가장 작고, 마지막이 가장 크다”
+			- 뒤에 오는 타입은 앞 타입보다 작지 않다(= 최소한 동일하거나 더 크다)
+			- 같은 그룹의 타입들은 기본 성질이 유사하고, 주로 크기/범위가 다르다
 
-			For integer types, having more representable values means that the range of values they can represent is greater;
-			for example, a 16-bit unsigned integer would be able to represent 65536 distinct values in the range 0 to 65535,
-			while its signed counterpart would be able to represent, on most cases, values between -32768 and 32767.
-			Note that the range of positive values is approximately halved in signed types compared to unsigned types,
-			due to the fact that one of the 16 bits is used for the sign; this is a relatively modest difference in range,
-			and seldom justifies the use of unsigned types based purely on the range of positive values they can represent.
+			---------------------------------------------------------------------------------------
+			[6] char를 제외하면 “정확한 크기”는 표준이 고정하지 않는다
+			---------------------------------------------------------------------------------------
+			- char는 정확히 1바이트로 고정.
+			- 그 외 기본 타입들은 “최소 크기만 보장”한다.
+			  => 플랫폼/컴파일러/아키텍처에 따라 실제 크기는 달라질 수 있다.
+			- 이는 C++이 다양한 환경에서 최적 동작하도록 하기 위한 유연성이다.
 
-			For floating-point types, the size affects their precision, by having more or less bits for their significant and exponent.
+			---------------------------------------------------------------------------------------
+			[7] 비트 수가 커지면?
+			---------------------------------------------------------------------------------------
+			- 비트 수↑ => 표현 가능한 값의 개수(범위)↑, 하지만 메모리 사용량↑
+			  예)
+				8-bit  : 2^8  = 256
+				16-bit : 2^16 = 65,536
+				32-bit : 2^32 = 4,294,967,296 (약 40억)
+				64-bit : 2^64 (매우 큼)
 
-			If the size or precision of the type is not a concern, then char, int, and double are typically selected to represent characters,
-			integers, and floating-point values, respectively.
-			The other types in their respective groups are only used in very particular cases.
+			---------------------------------------------------------------------------------------
+			[8] signed vs unsigned 범위
+			---------------------------------------------------------------------------------------
+			- unsigned는 0 이상만 표현하지만 양수 범위가 더 넓다.
+			- signed는 부호 비트(sign bit)가 필요해서 양수 범위가 대략 절반 정도 된다.
+			- “양수 범위가 조금 더 크다”는 이유만으로 unsigned를 쓰는 것은
+			  실무에서 큰 근거가 되지 않는 경우가 많다(부호 관련 버그 주의).
 
-			The properties of fundamental types in a particular system
-			and compiler implementation can be obtained by using the numeric_limits classes (see standard header <limits>).
-			If for some reason, types of specific sizes are needed, the library defines certain fixed-size type aliases in header <cstdint>.
+			---------------------------------------------------------------------------------------
+			[9] 부동소수점에서 크기 = 정밀도
+			---------------------------------------------------------------------------------------
+			- float / double / long double은 크기가 커질수록
+			  가수/지수에 쓸 수 있는 비트가 늘어 정밀도가 높아진다.
 
-			The types described above (characters, integers, floating-point, and boolean) are collectively known as arithmetic types.
-			But two additional fundamental types exist: void, which identifies the lack of type; and the type nullptr,
-			which is a special type of pointer. Both types will be discussed further in a coming chapter about pointers.
+			---------------------------------------------------------------------------------------
+			[10] 보통의 기본 선택(특별한 이유가 없다면)
+			---------------------------------------------------------------------------------------
+			- 문자: char
+			- 정수: int
+			- 실수: double
+			- 그 외 타입들은 특정 목적(메모리/범위/정밀도/호환성 등)일 때 선택
 
-			C++ supports a wide variety of types based on the fundamental types discussed above; these other types are known as compound data types,
-			and are one of the main strengths of the C++ language. We will also see them in more detail in future chapters.
+			---------------------------------------------------------------------------------------
+			[11] 시스템별 타입 정보 확인 방법
+			---------------------------------------------------------------------------------------
+			- <limits>의 std::numeric_limits<T> 로 범위/특성을 확인할 수 있다.
+			- 특정 비트 폭이 꼭 필요하면 <cstdint>의 고정 크기 타입을 사용한다.
+			  예) int32_t, uint64_t 등
+
+			---------------------------------------------------------------------------------------
+			[12] 산술 타입(arithmetic types)과 추가 기본 타입
+			---------------------------------------------------------------------------------------
+			- 문자/정수/실수/bool은 묶어서 산술 타입(arithmetic types)이라 부른다.
+			- 추가 기본 타입:
+			  * void     : 타입 없음
+			  * nullptr  : 널 포인터를 위한 특수 타입
+			- 포인터 챕터에서 보통 더 자세히 다룬다.
+
+			---------------------------------------------------------------------------------------
+			[13] 복합 타입(compound types)
+			---------------------------------------------------------------------------------------
+			- C++은 기본 타입을 기반으로 포인터/참조/배열/구조체/클래스 등
+			  다양한 “복합 타입”을 만들 수 있고, 이것이 C++의 큰 강점이다.
 		*/
 		{
 			//size of types
@@ -520,6 +1213,8 @@ namespace VariablesAndTypes
 					(void*) : 8 byte
 					(int*) : 8 byte
 				*/
+
+				system("pause");
 			}
 
 			//bit of types
@@ -592,1658 +1287,792 @@ namespace VariablesAndTypes
 
 				system("pause");
 			}
+
+			// [1] 메모리와 타입의 관계: 같은 “0/1”이라도 타입에 따라 해석이 달라짐
+			{
+				printLine("[1] Memory & Type: same bits, different meaning");
+
+				// 같은 32비트를 int와 float로 해석해보기(유니온/bit-copy)
+				uint32_t bits = 0x3F800000u; // float 1.0f의 IEEE-754 비트 패턴으로 널리 알려진 값
+				float f = 0.0f;
+				int i = 0;
+
+				static_assert(sizeof(bits) == sizeof(f), "uint32_t and float must be 4 bytes");
+				static_assert(sizeof(bits) == sizeof(i), "uint32_t and int must be 4 bytes");
+
+				memcpy(&f, &bits, sizeof(bits));
+				memcpy(&i, &bits, sizeof(bits));
+
+				std::cout << "raw bits (hex) = 0x" << std::hex << bits << std::dec << "\n";
+				std::cout << "as float       = " << f << "\n";
+				std::cout << "as int         = " << i << "\n";
+				std::cout << "(같은 비트라도 타입이 달라지면 값의 해석이 완전히 달라짐)\n";
+
+				system("pause");
+			}
+
+			// [2][3] 기본 타입 분류/목록: sizeof로 크기 확인
+			{
+				printLine("[2][3] Fundamental types: sizeof (platform dependent except char=1 byte)");
+
+				std::cout << "sizeof(char)        = " << sizeof(char) << "\n";
+				std::cout << "sizeof(char16_t)    = " << sizeof(char16_t) << "\n";
+				std::cout << "sizeof(char32_t)    = " << sizeof(char32_t) << "\n";
+				std::cout << "sizeof(wchar_t)     = " << sizeof(wchar_t) << "\n\n";
+
+				std::cout << "sizeof(signed char) = " << sizeof(signed char) << "\n";
+				std::cout << "sizeof(short)       = " << sizeof(short) << "\n";
+				std::cout << "sizeof(int)         = " << sizeof(int) << "\n";
+				std::cout << "sizeof(long)        = " << sizeof(long) << "\n";
+				std::cout << "sizeof(long long)   = " << sizeof(long long) << "\n\n";
+
+				std::cout << "sizeof(unsigned int)= " << sizeof(unsigned int) << "\n\n";
+
+				std::cout << "sizeof(float)       = " << sizeof(float) << "\n";
+				std::cout << "sizeof(double)      = " << sizeof(double) << "\n";
+				std::cout << "sizeof(long double) = " << sizeof(long double) << "\n\n";
+
+				std::cout << "sizeof(bool)        = " << sizeof(bool) << "\n";
+				std::cout << "sizeof(void*)       = " << sizeof(void*) << "\n";
+				std::cout << "sizeof(nullptr)     = " << sizeof(decltype(nullptr)) << "\n";
+
+				// 표준 보장: char는 반드시 1바이트
+				static_assert(sizeof(char) == 1, "C++ standard: sizeof(char) is always 1 byte");
+
+				system("pause");
+			}
+
+			// [4] 정수 타입 이름 축약: 타입 동치성(static_assert로 확인)
+			{	
+				printLine("[4] Integer type name abbreviation equivalence");
+
+				static_assert(std::is_same<short, short int>::value, "short == short int");
+				static_assert(std::is_same<signed short, signed short int>::value, "signed short == signed short int");
+				static_assert(std::is_same<int, signed int>::value, "int == signed int");
+
+				std::cout << "static_assert로 short/short int 등이 같은 타입임을 확인했습니다.\n";
+
+				system("pause");
+			}
+
+			// [5] 같은 그룹 내 차이 = 주로 크기: sizeof 관계 출력
+			{
+				printLine("[5] Within-group difference is mainly size (non-decreasing)");
+
+				std::cout << "sizeof(char)  <= sizeof(short) ? " << (sizeof(char) <= sizeof(short)) << "\n";
+				std::cout << "sizeof(short) <= sizeof(int)   ? " << (sizeof(short) <= sizeof(int)) << "\n";
+				std::cout << "sizeof(int)   <= sizeof(long)  ? " << (sizeof(int) <= sizeof(long)) << "\n";
+				std::cout << "sizeof(long)  <= sizeof(long long) ? " << (sizeof(long) <= sizeof(long long)) << "\n";
+
+				std::cout << "(표준은 최소 크기만 보장하므로, 관계는 플랫폼에 따라 같거나 커질 수 있음)\n";
+
+				system("pause");
+			}
+
+			// [6] char 제외 크기 고정 아님: 현재 플랫폼 값 출력
+			{
+				printLine("[6] Sizes are not fixed (except char). Show current platform result");
+
+				std::cout << "This platform sizes:\n";
+				std::cout << "  char      : " << sizeof(char) << "\n";
+				std::cout << "  short     : " << sizeof(short) << "\n";
+				std::cout << "  int       : " << sizeof(int) << "\n";
+				std::cout << "  long      : " << sizeof(long) << "\n";
+				std::cout << "  long long : " << sizeof(long long) << "\n";
+				std::cout << "  void*     : " << sizeof(void*) << "\n";
+				std::cout << "(예: Windows/MSVC 64-bit는 보통 long=4)\n";
+
+				system("pause");
+			}
+
+			// [7] 비트 수↑ => 2^N 출력(64는 overflow 주의)
+			{
+				printLine("[7] Bits -> unique representable values (2^N)");
+
+				std::cout << "8-bit  : " << (1ULL << 8) << " = 2^8\n";
+				std::cout << "16-bit : " << (1ULL << 16) << " = 2^16\n";
+				std::cout << "32-bit : " << (1ULL << 32) << " = 2^32\n";
+				std::cout << "64-bit : 2^64 (uint64_t 범위를 넘어가므로 숫자 출력은 생략)\n";
+
+				system("pause");
+			}
+
+			// [8] signed vs unsigned 범위: numeric_limits
+			{
+				printLine("[8] signed vs unsigned ranges");
+
+				std::cout << "int min/max           = "
+					<< std::numeric_limits<int>::min() << " / " << std::numeric_limits<int>::max() << "\n";
+				std::cout << "unsigned int min/max  = "
+					<< std::numeric_limits<unsigned int>::min() << " / " << std::numeric_limits<unsigned int>::max() << "\n";
+
+				std::cout << "short min/max         = "
+					<< std::numeric_limits<short>::min() << " / " << std::numeric_limits<short>::max() << "\n";
+				std::cout << "unsigned short min/max= "
+					<< std::numeric_limits<unsigned short>::min() << " / " << std::numeric_limits<unsigned short>::max() << "\n";
+
+				std::cout << "(unsigned는 0부터 시작, signed는 음수 포함 + 양수 범위가 대략 절반)\n";
+
+				system("pause");
+			}
+
+			// [9] float vs double 정밀도: digits10/epsilon + 0.1 누적
+			{
+				printLine("[9] Floating-point precision (float vs double)");
+
+				std::cout << "float  digits10  = " << std::numeric_limits<float>::digits10 << "\n";
+				std::cout << "double digits10  = " << std::numeric_limits<double>::digits10 << "\n";
+				std::cout << "float  epsilon   = " << std::numeric_limits<float>::epsilon() << "\n";
+				std::cout << "double epsilon   = " << std::numeric_limits<double>::epsilon() << "\n";
+
+				float fs = 0.0f;
+				double ds = 0.0;
+				for (int k = 0; k < 10; ++k) { fs += 0.1f; ds += 0.1; }
+
+				std::cout << "float  sum(0.1f x10) = " << fs << "\n";
+				std::cout << "double sum(0.1  x10) = " << ds << "\n";
+
+				system("pause");
+			}
+
+			// [10] 보통 선택: char/int/double 예시
+			{
+				printLine("[10] Typical choices: char / int / double");
+
+				char ch = 'A';
+				int count = 1024;
+				double pi = 3.141592653589793;
+
+				std::cout << "char   ch    = " << ch << "\n";
+				std::cout << "int    count = " << count << "\n";
+				std::cout << "double pi    = " << pi << "\n";
+
+				system("pause");
+			}
+
+			// [11] numeric_limits & <cstdint> 고정폭 타입
+			{
+				printLine("[11] numeric_limits + <cstdint> fixed-size types");
+
+				std::cout << "int32_t  size = " << sizeof(int32_t) << " bytes\n";
+				std::cout << "uint64_t size = " << sizeof(uint64_t) << " bytes\n";
+
+				std::cout << "int32_t  min/max = "
+					<< std::numeric_limits<int32_t>::min() << " / " << std::numeric_limits<int32_t>::max() << "\n";
+				std::cout << "uint64_t min/max = "
+					<< std::numeric_limits<uint64_t>::min() << " / " << std::numeric_limits<uint64_t>::max() << "\n";
+
+				system("pause");
+			}
+
+			// [12] arithmetic types + void/nullptr (v140: is_arithmetic_v 없음)
+			{
+				printLine("[12] arithmetic types + void + nullptr");
+
+				static_assert(std::is_arithmetic<int>::value, "int is arithmetic");
+				static_assert(std::is_arithmetic<double>::value, "double is arithmetic");
+				static_assert(std::is_arithmetic<char>::value, "char is arithmetic");
+				static_assert(std::is_arithmetic<bool>::value, "bool is arithmetic");
+
+				std::cout << "static_assert로 산술 타입(arithmetic types)임을 확인했습니다.\n";
+
+				void* p = nullptr;
+				std::cout << "void* p = " << p << " (nullptr)\n";
+
+				decltype(nullptr) np = nullptr;
+				std::cout << "decltype(nullptr) size = " << sizeof(np) << "\n";
+
+				system("pause");
+			}
+
+			// [13] compound types: 배열/포인터/참조/구조체
+			{
+				printLine("[13] Compound types examples (array/pointer/reference/struct)");
+
+				int arr[3] = { 10, 20, 30 };
+
+				int* p = &arr[0];
+				int& r = arr[1];
+
+				struct Player
+				{
+					int id;
+					float hp;
+					bool alive;
+				};
+
+				Player pl = { 7, 99.5f, true };
+
+				std::cout << "array arr[0..2] = " << arr[0] << ", " << arr[1] << ", " << arr[2] << "\n";
+				std::cout << "pointer p -> *p = " << *p << "\n";
+				std::cout << "reference r (arr[1]) = " << r << "\n";
+				r = 777;
+				std::cout << "after r=777, arr[1] = " << arr[1] << "\n";
+
+				std::cout << "struct Player = { id=" << pl.id << ", hp=" << pl.hp << ", alive=" << pl.alive << " }\n";
+
+				system("pause");
+			}
 		}
+	}
+
+	//---------------------------------------------------------------------------------------------
+
+	bool safe_add_u32(unsigned __int32 a, unsigned __int32 b, unsigned __int32& out)
+	{
+		const unsigned __int32 max = std::numeric_limits<unsigned __int32>::max();
+
+		// unsigned는 a+b가 max를 넘으면 랩어라운드
+		if (b > max - a) return false;
+
+		out = a + b;
+		return true;
+	}
+
+	bool safe_sub_u32(unsigned __int32 a, unsigned __int32 b, unsigned __int32& out)
+	{
+		// a-b에서 b > a면 랩어라운드(언더플로우 느낌)
+		if (b > a) return false;
+
+		out = a - b;
+		return true;
+	}
+
+	bool safe_add_i32(__int32 a, __int32 b, __int32& out)
+	{
+		const __int32 max = std::numeric_limits<__int32>::max();
+		const __int32 min = std::numeric_limits<__int32>::min();
+
+		// b의 부호에 따라 검사식이 달라짐(이게 정석)
+		if (b > 0)
+		{
+			if (a > max - b) return false;
+		}
+		else if (b < 0)
+		{
+			if (a < min - b) return false;
+		}
+
+		out = a + b;
+		return true;
+	}
+
+	bool safe_sub_i32(__int32 a, __int32 b, __int32& out)
+	{
+		const __int32 max = std::numeric_limits<__int32>::max();
+		const __int32 min = std::numeric_limits<__int32>::min();
+
+		// a - b == a + (-b) 로 생각하면 동일하게 처리 가능
+		// 단, -b가 overflow 나는 케이스(b==INT_MIN)는 별도 처리 필요
+		if (b == min)
+		{
+			// a - INT_MIN 은 a + 2147483648 이 되어 범위를 벗어날 수 있음
+			// (INT_MIN의 절댓값은 int에 담기지 않음)
+			// 안전하게 판정:
+			// a - min => 항상 overflow(양수 방향) 가능성이 매우 큼.
+			// 정확히는 a가 음수여도 결과가 max를 넘어갈 수 있음.
+			// a - min = a + 2147483648 이므로 int32 범위 밖 -> 무조건 실패 처리
+			return false;
+		}
+
+		__int32 nb = -b;
+		return safe_add_i32(a, nb, out);
 	}
 
 	void integer_over_under_flow()
 	{
-		//for add operation unsigned 32bit check
+		// 1) unsigned 32-bit add
 		{
-			unsigned __int32 max = std::numeric_limits<unsigned __int32>::max();
-			unsigned __int32 a = max;
+			unsigned __int32 a = std::numeric_limits<unsigned __int32>::max();
 			unsigned __int32 b = 1;
+			unsigned __int32 r = 0;
 
-			if ( 0 < b && b > max - a ) {
-				printf("Overflow Unsigned Integer 32bit !!! : Max:%u, Overflow:%u\n", max, b);
-			}
-			else {
-				printf("Unsigned Integer 32bit - Before:%d, After:%u\n", a, a + b);
-			}
-
-			/*
-			output:
-				Overflow Unsigned Integer 32bit !!! : Max:4294967295, Overflow:1
-			*/
+			if (!safe_add_u32(a, b, r))
+				printf("Overflow(=wrap) Unsigned 32-bit add !!! : a=%u, b=%u\n", a, b);
+			else
+				printf("Unsigned 32-bit add ok : a=%u, b=%u, r=%u\n", a, b, r);
 		}
 
-		//for subtract operation unsigned 32bit check
+		// 2) unsigned 32-bit sub
 		{
-			unsigned __int32 min = std::numeric_limits<unsigned __int32>::min();
-			unsigned __int32 a = min;
+			unsigned __int32 a = std::numeric_limits<unsigned __int32>::min(); // 0
 			unsigned __int32 b = 1;
+			unsigned __int32 r = 0;
 
-			if ( a < b && min < b ) {
-				printf("Underflow Unsigned Integer 32bit !!! : Min:%u, Underflow:%u\n", min, b);
-			}
-			else {
-				printf("Unsigned Integer 32bit - Before:%d, After:%u\n", a, a - b);
-			}
-
-			/*
-			output:
-				Underflow Unsigned Integer 32bit !!! : Min:0, Underflow:1
-			*/
+			if (!safe_sub_u32(a, b, r))
+				printf("Underflow(=wrap) Unsigned 32-bit sub !!! : a=%u, b=%u\n", a, b);
+			else
+				printf("Unsigned 32-bit sub ok : a=%u, b=%u, r=%u\n", a, b, r);
 		}
 
-		//for add operation signed 32bit check
+		// 3) signed 32-bit add
 		{
-			__int32 max = std::numeric_limits<__int32>::max();
-			__int32 a = max;
+			__int32 a = std::numeric_limits<__int32>::max();
 			__int32 b = 1;
+			__int32 r = 0;
 
-			if ( 0 < a && b > max - a ) {
-				printf("Overflow Signed Integer 32bit !!! : Max:%d, Overflow:%d\n", max, b);
-			}
-			else {
-				printf("Signed Integer 32bit - Before:%d, After:%d\n", a, a + b);
-			}
-
-			/*
-			output:
-				Overflow Signed Integer 32bit !!! : Max:2147483647, Overflow:1
-			*/
+			if (!safe_add_i32(a, b, r))
+				printf("Overflow Signed 32-bit add !!! : a=%d, b=%d\n", a, b);
+			else
+				printf("Signed 32-bit add ok : a=%d, b=%d, r=%d\n", a, b, r);
 		}
 
-		//for subtract operation signed 32bit check
+		// 4) signed 32-bit sub
 		{
-			__int32 min = std::numeric_limits<__int32>::min();
-			__int32 a = min;
+			__int32 a = std::numeric_limits<__int32>::min();
 			__int32 b = 1;
+			__int32 r = 0;
 
-			if (a < 0 && b > min + a) {
-				printf("Underflow Signed Integer 32bit !!! : Min:%d, Underflow:%d\n", min, b);
-			}
-			else {
-				printf("Signed Integer 32bit - Before:%d, After:%d\n", a, a - b);
-			}
-
-			/*
-			output:
-				Underflow Signed Integer 32bit !!! : Min:-2147483648, Underflow:1
-			*/
+			if (!safe_sub_i32(a, b, r))
+				printf("Underflow Signed 32-bit sub !!! : a=%d, b=%d\n", a, b);
+			else
+				printf("Signed 32-bit sub ok : a=%d, b=%d, r=%d\n", a, b, r);
 		}
 
 		system("pause");
 	}
 
-	void ieee_754_floating_point()
-	{
-		/*
-			IEEE 754 floating point
-
-			IEEE 754 is a technical standard for representing IEEE floating point.
-			The current version of current writing is IEEE 754-2008, which was enacted in August 2008.
-			Previously, IEEE 754-1985 introduced a standard for binary floating points,
-			IEEE 854-1987 defined a standard for radix-independent floating points (binary / decimal)
-			IEEE 754-2008 includes both binary and decimal.
-
-			IEEE 754 standard definition
-			The main items defined in IEEE 754 are as follows.
-
-				* Arithmetic formats
-				* Interchange formats
-				* Rounding rules
-				* Operations
-				* Exception handling
-
-			It also includes standards such as advanced exception handling and additional operations (trigonometric functions, etc.).
-
-
-			- Arithmetic formats
-
-			A floating point is expressed as an exponent representing the position of a decimal point and
-			a mantissa representing a significant digit when expressing a real number.
-			In addition to finite numbers, we have set standards for infinity and NaN.
-
-				Basic format
-					(-1)^s × c × b^q
-
-			The expression for floating point is as above.
-
-				s: Represents a sign (sign), where 0 represents +, and 1 represents -.
-				c: Represents the mantissa (significand, fraction), expressed as a positive integer.
-				   The range is limited by the precision.
-				b: Indicates the base / radix, which is 2 or 10 in IEEE 754.
-				   This means that each is represented as a binary number or a decimal number.
-				q: represents the exponent and the exponent represents the position of the decimal point.
-
-			For example, 1.2345 is expressed as the base number 10, as follows.
-
-				1.2345 = (-1)^0 × 12345 × 10^-4
-
-			By default, the value of each part is
-
-				s: 0
-				c: 12345
-				b: 10
-				q: -4
-
-			In the actual representation, since the bit size of the significand and
-			the exponent are different according to the precision defined by IEEE 754, the number of digits to be represented is different.
-
-			NaN (not a number)
-			IEEE 754 defines a special value in addition to the usual number.
-			NaN is a symbol that indicates that the calculations failed due to incorrect inputs.
-			The main situations in which NaN occurs are as follows.
-
-				Operator			Conditions for generating NaN
-				+					∞ + (-∞)
-				×					0 × ∞
-				/					0 / 0, ∞ / ∞
-				REM					X REM 0, ∞ REM Y
-				root				root(X) (when x < 0)
-	
-			The way to express NaN is as follows.
-
-				* All bits in the exponent are filled with 1s.
-				* The value of the mantissa should not be zero.
-				* The sign does not make sense.
-			
-			There are two types: quiet NaN and signaling NaN.
-
-			Quiet NaN
-			Quiet NaN is responsible for continuing operations by returning a NaN without throwing an exception due to erroneous input.
-			In the case of Quiet NaN, all bits in the mantissa are filled with 1s.
-
-			Signaling NaN
-			Signaling NaN indicates a case where an exception is raised during a wrong operation as opposed to a quiet NaN.
-			Signaling NaN fills most of the mantissa bits with zeros and fills at least one bit with ones.
-
-			infinity
-			Infinity defines the value to represent when overflow occurs.
-			This is because it is a more secure way than using the maximum number of expressions to be infinite.
-			The way to express infinity is as follows.
-
-				* All bits in the exponent are filled with 1s.
-				* All bits in the mantissa are filled with zeros.
-				* It is divided into positive infinity and negative infinity according to the sign.
-				
-			For example, 0 / 0 is NaN.
-			However, dividing a nonzero number by 0 results in infinity, which is 1/0 = ∞ and -1 / 0 = -∞.
-			IEEE 754 defines c / 0 = ± ∞ when c is not zero.
-			At this point, the sign will follow the sign of c.
-			For reference, if the sign bit is 0, it is positive infinity, and if 1, it is negative infinity.
-
-			Zero signed
-			IEEE 754 distinguishes between signed 0s.
-			We have set the rule of -0 = +0 because we can produce uncertain results in operations like if (x == 0).
-			The use of a signed 0 enables the expression 1 / -∞ <1 / + ∞.
-			A method of expressing a signed 0 is as follows.
-
-			All bits in the exponent are filled with zeros.
-			All bits in the mantissa are also filled with zeros.
-			It is divided into +0 and -0 depending on the sign.
-			For reference, if the sign bit is 0, it is +0, and if it is 1, it is -1.
-
-
-			- Exchange type
-
-			IEEE 754 defines 32-, 64-, and 128-bit binary formats and 64- and 128-bit decimal formats by default.
-			For reference, binary 32 format is called single precision and binary 64 format is called double precision.
-			The main factors for each type are as follows. (sign bit is always 1 digit)
-
-				Format name		Precision name			Base	Exponent	Significand		Exponent bias		Min Exponent	Max Exponent
-				binary32		Single precision		2		8			23				2^7 - 1 = 127		-126			127
-				binary64		Double precision		2		11			52				2^10 - 1 = 1023		-1022			1023
-				binary128		Quadruple precision		2		15			112				2^14 - 1 = 16383	-16382			16383
-				decimal64								10		10			16				398					-383			384
-				decimal128								10		14			34				6176				-6143			6144
-
-			For binary format, the number of digits is the same as the number of bits, but in case of decimal,
-			it indicates the number of digits to represent.
-			Also, the way to express decimal 64 and decimal 128 bits is slightly different.
-
-			In addition, it defines binary 16, binary 256, and decimal 32.
-			It also defines a format that extends the base format.
-			The extended precision format specifies a lower bound on how much more bits to add in the standard format.	
-			Major extensions include x86 extended double quotes.
-
-			Format conversion (binary32)
-			In order to represent an arbitrary real number as binary 75 (IEEE 754 standard, single precision), 
-			the absolute value of the real number is converted into binary, and the values ​​corresponding to sign, exponent,
-			and mantissa are summed up It can be expressed in position.	
-			Basically, the following steps are taken.
-
-				* First, the code part is represented by a bit in an arbitrary real number. (0 for +, 1 for -)
-				* The absolute value is expressed in binary form.
-				* Normalize processing to form arithmetic expressions.
-				
-					(-1)^s × c × b^q
-				
-				* In the above result, the remainder except the first 1 of the mantissa (c) is filled in the significand bit.
-				  (At this point, fill in the missing part with zeros.)
-				* The exponent part (q) is added to the sign bits by adding the bias value and then expressed in binary.
-				
-			For more information, see the examples below.
-
-			Expression example
-			Let's express arbitrary real number -12.375 in binary32 format.
-			The bit structure of binary 32 is as shown in the table above, which requires the mantissa 23, the exponent 8, and the code 1.
-
-				sign exponent                 significand
-				[0]  [0][0][0][0][0][0][0][0] [0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0]
-				31   30                   23  22                                                                0
-
-			If the code part is represented by a bit in an arbitrary real number, the bit value of the sign is 1 since -12.375 is a negative number.
-				
-				sign exponent                 significand
-				[1]  [0][0][0][0][0][0][0][0] [0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0]
-				31   30                   23  22                                                                0
-
-			Expressing the absolute value of 12.375 in binary is 1100.011.
-			Note that when converting to binary,
-			the integer part before the decimal point is represented by the remainders divided by the remainder being less than 2,
-			and the decimal part after the decimal point is multiplied by 2 until the result is 1.0,
-			and expressed as an integer part for each step.
-
-			Now normalize the result.
-			Normalization means processing the arithmetic expression so that the first digit of the mantissa (c) is 1.
-			When normalization is performed, the mantissa part (c) is represented by the expression 1.xxxx.
-			Normalization of the previous result is as follows.
-
-				1.100011 × 2^3
-
-			If the normalization is performed, the integer part of the mantissa is always 1, so it is omitted when expressing binary32.
-			In the binary32 format, the mantissa is composed of 23 bits, but since the first 1 is omitted by the normalization operation, it actually represents 24 bits.
-			It says that it uses the hidden bit (hidden bit).
-			
-			Now the expression of the mantissa is as follows.
-
-				sign exponent                 significand
-				[1]  [0][0][0][0][0][0][0][0] [1][0][0][0][1][1][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0]
-				31   30                   23  22                                                                0
-
-			In 1.10011, only the fractional part except the leading 1 is represented, and the remaining bits are filled with 0s.
-
-			Now the index part is left. Since the exponent can be both positive and negative, a special way of expressing it is used. IEEE 754 expresses both positive and negative numbers using the bias expression.
-			In the binary 32 format, the exponent is composed of 8 bits, with a minimum value of -126 and a maximum value of 127.
-			Since 8 bits can represent 0 to 255, it divides it by half and expresses both positive and negative numbers.
-
-				That is, bias + q = exponent.
-
-			In this example, since q = 3, bias + q = 127 + 3 = 130.
-			130 is expressed by binary method and is 10000010.
-			Finally, the final exponent is filled in as binary32.
-
-				sign exponent                 significand
-				[1]  [1][0][0][0][0][0][0][1] [1][0][0][0][1][1][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0][0]
-				31   30                   23  22                                                                0
-
-			Denormalized (denormalized number)
-			IEEE 754 has a special value, such as NaN, infinity, and so on.
-			In the above expression example, binary32 is expressed through normalization.
-			In this case, the bit value is filled out except for the leading one.
-			In other words, all the numbers expressed by normalization can not but express the number 1.xx..xx because of the hidden bits.
-			For example, 0.11 × 2^126 smaller than 1.00 × 2^126 can not be expressed because it is out of the expression range of exponent part.
-			Also, this very small value can cause some formulas to fail.
-			Thus, IEEE 754 addresses this by introducing denormalized numbers.
-			The behavior with denormalized numbers is called gradual underflow.
-			The manner of expressing the denormalized number is as follows.
-
-				* All bits in the exponent are filled with zeros.
-				* Expresses the values ​​of a sign and a sigificand.
-
-
-			- Rounding rules
-
-			In IEEE 754, floating-point operations (or conversions) round off to represent the closest value to the original value,
-			rather than beyond the mantissa representation.
-			IEEE 754 defines five types of rounding methods:
-
-				Collect
-				Round up is rounded up in the + ∞ direction.
-				Therefore, if a negative number is directed toward 0, if the absolute value is used as a reference, the number is discarded.
-
-					 -∞ ---------------------------------------------------------------------------------> +∞
-					-1.0 -0.9 -0.8 -0.7 -0.6 -0.5 -0.4 -0.3 -0.2 -0.1 0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0
-					  -1    0    0    0    0    0    0    0    0    0 0   1   1   1   1   1   1   1   1   1   1
-
-				Round off
-				Round down performs rounding down in the -∞ direction.
-				Therefore, if it is a negative number, the number is rounded up if it is based on the absolute value.
-
-					 -∞ <--------------------------------------------------------------------------------- +∞
-					-1.0 -0.9 -0.8 -0.7 -0.6 -0.5 -0.4 -0.3 -0.2 -0.1 0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0
-					  -1   -1   -1   -1   -1   -1   -1   -1   -1   -1 0   0   0   0   0   0   0   0   0   0   1
-
-				Round to zero
-				Round toward zero always selects the nearest number in the direction of 0 for rounding.
-				If you look at the absolute value, the absolute value is smaller than or equal to the original value,
-				and the largest number of the same value is selected.
-				That is, the process is always discarded.
-
-					 -∞ ------------------------------------------->   <---------------------------------- +∞
-					-1.0 -0.9 -0.8 -0.7 -0.6 -0.5 -0.4 -0.3 -0.2 -0.1 0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0
-					  -1    0    0    0    0    0    0    0    0    0 0   0   0   0   0   0   0   0   0   0   1
-
-				Round to the nearest, even close to the nearest
-				Round to nearest is literally rounding to the nearest value.
-				In IEEE 754, the closest value is classified into two.
-				One is ties to even.
-				If the closest value is 2 (for example 0.5, the closest value is 0 and 1), the last digit of the mantissa is even.
-				round to nearest, and ties to even are also called banker's rounding,
-				and the IEEE 754 standard provides a basic approach to rounding.
-
-				                   X                      O                     O                  X           
-					 -∞ <--------------------   ------------------->   <---------------   ---------------> +∞
-					-1.0 -0.9 -0.8 -0.7 -0.6 -0.5 -0.4 -0.3 -0.2 -0.1 0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0
-					  -1   -1   -1   -1   -1    0    0    0    0    0 0   0   0   0   0   0   1   1   1   1   1
-
-				round to nearest, and ties to even are directed to even if the closest value is 2,
-				so the directionality of the arrow may vary as follows.
-
-				                 O                  X                   X                  O
-					 -∞ <---------------   ---------------->   <----------------   ---------------> +∞
-					 2.0 2.1 2.2 2.3 2.4 2.5 2.6 2.7 2.8 2.9 3.0 3.1 3.2 3.3 3.4 3.5 3.6 3.7 3.8 3.9 4.0
-					   2   2   2   2   2   3   3   3   3   3   3   3   3   3   4   4   4   4   4   4   4
-
-				Round the nearest side and move away from zero.
-				Another way is to tie away from zero. This selects the largest value based on the absolute value when the closest value is two.
-
-								  O                      X                     X                  O           
-					 -∞ <--------------------   ------------------->   <---------------   ---------------> +∞
-					-1.0 -0.9 -0.8 -0.7 -0.6 -0.5 -0.4 -0.3 -0.2 -0.1 0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0
-					  -1   -1   -1   -1   -1   -1    0    0    0    0 0   0   0   0   0   1   1   1   1   1   1
-
-
-			- Operation
-			
-			In addition to floating point representation, IEEE 754 defines standards for arithmetic operations, conversions, and testing.
-			In the case of arithmetic operations, the operation is first rounded to round to nearest (ties to even).
-			It also provides criteria for power, power, sign, and so on.
-			This is to ensure that the same results are always obtained between standards-compliant programs and to improve portability.
-
-
-			- Exception handling
-
-			IEEE 754 specifies that handlers should be used to handle exceptions in various situations.
-			There are basically five exceptions.
-
-				* Invalid operation
-				  Occurs when an invalid argument is used in an operation, and returns NaN by default.
-
-				* Division by zero (divide by zero)
-			      This occurs when the operand is 0 and returns ±∞ by default.
-
-			    * Overflow
-			      It occurs when the value is out of the range after rounding, and returns ±∞ by default.
-
-				* Underflow
-			      It occurs when the value is too small after the rounding process and basically returns an unqualified number.
-				  It usually occurs as inexact.
-
-			    * Inexact
-			      Occurs when the result of an operation is incorrect.
-				  Inaccuracies are most often caused by rounding off nonzero numbers.
-				  It basically returns the rounded result.
-			      Also, one exception flag is allocated to each exception to determine the exception condition correctly.
-
-			In addition, the decimal floating point is clamped (if the value to be expressed in the exponent is out of the range)
-			and Rounded (rounded off when the number is truncated, if Rounded occurs but Inexact occurs if the nonzero number is truncated).
-
-			Floating point conditions
-			
-			When programming, there are certain error condition that might arise from your code.
-			If the compiler catches any compilation errors, it will stop compilation and tell you what and where the error is.
-			The compiler also may issue a warning for certain constructs, which may or may not give you problems during runtime.
-
-			Here are some floating point conditions that you as a programmer should be aware of when doing floating point arithmetic
-			(any of addition, subtraction, multiplication, and division), namely  INF, IND, and NaN (QNAN and SNAN) conditions and errors.
-		*/
-		{
-			std::string bitString;
-
-			int exponent = 0;
-
-			//integer min-max size
-			int minInt = INT_MIN;
-			int maxInt = INT_MAX;
-			printf("INT_MIN(d): %d, INT_MAX(d): %d\n", minInt, maxInt);
-			printf("INT_MIN(e): %e, INT_MAX(e): %e\n", (double)minInt, (double)maxInt);
-			printf("INT_MIN(x): %x, INT_MAX(x): %x\n", minInt, maxInt);		
-			printBitFormatOfType(minInt);
-			printBitFormatOfType(maxInt);
-
-			minInt--;
-			maxInt++;
-			printf("Decreased INT_MIN(d): %d, Increased INT_MAX(d): %d\n", minInt, maxInt);
-			printf("Decreased INT_MIN(e): %e, Increased INT_MAX(e): %e\n", (double)minInt, (double)maxInt);
-			printf("Decreased INT_MIN(x): %x, Increased INT_MAX(x): %x\n", minInt, maxInt);
-			printBitFormatOfType(minInt);
-			printBitFormatOfType(maxInt);
-
-			/*
-			output:
-				INT_MIN(d) : -2147483648, INT_MAX(d) : 2147483647
-				INT_MIN(e) : 1.060998e-314, INT_MAX(e) : 1.060998e-314
-				INT_MIN(x) : 80000000, INT_MAX(x) : 7fffffff
-				-2147483648 : int = 1 000 0000 0000 0000 0000 0000 0000 0000
-				2147483647 : int = 0 111 1111 1111 1111 1111 1111 1111 1111
-				Decreased INT_MIN(d) : 2147483647, Increased INT_MAX(d) : -2147483648
-				Decreased INT_MIN(e) : 1.060998e-314, Increased INT_MAX(e) : 1.060998e-314
-				Decreased INT_MIN(x) : 7fffffff, Increased INT_MAX(x) : 80000000
-				2147483647 : int = 0 111 1111 1111 1111 1111 1111 1111 1111
-				-2147483648 : int = 1 000 0000 0000 0000 0000 0000 0000 0000
-			*/
-
-			//float min-max size
-			float minFloat = FLT_MIN;
-			float maxFloat = FLT_MAX;
-			printf("FLT_MIN(f): %f, FLT_MAX(f): %f\n", minFloat, maxFloat);
-			printf("FLT_MIN(e): %e, FLT_MAX(e): %e\n", (double)minFloat, (double)maxFloat);
-			printf("FLT_MIN(x): %x, FLT_MAX(x): %x\n", *(unsigned int*)&minFloat, *(unsigned int*)&maxFloat);
-			printBitFormatOfType(minFloat);
-			printBitFormatOfType(maxFloat);
-
-			minFloat -= 0.1f;
-			for (int i = 1; maxFloat == FLT_MAX; ++i) {
-				maxFloat += std::powf(2, i);
-				exponent = i;
-			}
-
-			printf("Decreased FLT_MIN(f): %f, Increased FLT_MAX(f): %f, Exp:%d\n", minFloat, maxFloat, exponent);
-			printf("Decreased FLT_MIN(e): %e, Increased FLT_MAX(e): %e, Exp:%d\n", minFloat, maxFloat, exponent);
-			printf("Decreased FLT_MIN(x): %x, Increased FLT_MAX(x): %x, Exp:%d\n", *(unsigned int*)&minFloat, *(unsigned int*)&maxFloat, exponent);
-			printBitFormatOfType(minFloat);
-			printBitFormatOfType(maxFloat);
-
-			/*
-			output:
-				FLT_MIN(f) : 0.000000, FLT_MAX(f) : 340282346638528860000000000000000000000.000000
-				FLT_MIN(e) : 1.175494e-038, FLT_MAX(e) : 3.402823e+038
-				FLT_MIN(x) : 0, FLT_MAX(x) : e0000000
-				0.000000 : float = 0 00000001 00000 00000 00000 00000 000
-				340282346638528860000000000000000000000.000000 : float = 0 11111110 11111 11111 11111 11111 111
-				Decreased FLT_MIN(f) : -0.100000, Increased FLT_MAX(f) : 1.#INF00, Exp:103
-				Decreased FLT_MIN(e) : -1.000000e-001, Increased FLT_MAX(e) : 1.#INF00e + 000, Exp:103
-				Decreased FLT_MIN(x) : a0000000, Increased FLT_MAX(x) : 0, Exp : 103
-				-0.100000 : float = 1 01111011 10011 00110 01100 11001 101
-				Positive infinity(+INF)
-			*/
-
-			//double min-max size
-			double minDouble = DBL_MIN;
-			double maxDouble = DBL_MAX;
-
-			printf("DBL_MIN(f): %f, DBL_MAX(f): %f\n", minDouble, maxDouble);
-			printf("DBL_MIN(e): %e, DBL_MAX(e): %e\n", minDouble, maxDouble);
-			printf("DBL_MIN(x): %llx, DBL_MAX(x): %llx\n", *(uint64_t*)&minDouble, *(uint64_t*)&maxDouble);
-			printBitFormatOfType(minDouble);
-			printBitFormatOfType(maxDouble);
-
-			minDouble -= 0.1;
-			for (int i = 1; maxDouble == DBL_MAX; ++i) {
-				maxDouble += std::powf(2, i);
-				exponent = i;
-			}
-
-			printf("Decreased DBL_MIN(f): %f, Increased DBL_MAX(f): %f, Exp:%d\n", minDouble, maxDouble, exponent);
-			printf("Decreased DBL_MIN(e): %e, Increased DBL_MAX(e): %e, Exp:%d\n", minDouble, maxDouble, exponent);
-			printf("Decreased DBL_MIN(x): %llx, Increased DBL_MAX(x): %llx\n", *(uint64_t*)&minDouble, *(uint64_t*)&maxDouble);
-			printBitFormatOfType(minDouble);
-			printBitFormatOfType(maxDouble);
-
-			/*
-			output:
-				DBL_MIN(f) : 0.000000, DBL_MAX(f) : 179769313486231570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000.000000
-				DBL_MIN(e) : 2.225074e-308, DBL_MAX(e) : 1.797693e+308
-				DBL_MIN(x) : 0, DBL_MAX(x) : ffffffff
-				0.000000 : double = 0 00000000001 00000 00000 00000 00000 00000 00000 00000 00000 00000 00000 00
-				179769313486231570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000.000000 : double = 0 11111111110 11111 11111 11111 11111 11111 11111 11111 11111 11111 11111 11
-				Decreased DBL_MIN(f) : -0.100000, Increased DBL_MAX(f) : 1.#INF00, Exp:128
-				Decreased DBL_MIN(e) : -1.000000e-001, Increased DBL_MAX(e) : 1.#INF00e + 000, Exp:128
-				Decreased DBL_MIN(x) : 9999999a, Increased DBL_MAX(x) : 0, Exp : 128
-				-0.100000 : double = 1 01111111011 10011 00110 01100 11001 10011 00110 01100 11001 10011 00110 10
-				Positive infinity(+INF)
-			*/
-
-			system("pause");
-		}
-	}
-
-	void concept_of_NAN_IND_INF_DEN()
-	{
-		/*
-			Concept of NaN, IND, INF and DEN
-
-			Software developers deal with two primary data types everyday.
-			We know that they are String and Numeric.
-			When some data is said to be not-a-number, then for some developers, it could be a string.
-			In fact, it is not!
-
-			When we deal with algorithms that perform extensive numerical computation on floating point numbers,
-			there come situation which produces a result that cannot be called number!
-
-			This article is trying to give its reader a brief overview of below given numerical concepts using C++ code samples.
-
-				* NaN
-				* IND
-				* INF
-				* DEN
-
-
-			Background
-
-			I was involved in a project which required porting some Matlab image processing algorithms to C++.
-			The Matlab algorithm had high intensity in computation.
-			It has to deal with many floating point operations, each of which will be repeated for several thousand counts,
-			until a specific condition is met.
-
-			One of the most challenging requirements of the project was to produce floating point output that exactly matches the output of Matlab, using C++.
-			Any mismatch in one digit of fractional part will produce an output that is quite different from that of Matlab output.
-
-			During verification of Matlab to C++ ported code, it is found that at some point,
-			certain double variables were holding strange numbers such as "1.#QNAN00000000000", "-1.#IND000000000000" etc. How did it happen?
-
-			Matlab has a rich set of quiet-easy-to-use utility functions and operators. One such function is given below.
-
-				Pixels(isnan(Pixels)) = 0 ;
-			
-			Above Matlab statement will iterate an array named Pixels and assign a value of 0 to each array position whose value is not-a-number.
-
-			Since there was some need for haste to produce an output in C++, one statement such as the above was missed during the porting,
-			from Matlab to C++ and the result was obvious.
-			I was confronted with "strange" numbers such as "1.#QNAN00000000000"
-
-				Output		Meaning
-				1#INF		Positive infinity
-				-1#INF		Negative infinity
-				1#SNAN		Positive signaling NaN
-				-1#SNAN		Negative signaling NaN
-				1#QNAN		Positive quiet NaN
-				-1#QNAN		Negative quiet NaN
-				1#IND		Positive indefinite NaN
-				-1#IND		Negative indefinite NaN
-		*/
-		{
-			system("pause");
-		}
-	}
-
-	void concept_NAN()
-	{
-		/*
-			Concept of NAN
-
-			NAN : Not A Number.
-			When a computer performs extensive numerical calculations, result will be such that it cannot be treated as a number!
-		*/
-		{
-			double dSQRTValue = sqrt(-1.00); //An image processing algorithm may invoke the sqrt() with -1 as its input . 
-			double dResult = -dSQRTValue;  //A image processing algorithm may involve taking the negative of another value.
-
-			std::cout << "sqrt(-1.0) = " << dSQRTValue << std::endl;
-			std::cout << "-(" << dSQRTValue << ") = " << dResult << std::endl;
-			/*
-			output:
-				sqrt(-1.0) = -1.#IND
-				-(-1.#IND) = 1.#QNAN
-			*/
-
-			//Representation of NAN
-
-			//Non Standard Representation
-			const unsigned long lnNAN[2] = { 0x00000000, 0x7ff80000 };
-			const double NOT_A_NUMBER = *(double*)lnNAN;
-
-			std::cout << NOT_A_NUMBER << std::endl;
-			/*
-			output:
-				1.#QNAN
-			*/
-
-			//Standard Representation
-			const double STD_NOT_A_NUMBERD = std::numeric_limits<double>::quiet_NaN();
-
-			std::cout << STD_NOT_A_NUMBERD << std::endl;
-			/*
-			output:
-				1.#QNAN
-			*/
-
-			//Comparison of NAN
-
-			//Non Standard Comparison
-			bool bNaN = false;
-			//compare NaN & NaN in memory 
-			if (0 == memcmp(&NOT_A_NUMBER, &dResult, sizeof(double))) {
-				bNaN = true;
-			}
-
-			std::cout << "Same data block : " << bNaN << std::endl;
-			/*
-			output:
-				Same data block : 1
-			*/
-
-			bNaN = false;
-			//Standard Comparison
-			if (_isnan(dResult)) {
-				bNaN = true;
-			}
-
-			std::cout << "_isnan() : " << bNaN << std::endl;
-			/*
-			output:
-				_isnan() : 1
-			*/
-
-			//Properties of NAN
-
-			//Equality Check Returns False
-			if (dResult == dResult) {
-				// Code inside this block will NEVER be executed.
-				int nNumber = 0;
-			}
-
-			//Any Calculation with a NAN Returns a NAN
-			std::cout << dResult << " += 1234" << std::endl;
-			dResult += 1234;
-
-			std::cout << dResult << std::endl;
-
-			/*
-			output:
-				1.#QNAN += 1234
-				1.#QNAN
-			*/
-
-			system("pause");
-		}
-	}
-
-	void concept_IND()
-	{
-		/*
-			Concept of IND
-
-			IND means Indeterminate Number.
-			An IND number is a value that is one step down from NaN.
-			That is, an IND is a value that is almost equivalent to a NaN.
-			There are situations in computation whose result cannot be determined by the FPU (Floating Point Unit).
-			In such cases the result will be set as an indeterminate number.
-		*/
-		{
-			double dInfinity = std::numeric_limits<double>::infinity();//Concept of Infinity will be explained next.
-			double dIND = (dInfinity / dInfinity); //An arithmetic operation may eventually divide two infinite numbers.
-
-			std::cout << "infinity / infinity = " << dIND << std::endl;
-			/*
-			output:
-				infinity / infinity = 1.#IND
-			*/
-
-			double dZero = 0.00;			//This is defined just for demonstration.
-			double dIND1 = (dZero / dZero); //Extensive algorithmic operations may consequently perform 0/0.
-
-			std::cout << "0.0 / 0.0 = " << dIND << std::endl;
-			/*
-			output:
-				0.0 / 0.0 = 1.#IND
-			*/
-
-
-			//Representation of IND
-
-			//Non Standard Representation
-			const unsigned lnIND[2] = { 0x00000000, 0xfff80000 };
-			const double AN_INDETERMINATE = *(double*)lnIND;
-
-			std::cout << AN_INDETERMINATE << std::endl;
-			/*
-			output:
-				1.#IND
-			*/
-
-			//Standard Representation
-			//I couldn't find any functions that provides the standard representation of an IND number. 
-
-			//Comparison of IND
-
-			//Non Standard Method
-			bool bIND = false;
-			if (0 == memcmp(&AN_INDETERMINATE, &dIND, sizeof(double))) {
-				bIND = true;
-			}
-
-			std::cout << "Same data block : " << bIND << std::endl;
-			/*
-			output:
-				Same data block : 1
-			*/
-
-			//Standard Method
-			//So far, I could not find any standard functions.
-			//This may be due to the fact that C++ (Microsoft)treats an IND as a NaN.
-			//This point is evident from the fact that the function _isnan() returns true (a non zero) when an IND is given as input.
-
-			//Properties of IND
-
-			//Equality Check Returns False
-			if (dIND == dIND) {
-				//Code inside this block will NEVER be executed.
-				int a = 0;
-			}
-			//Any Calculation with a IND Returns an IND or NaN
-
-			std::cout << dIND << " += 1234" << std::endl;
-			dIND += 1234; // dIND will hold an IND
-			std::cout << dIND << std::endl;
-
-			std::cout << dIND << " += " << -dIND << std::endl;
-			dIND += -dIND; // dIND will hold a NaN
-			std::cout << dIND << std::endl;
-
-			/*
-			output:
-				-1.#IND += 1234
-				-1.#IND
-				-1.#IND += 1.#QNAN
-				-1.#IND
-			*/
-
-			system("pause");
-		}
-
-		/*
-			#IND
-		
-			C++ #IND is a special kind of NaN, when the result can’t be determined.
-			This is particular true for mathematical methods where certain inputs are undefined (acos, sqrt, and friends).
-
-			For instance, zero divided by zero (0.0 / 0.0) is undefined in the field of mathematics or  #IND.
-			It’s the same with floating points, it produced an indefinite and indeterminate number.
-		*/
-		{
-			double a = 0.0;
-			double b = 0.0 / a; //warning C4723
-			double negative_sqrt = sqrt(-1.0);
-
-			std::cout << "0.0 / 0.0 = " << b << std::endl;
-			std::cout << "sqrt(-1.0) = " << negative_sqrt << std::endl;
-
-			/*
-			output:
-				0.0 / 0.0 = -1.#IND
-				sqrt(-1.0) = -1.#IND
-			*/
-			system("pause");
-		}
-	}
-
-	void concept_INF()
-	{
-		/*
-			Concept of INF
-
-			INF means Infinity.
-			An arithmetic operation results in an infinite number when the result of operation cannot be held in the corresponding data type.
-			Here the result is said to be overflowed.
-			That is, the result has overflowed available storage space.
-			In such cases, the result is marked as INF.
-		*/
-		{
-			double dZero = 0.00;      //This is defined just for demonstration.
-			double dINF = 1 / dZero; //warning C4723
-
-			std::cout << "1 / 0.0 = " << dINF << std::endl;
-			/*
-			output:
-				1 / 0.0 = 1.#INF
-			*/
-
-			//Representation of INF
-
-			//Non Standard Representation
-			const unsigned long lnINF[2] = { 0x00000000, 0x7ff00000 };
-			const double AN_INFINITY_POSITIVE = *(double*)lnINF;
-
-			std::cout << AN_INFINITY_POSITIVE << std::endl;
-			/*
-			output:
-				1.#INF
-			*/
-
-			//Standard Representation
-			const double STD_AN_INFINITY_POSITIVE = std::numeric_limits<double>::infinity();
-
-			//Negative infinity.
-			const double AN_INFINITY_NEGATIVE = -STD_AN_INFINITY_POSITIVE;
-
-			std::cout << AN_INFINITY_NEGATIVE << std::endl;
-			/*
-			output:
-				-1.#INF
-			*/
-
-
-			//Comparison of INF
-
-			//Non Standard Method
-			bool bINF = false;
-			if (0 == memcmp(&AN_INFINITY_POSITIVE, &dINF, sizeof(double)) ||
-				0 == memcmp(&AN_INFINITY_NEGATIVE, &dINF, sizeof(double))) {
-				bINF = true;
-			}
-
-			std::cout << "Same data block : " << bINF << std::endl;
-			/*
-			output:
-				Same data block : 1
-			*/
-
-			bINF = false;
-
-			//Standard Method
-			if (!_finite(dINF)) {
-				bINF = true;
-			}
-
-			std::cout << "!_finite() : " << bINF << std::endl;
-			/*
-			output:
-				!_finite() : 1
-			*/
-
-			//Properties of INF
-
-			//Equality Check Returns True
-			if (dINF == dINF) {
-				//Code inside this block WILL be executed.
-				int a = 0;
-			}
-
-			if (-dINF == -dINF) {
-				//Code inside this block WILL be executed.
-				int a = 0;
-			}
-
-			//Any Calculation with a INF Returns an IND or NaN
-			std::cout << dINF << " += " << -dINF << std::endl;
-			dINF += -dINF; //dINF will hold an IND
-			std::cout << dINF << std::endl;
-			/*
-			output:
-				1.#INF += -1.#INF
-				-1#IND
-			*/
-
-			const double STD_NOT_A_NUMBERD = std::numeric_limits<double>::quiet_NaN();
-			dINF = 1 / dZero;
-			std::cout << dINF << " = 1 / " << dZero << std::endl;
-			std::cout << dINF << " += " << STD_NOT_A_NUMBERD << std::endl;
-			dINF += STD_NOT_A_NUMBERD; //dINF will hold a NaN
-			std::cout << dINF << std::endl;
-			/*
-			output:
-				1.#INF = 1 / 0
-				1.#INF += 1.#QNAN
-				1.#QNAN
-			*/
-
-			system("pause");
-		}
-
-		/*
-			#INF value
-
-			C++ INF denotes "infinity".
-			Due to the finite nature of floating point numbers (32-bit for floats,  64-bit for doubles),
-			infinite is represented by a finite value.
-
-			This type of error condition / value arises when the resultant number is overflowing or
-			underflowing the capacity of the floating point number.
-			In other words, the value is too large or too small to be represented as a floating point value.
-
-			So the value appears as #INF.
-
-				* 1.#INF – if the result is a too large positive number.
-				* -1.#INF – if the result is a too large negative number.
-			
-			The easiest way to use get an infinite number is asking for it.
-		*/
-		{
-			//Infinite
-			auto positive_inf = std::numeric_limits<double>::infinity();
-			auto negative_inf = positive_inf * -1;
-
-			std::cout << "Positive infinity: " << positive_inf << std::endl;
-			std::cout << "Negative infinity: " << negative_inf << std::endl;
-			/*
-			output:
-				Positive infinity: 1.#INF
-				Negative infinity: -1.#INF
-			*/
-
-			//Or division by zero
-			double zero = 0.0;
-			double divbyzero = 1.0 / zero;
-			std::cout << "Division by zero: " << divbyzero << std::endl;
-			/*
-			output:
-				Division by zero: 1.#INF
-			*/
-
-			//Any operation with infinity gives another infinite value, so it behaves like a plague,
-			//and it’ll kill simulations where it can propagate to complete data sets within iterations.
-			double add = positive_inf + 0.1;
-			double sub = positive_inf - 0.1;
-			double mul = positive_inf * 0.1;
-			double div = positive_inf / 0.1;
-
-			std::cout << "Add: " << add << " Sub: " << sub << " Mul: " << mul << " Div: " << div << std::endl;
-			/*
-			output:
-				Add: 1.#INF Sub: 1.#INF Mul: 1.#INF Div: 1.#INF
-			*/
-
-			//When doing stream formatting, the infinity number might be mangled and may show something not expected.
-			//Formatting (scientific)
-			for (size_t i = 0; i<10; i++) {
-				std::cout << "Precision: " << std::scientific << i << std::setprecision(i) << " inf: " << positive_inf << std::endl;
-			}
-
-			/*
-			output:
-				Precision: 0 inf: 1.#INF00e+000
-				Precision: 1 inf: 1.$e+000
-				Precision: 2 inf: 1.#Je+000
-				Precision: 3 inf: 1.#IOe+000
-				Precision: 4 inf: 1.#INFe+000
-				Precision: 5 inf: 1.#INF0e+000
-				Precision: 6 inf: 1.#INF00e+000
-				Precision: 7 inf: 1.#INF000e+000
-				Precision: 8 inf: 1.#INF0000e+000
-				Precision: 9 inf: 1.#INF00000e+000
-			*/
-
-			//Formatting (fixed)
-			for (size_t i = 0; i<10; i++) {
-				std::cout << "Precision: " << std::fixed << i << std::setprecision(i) << " inf: " << positive_inf << std::endl;
-			}
-			/*
-			output:
-				Precision: 0 inf: 1
-				Precision: 1 inf: 1.$
-				Precision: 2 inf: 1.#J
-				Precision: 3 inf: 1.#IO
-				Precision: 4 inf: 1.#INF
-				Precision: 5 inf: 1.#INF0
-				Precision: 6 inf: 1.#INF00
-				Precision: 7 inf: 1.#INF000
-				Precision: 8 inf: 1.#INF0000
-				Precision: 9 inf: 1.#INF00000
-			*/
-
-			//Fixed notation with precision 0 is very dangerous!
-			//There is no indication this is an infinite number!
-
-			system("pause");
-		}
-	}
-
-	void concept_DEN()
-	{
-		/*
-			Concept of DEN
-			
-			DEN means Denormalized.
-			It is also known as Subnormal.
-			All of us know that there are infinite rational numbers between 0 and 1.
-			Have you ever thought how much out of the infinite numbers a computer can store ?
-			Since computer is a finite machine, there are limitations.It has limitation in the representation of floating numbers.
-			We know that float and double data types are represented by IEEE 754 floating point representation.
-			This representation has two parts.One is Mantissa part and the second is Exponent part.
-			An example is shown below.
-			Suppose an arithmetic operation results in a number that is very close to zero but NOT zero.Due to the floating point representation limit, CPU may not be able to represent it for further computation.
-			In this case, the number is marked as a denormalized number.
-		*/
-		{
-			double dDenTest = 0.01E-305;
-
-			std::cout << dDenTest << " /= 10" << std::endl;
-			dDenTest /= 10; //This will produce a denormalized number.1
-			std::cout << dDenTest << std::endl;
-			/*
-			output:
-				1e-307 /= 10
-				1e-308#DEN
-			*/
-
-			//Representation of DEN
-
-			//Non Standard Representation
-			const unsigned long lnDEN[2] = { 0x00000001, 0x00000000 };
-			const double A_DENORMAL = *(double*)lnDEN;
-
-			std::cout << A_DENORMAL << std::endl;
-			/*
-			output:
-				4.94066e-324#DEN
-			*/
-
-			//Standard Representation
-			double dDEN = std::numeric_limits<double>::denorm_min();
-
-			std::cout << dDEN << std::endl;
-			/*
-			output:
-				4.94066e-324#DEN
-			*/
-
-			//Comparison of DEN
-
-			//Non Standard Method
-			bool bDEN = false;
-			if (0 == memcmp(&A_DENORMAL, &dDEN, sizeof(double)))
-			{
-				bDEN = true;
-			}
-
-			//Standard Method
-			if (dDEN != 0 && fabs(dDEN) <= std::numeric_limits<double>::denorm_min())
-			{
-				//it's denormalized
-				bDEN = true;
-			}
-
-			//Properties of DEN
-
-			//Equality Check is Same as Numeric Comparison
-			if (dDEN == dDEN)
-			{
-				int a = 0;
-				//Code inside this block WILL be executed.
-			}
-
-			//Any Calculation with a DEN is Same as Normal Calculation
-			dDenTest = 0.01E-305;
-			std::cout << dDenTest << std::endl;
-			/*
-			output:
-				1e-307
-			*/
-
-			std::cout << dDenTest << " /= 10" << std::endl;
-			dDenTest /= 10; //This will produce a denormalized number.
-			std::cout << dDenTest << std::endl;
-			/*
-			output:
-				1e-307 /= 10
-				1e-308#DEN
-			*/
-
-			std::cout << dDenTest << " *= 10" << std::endl;
-			dDenTest *= 10; //This will result in the previous normalized value.
-			std::cout << dDenTest << std::endl;
-			/*
-			output:
-				1e-308#DEN *= 10
-				1e-307
-			*/
-
-			system("pause");
-		}
-	}
-
-	template<typename T>
-	bool is_infinite(const T &value)
-	{
-		//Since we're a template, it's wise to use std::numeric_limits<T>
-		//Note: std::numeric_limits<T>::min() behaves like DBL_MIN, and is the smallest absolute value possible.
-
-		T max_value = std::numeric_limits<T>::max();
-		T min_value = -max_value;
-
-		return !(min_value <= value && value <= max_value);
-	}
-
-	template<typename T>
-	bool is_nan(const T &value)
-	{
-		//True if NAN
-		return value != value;
-	}
-
-	template<typename T>
-	bool is_valid(const T &value)
-	{
-		return !is_infinite(value) && !is_nan(value);
-	}
-
-	void check_for_NAN_INF_IND()
-	{
-		/*
-			Recently we had occasional, but serious problems with some software we’re making.
-			The problems were with invalid floating point numbers or C++ NAN and IND/INF errors.
-
-			Once invalid (#IND / #INF / #NAN) numbers have infested your simulation,
-			it’s very difficult to get rid of it. It’s like a viral infection.
-			
-			The best way to avoid invalid floating point numbers are to prevent them happening in the first place.
-
-			What happened was that invalid floating point values were introduced while calculating the angle between two vectors.
-			The acos method calculate the angle, and it’s domain is [-1, 1].
-			Due to rounding errors, the actual value passed to acos was slightly less or
-			slightly above the domain, which resulted in an invalid number.
-
-			The way we caught the error was to modify the vector3d-class and insert breakpoints
-			when the expression value != value is true. Only NAN and IND values behave like that.
-
-			After the breakpoints were set, the call stack gave it all away.	
-		*/
-
-		double a, b, c = 0.0, d, e;
-
-		a = 1.0;
-		b = 0.0;
-		c = a / c;          //divide by zero, warning C4723
-		d = acos(-1.001);   //domain for acos is [-1, 1], anything else is #IND or #INF
-		e = b / b;          //zero / zero, warning C4723
-
-		std::cout << "Value of a: " << a << " " << is_valid(a) << " " << (is_nan(a) ? " nan " : "") << (is_infinite(a) ? " infinite " : "") << "n";
-		std::cout << "Value of b: " << b << " " << is_valid(b) << " " << (is_nan(b) ? " nan " : "") << (is_infinite(b) ? " infinite " : "") << "n";
-		std::cout << "Value of c: " << c << " " << is_valid(c) << " " << (is_nan(c) ? " nan " : "") << (is_infinite(c) ? " infinite " : "") << "n";
-		std::cout << "Value of d: " << d << " " << is_valid(d) << " " << (is_nan(d) ? " nan " : "") << (is_infinite(d) ? " infinite " : "") << "n";
-		std::cout << "Value of e: " << e << " " << is_valid(e) << " " << (is_nan(e) ? " nan " : "") << (is_infinite(e) ? " infinite " : "") << "n";
-
-		/*
-		output:
-			Value of a: 1 1
-			Value of b: 0 1
-			Value of c: inf 0  infinite
-			Value of d: nan 0  nan  infinite
-			Value of e: -nan 0  nan  infinite
-		*/
-
-		system("pause");
-	}
-
-	void printFractionBit(float value)
-	{
-		char buffer[1024];
-		buffer[0] = '\0';
-		int bitPos = 0;
-
-		float input = value;
-
-		while(1.0f != input) {
-
-			input = input * 2.0f;
-			if (1.0f < input) {
-				strcat(buffer, "1");
-
-				input -= 1.0f;
-			}
-			else {
-				strcat(buffer, "0");
-			}
-
-			if (   0 < bitPos
-				&& 0 == ((bitPos + 1) % 4) ) {
-				strcat(buffer, " ");
-			}
-
-			++bitPos;
-		}
-		
-		printf("%f : %s\n", value, buffer);
-	}
-
-	void printMachineEpsilon(float EPS)
-	{
-		//taking a floating type variable
-		float prev_epsilon;
-
-		//run until condition satisfy
-		while( (1 + EPS) != 1 ) {
-
-			//copying value of epsilon into previous epsilon
-			prev_epsilon = EPS;
-			//dividing epsilon by 2
-			EPS /= 2;
-		}
-
-		//print output of the program
-		std::cout << "Machine Epsilon is : " << prev_epsilon << std::endl;
-	}
-
-	void variables_epsilon()
-	{
-		/*
-			Epsilon
-
-			Floating point numbers have limited precision.
-			This can lead to small approximation errors in calculations which,
-			in turn, can cause unexpected results when comparing calculation results.
-
-			# When you want to use a mistake without error
-			  float significand is 6 ~ 7 digits
-			  double significand is 15 ~ 16 digits
-		*/
-		{
-			int iNumber = 12;
-			float fNumber = 324.1234f;
-
-			printf("%d + %f = %f\n", iNumber, fNumber, iNumber + fNumber);
-			printf("%d + %10.4f = %10.5f\n", iNumber, fNumber, iNumber + fNumber);
-			/*
-			output:
-				12 + 324.123413 = 336.123413
-				12 +   324.1234 =  336.12341
-			*/
-
-			float pi_1 = 3.141592653589793f;
-			double pi_2 = 3.141592653589793;
-
-			printf("float type pi_1 value: %f\n", pi_1);
-			printf("double type pi_2 value: %f\n", pi_2);
-
-			printf("float type pi_1 value: %30.25f\n", pi_1);
-			printf("double type pi_2 value: %30.25f\n", pi_2);
-			/*
-			output:
-				float type pi_1 value: 3.141593
-				double type pi_2 value: 3.141593
-				float type pi_1 value:    3.1415927410125732000000000
-				double type pi_2 value:    3.1415926535897931000000000
-			*/
-		}
-		/*
-			float stores a range of decimal points that is larger than the number of digits it supports and
-			outputs an incorrect value from the 7th decimal place
-			Since double supports a larger range of decimals than float
- 			3.141592653589793 was printed with exactly one and 1 more
-
-			Why is this happening ?
-
-			This is a structural problem when converting 10 decimal to 2 decimal on a computer.
-
-			Let's start with the expression of real numbers.
-
-			Real numbers are expressed in two ways
-
-				* Fixed Point (Integer . Fraction ) : 345.3978 (integer:345 . fraction:3978)
-
-				* Floating Point (fraction ×exponent) : 10 decimal : 3.453978   × 10^3
-									                      2 decimal : 1.01001101 ×  2^4
-
-			Fixed Point is the way we normally use it.
-			Floating Point can not be stored in 10 decimal form on computers
-			Floating point use 2 decimal to store and use real numbers.
-
-			The format for storing real numbers is as follows.
-
-				* float
-					sign       exponent                 fraction
-					[ 1 bit ]  [        8 bit        ]  [                    23 bit                     ]
-					31         30                   23  22											    0
-				
-				* double
-					sign       exponent                 fraction
-					[ 1 bit ]  [        11 bit       ]  [                    52 bit                     ]
-					63         62                   53  52											    0
-
-			float type stores real numbers in 4 bytes (32bit) of space.
-
-			sign bit		: 1 bit, positive 0, negative 1
-			exponent bit	: 8 bit, store the exponent plus 127
-			fraction bit	: 23 bit, store fraction, do not save the first 1
-		*/
-		
-		/*
-			The process of converting a real number 1.0 to a 2 deciaml and storing it as a float type
-
-			Floating point : 1.0 × 2^0
-
-			sign bit (1bit)		    : 0
-			exponent bit (8bit)	    : 0 + 127 = 127, 2 decimal : 0111 1111
-			                          - Currently, exponent is stored as 0, and exponent is added as 127.
-									  - Reason for adding 127 : 0.0345 is a positive number.
-									    However, since the exponent is 3.45 × 10^-2, exponent is negative.
-                                        Therefore, 127 is added basically to avoid the inconvenience of making the sign bit in the exponent part using 8 bits.
-			fraction bit (23bit)	: 1, However, 1 is not stored, 2 decimal : 000 0000 0000 0000 0000 0000
-									  - In 2 decimal floating point representation, the first must be 1.
-									    Therefore, 1 is not stored.
-
-			Therefore, 1.0 of 2 decimal floating point representation is 0011 1111 1000 0000 0000 0000 0000 0000
-		*/
-		{
-			printBitFormatOfType(1.0f);
-			/*
-			output:
-				1.000000 : float = 0 01111111 00000 00000 00000 00000 000
-			*/
-
-			printBitFormatOfType(1);
-			/*
-			output:
-				1 : int = 0 000 0000 0000 0000 0000 0000 0000 0001
-			*/
-
-			printBitFormatOfType(-1);
-			/*
-				2 decimal type of integer -1. -> 1111 1111 1111 1111 1111 1111 1111 1110
-				First, each bit of integer 1 is inverted. -> : 1111 1111 1111 1111 1111 1111 1111 1111
-				Second, 1 is added to the inverted 2 decimal value.
-
-			output:
-				-1 : int = 1 111 1111 1111 1111 1111 1111 1111 1111
-			*/
-
-			system("pause");
-		}		          
-		/*
-			The process of converting a real number 45000.67 to a 2 deciaml and storing it as a float type
-
-			First, the integer part and the fraction part are separated.
-
-			2 decimal representation of integer 45000 : 0000 0000 0000 0000 1010 1111 1100 1000
-			2 decimal representation of fraction 0.67 : 1010 1011 1000 0101 0001 1110
-
-			2 decimal representation of 45000.67 : 1010 1111 1100 1000.1010 1011 1000 0101 0001 1110
-
-			Floating point : 1.010 1111 1100 1000 1010 1011 1000 0101 000 × 2^15
-
-			sign bit (1bit)		    : 0
-			exponent bit (8bit)	    : 15 + 127 = 142, 2 decimal : 1000 1110
-			fraction bit (23bit)	: 0101 1111 1001 0001 0101 011
-									  
-			Therefore, 45000.67 of 2 decimal floating point representation is 0 1000 1110 0101 1111 1001 0001 0101 100
-
-		*/
-		{
-			printBits(45000);
-			/*
-			output:
-				45000 : int = 0000 0000 0000 0000 1010 1111 1100 1000
-			*/
-			printFractionBit(0.67f);
-			/*
-			output:
-				0.670000 : 1010 1011 1000 0101 0001 1110
-			*/
-			printBitFormatOfType(45000.67f);
-			/*
-			output:
-				45000.671875 : float = 0 10001110 01011 11110 01000 10101 100
-			*/
-
-			system("pause");
-		}
-		/*
-			The process of converting a real number 0.1 to a 2 deciaml and storing it as a float type
-
-			First, the integer part and the fraction part are separated.
-
-			2 decimal representation of integer 0 : 0
-			2 decimal representation of fraction 0.1 : 0001 1001 1001 1001 1001 1001 1001 100 ...
-
-			2 decimal representation of 0.1 : 0.0001 1001 1001 1001 1001 1001 1001 100 ...
-
-			Floating point : 1.1001 1001 1001 1001 1001 1001 100... × 2^-4
-
-			* The mantissa can only store 23 bits.
-              Therefore, you can not use infinite repeated values.
-              In Floating point format, it rounds to 24 degit places.
-			  : 1001 1001 1001 1001 1001 1001 -> 1001 1001 1001 1001 1001 101
-			
-			sign bit (1bit)		    : 0
-			exponent bit (8bit)	    : -4 + 127 = 123, 2 decimal : 0111 1011
-			fraction bit (23bit)	: 1001 1001 1001 1001 1001 101
-									  
-			Therefore, 0.1 of 2 decimal floating point representation is 0 0111 1011 1001 1001 1001 1001 1001 101
-		*/
-		{
-			printBits(0);
-			/*
-			output:
-				0 : int = 0000 0000 0000 0000 0000 0000 0000 0000
-			*/
-			printFractionBit(0.1f);
-			/*
-			output:
-				0.100000 : 0001 1001 1001 1001 1001 1001 100
-			*/
-			printBitFormatOfType(0.1f);
-			/*
-			output:	
-				0.100000 : float = 0 01111011 10011 00110 01100 11001 101
-			*/
-			
-			system("pause");
-		}
-
-		//calling function which calculate machine epsilon
-		//with initial value provided as 0.5
-		{
-			printMachineEpsilon(0.5f);
-			/*
-			output:
-				1.19209e-007
-			*/
-		}
-
-		system("pause");
-	}
+	//---------------------------------------------------------------------------------------------
 
 	void declaration_of_variables()
 	{
 		/*
-			Declaration of variables
+			📚 변수의 선언 (Declaration of variables)
 
-			C++ is a strongly-typed language, and requires every variable to be declared with its type before its first use.
-			This informs the compiler the size to reserve in memory for the variable and how to interpret its value.
-			The syntax to declare a new variable in C++ is straightforward:
-			we simply write the type followed by the variable name (i.e., its identifier).
-			For example:
+			C++는 강한 형식(Strongly-typed) 언어이기 때문에,
+			변수를 사용하기 전에 반드시 먼저
+			"어떤 자료형인지" 선언해야 한다.
 
+			즉 컴파일러에게:
+			1) 이 변수가 메모리에서 얼마나 큰 공간이 필요한지
+			2) 이 값을 어떤 타입으로 해석해야 하는지
+			를 알려줘야 한다.
+
+			변수 선언 문법은 매우 단순하다.
+
+				자료형 변수이름;
+
+			예:
 				int a;
 				float mynumber;
 
-			These are two valid declarations of variables. The first one declares a variable of type int with the identifier a.
-			The second one declares a variable of type float with the identifier mynumber.
-			Once declared, the variables a and mynumber can be used within the rest of their scope in the program.
-			If declaring more than one variable of the same type, they can all be declared in a single statement by separating their identifiers with commas.
-			For example:
+			같은 자료형 변수 여러 개를 한 줄에 선언할 수도 있다.
 
 				int a, b, c;
 
-			This declares three variables (a, b and c), all of them of type int, and has exactly the same meaning as:
+			이것은 아래와 같은 의미이다.
 
 				int a;
 				int b;
 				int c;
-
-			To see what variable declarations look like in action within a program,
-			let's have a look at the entire C++ code of the example about your mental memory proposed at the beginning of this chapter:
 		*/
+
 		{
-			// declaring variables:
-			float number;
+			// 변수 선언
+			float number;   // 실수형 변수
+			int a, b;       // 정수형 변수 2개
+			int result;     // 정수형 변수 1개
 
-			int a, b;
-			int result;
-
-			// process:
+			// 값 대입 및 계산
 			a = 5;
 			b = 2;
-			a = a + 1;
-			result = a - b;
+			a = a + 1;      // a는 6이 됨
+			result = a - b; // 6 - 2 = 4
 
-			// print out the result:
 			std::cout << result << std::endl;
 
-			system("pause");
-
 			/*
-			output:
-				4
+				출력 결과:
+					4
 			*/
 		}
-		/*
-			Don't be worried if something else than the variable declarations themselves look a bit strange to you.
-			Most of it will be explained in more detail in coming chapters.
-		*/
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] 같은 자료형 여러 변수 선언" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int x, y, z;
+
+			x = 10;
+			y = 20;
+			z = x + y;
+
+			std::cout << "x = " << x << std::endl;
+			std::cout << "y = " << y << std::endl;
+			std::cout << "z = " << z << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				int x, y, z;
+				는 int형 변수 3개를 한 번에 선언한 것이다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 3] 선언만 하고 아직 값이 없는 상태" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int value;
+
+			std::cout << "value 변수는 선언되었지만 아직 값을 직접 넣지 않았다." << std::endl;
+			std::cout << "선언 후에는 반드시 값을 넣고 사용하는 습관이 중요하다." << std::endl;
+			std::cout << std::endl;
+
+			/*
+				중요:
+				지역 변수는 선언만 하면 초기값이 자동으로 보장되지 않는다.
+				따라서 사용 전에 반드시 값을 넣는 것이 안전하다.
+			*/
+		}
+
+		system("pause");
 	}
 
 	void initialization_of_variables()
 	{
 		/*
-			Initialization of variables
+			📚 변수의 초기화 (Initialization of variables)
 
-			When the variables in the example above are declared,
-			they have an undetermined value until they are assigned a value for the first time.
-			But it is possible for a variable to have a specific value from the moment it is declared.
-			This is called the initialization of the variable.
+			변수를 선언만 하면,
+			그 변수는 처음 값을 대입하기 전까지는
+			의미 있는 값이 들어 있다고 보장되지 않는다.
 
-			In C++, there are three ways to initialize variables.
-			They are all equivalent and are reminiscent of the evolution of the language over the years:
+			그래서 변수를 선언하는 순간
+			바로 원하는 값을 넣어주는 것을
+			초기화(initialization)라고 한다.
 
-			The first one, known as c-like initialization (because it is inherited from the C language),
-			consists of appending an equal sign followed by the value to which the variable is initialized:
+			C++에서는 여러 가지 초기화 문법이 있다.
 
-			type identifier = initial_value;
-			For example, to declare a variable of type int called x and initialize it to a value of zero from the same moment it is declared,
-			we can write:
-
+			대표적으로:
+			1) C 스타일 초기화
 				int x = 0;
 
-			A second method, known as constructor initialization (introduced by the C++ language),
-			encloses the initial value between parentheses (()):
+			2) 생성자 형태 초기화
+				int x(0);
 
-			type identifier (initial_value);
-			For example:
-
-				int x (0);
-
-			All three ways of initializing variables are valid and equivalent in C++.
+			둘 다 유효하다.
 		*/
+
 		{
 			int x = 0;
 			int y(0);
 
-			int a = 5;	// initial value: 5
-			int b(3);	// initial value: 3
-			int result;	// initial value undetermined
+			int a = 5;   // 선언과 동시에 5로 초기화
+			int b(3);    // 선언과 동시에 3으로 초기화
+			int result;  // 아직 초기화하지 않음
 
-			a = a + b;
-			result = a - b;
+			a = a + b;   // 5 + 3 = 8
+			result = a - b; // 8 - 3 = 5
+
 			std::cout << result << std::endl;
 
-			system("pause");
 			/*
-			output:
-				5
+				출력 결과:
+					5
 			*/
 		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] 선언만 한 변수와 초기화한 변수 비교" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int initializedValue = 100;
+			int anotherValue(200);
+			int laterAssigned;
+
+			laterAssigned = 300;
+
+			std::cout << "initializedValue = " << initializedValue << std::endl;
+			std::cout << "anotherValue     = " << anotherValue << std::endl;
+			std::cout << "laterAssigned    = " << laterAssigned << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				initializedValue 와 anotherValue 는
+				선언과 동시에 값이 정해졌다.
+
+				laterAssigned 는 선언 후 나중에 값을 넣었다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 3] 초기화가 중요한 이유" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int score = 0;
+
+			std::cout << "초기 score = " << score << std::endl;
+
+			score = score + 10;
+			std::cout << "변경 후 score = " << score << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				초기값을 명확히 주면
+				나중에 계산할 때 훨씬 안전하고 예측 가능하다.
+			*/
+		}
+
+		system("pause");
 	}
 
 	void type_deduction_auto_n_decltype()
 	{
 		/*
-			Type deduction : auto and decltype
+			📚 타입 추론 : auto 와 decltype
 
-			When a new variable is initialized, the compiler can figure out what the type of the variable is automatically by the initializer.
-			For this, it suffices to use auto as the type specifier for the variable:
+			C++에서는 어떤 경우
+			컴파일러가 초기값을 보고 변수의 타입을 자동으로 추론할 수 있다.
 
-				int foo = 0;
-				auto bar = foo;  // the same as: int bar = foo;
+			1) auto
+				초기값을 기준으로 타입을 자동 결정한다.
 
-			Here, bar is declared as having an auto type; therefore, the type of bar is the type of the value used to initialize it:
-			in this case it uses the type of foo, which is int.
+				예:
+					int foo = 0;
+					auto bar = foo;   // bar는 int
 
-			Variables that are not initialized can also make use of type deduction with the decltype specifier:
+			2) decltype
+				어떤 식(expression) 또는 변수의 타입을 그대로 가져온다.
 
-				int foo = 0;
-				decltype(foo) bar;  // the same as: int bar;
+				예:
+					int foo = 0;
+					decltype(foo) bar;   // bar는 int
 
-			Here, bar is declared as having the same type as foo.
-			auto and decltype are powerful features recently added to the language.
-			But the type deduction features they introduce are meant to be used either when the type cannot be obtained by other means
-			or when using it improves code readability.
-			The two examples above were likely neither of these use cases.
-			In fact they probably decreased readability, since, when reading the code,
-			one has to search for the type of foo to actually know the type of bar.
+			주의:
+			auto 는 반드시 초기값이 있어야 타입을 추론할 수 있다.
+			반면 decltype 은 초기값 없이도 특정 식의 타입을 그대로 가져올 수 있다.
+
+			또한 auto 와 decltype 은 편리하지만,
+			무분별하게 쓰면 오히려 코드 가독성이 떨어질 수 있다.
 		*/
+
 		{
-			system("pause");
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 1] auto 기본 예제" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int foo = 0;
+			auto bar = foo;  // bar는 int로 추론됨
+
+			bar = 100;
+
+			std::cout << "foo = " << foo << std::endl;
+			std::cout << "bar = " << bar << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				bar는 auto 이지만,
+				초기값 foo가 int 이므로
+				bar도 int가 된다.
+			*/
 		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] auto로 실수 타입 추론" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			auto a = 3.14;   // double로 추론
+			auto b = 10;     // int로 추론
+			auto c = 'A';    // char로 추론
+
+			std::cout << "a = " << a << std::endl;
+			std::cout << "b = " << b << std::endl;
+			std::cout << "c = " << c << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				auto는 오른쪽 초기값의 타입을 보고
+				자동으로 타입을 정한다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 3] decltype 기본 예제" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int foo = 123;
+			decltype(foo) bar; // bar는 int
+
+			bar = 456;
+
+			std::cout << "foo = " << foo << std::endl;
+			std::cout << "bar = " << bar << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				decltype(foo) 는
+				foo의 타입이 int 이므로
+				bar를 int로 선언한다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 4] decltype으로 식의 타입 가져오기" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int x = 10;
+			int y = 20;
+
+			decltype(x + y) sum = x + y;
+
+			std::cout << "sum = " << sum << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				x + y 의 결과 타입은 int 이므로
+				sum도 int가 된다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 5] 언제 쓰면 좋은가" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << "auto / decltype 은 타입이 너무 길거나" << std::endl;
+			std::cout << "표현식으로부터 타입을 자연스럽게 얻고 싶을 때 유용하다." << std::endl;
+			std::cout << "하지만 단순한 int, double까지 무조건 auto로 쓰면" << std::endl;
+			std::cout << "오히려 읽기 어려워질 수 있다." << std::endl;
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
 
 	void introduction_to_strings()
 	{
 		/*
-			Introduction to strings
+			📚 문자열 소개 (Introduction to strings)
 
-			Fundamental types represent the most basic types handled by the machines where the code may run.
-			But one of the major strengths of the C++ language is its rich set of compound types,
-			of which the fundamental types are mere building blocks.
+			기본 자료형(int, float, char 등)은
+			컴퓨터가 직접 다루는 가장 기초적인 값들이다.
 
-			An example of compound type is the string class. Variables of this type are able to store sequences of characters,
-			such as words or sentences. A very useful feature!
+			하지만 C++의 강점 중 하나는
+			이 기본 자료형들을 바탕으로 더 풍부한 복합 타입(compound type)을 제공한다는 점이다.
 
-			A first difference with fundamental data types is that in order to declare and use objects (variables) of this type,
-			the program needs to include the header where the type is defined within the standard library (header <string>):
+			그 대표적인 예가 string 클래스이다.
+
+			string 은 문자들의 연속,
+			즉 단어나 문장 같은 문자열을 저장할 수 있는 타입이다.
+
+			string 을 사용하려면
+			표준 라이브러리의 <string> 헤더가 필요하다.
 		*/
+
 		{
 			std::string myString;
 			myString = "This is a string";
 			std::cout << myString << std::endl;
 
-			system("pause");
-
 			/*
-			output:
-				This is a string
+				출력 결과:
+					This is a string
 			*/
 		}
-		/*
-			As you can see in the previous example, strings can be initialized with any valid string literal,
-			just like numerical type variables can be initialized to any valid numerical literal.
-			As with fundamental types, all initialization formats are valid with strings:
 
-				string mystring = "This is a string";
-				string mystring ("This is a string");
-				string mystring {"This is a string"};
-
-			Strings can also perform all the other basic operations that fundamental data types can,
-			like being declared without an initial value and change its value during execution:
-		*/
 		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] 문자열 초기화 방법" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::string s1 = "This is a string";
+			std::string s2("This is a string");
+			std::string s3 = "Another string";
+
+			std::cout << "s1 = " << s1 << std::endl;
+			std::cout << "s2 = " << s2 << std::endl;
+			std::cout << "s3 = " << s3 << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				string 도 기본 자료형처럼
+				여러 방식으로 초기화할 수 있다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 3] 문자열 값 변경" << std::endl;
+			std::cout << "============================================" << std::endl;
+
 			std::string myString;
 			myString = "This is the initial string content";
 			std::cout << myString << std::endl;
+
 			myString = "This is a different string content";
 			std::cout << myString << std::endl;
-
-			system("pause");
+			std::cout << std::endl;
 
 			/*
-			출력:
-				This is the initial string content
-				This is a different string content
+				출력:
+					This is the initial string content
+					This is a different string content
+
+				설명:
+				string 변수도 일반 변수처럼
+				실행 중에 값을 바꿀 수 있다.
 			*/
 		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 4] 문자열 연결" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::string firstName = "Justin";
+			std::string lastName = "Kang";
+			std::string fullName = firstName + " " + lastName;
+
+			std::cout << "fullName = " << fullName << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				string 은 + 연산자를 사용해
+				문자열을 이어 붙일 수 있다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 5] 문자열 길이 확인" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::string text = "Hello";
+
+			std::cout << "text = " << text << std::endl;
+			std::cout << "length = " << text.length() << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				string 은 클래스이기 때문에
+				길이 확인 같은 기능도 제공한다.
+			*/
+		}
+
 		/*
-			Note: inserting the endl manipulator ends the line (printing a newline character and flushing the stream).
-
-			The string class is a compound type. As you can see in the example above,
-			compound types are used in the same way as fundamental types:
-			the same syntax is used to declare variables and to initialize them.
-
-			For more details on standard C++ strings, see the string class reference.
+			참고:
+			std::endl 은 줄바꿈을 출력하고
+			스트림을 비우는(flush) 역할도 한다.
 		*/
+
+		system("pause");
 	}
 
 	void volatile_what()
@@ -2355,22 +2184,6 @@ namespace VariablesAndTypes
 		//initialization_of_variables();
 
 		//declaration_of_variables();
-
-		//variables_epsilon();
-
-		//check_for_NAN_INF_IND();
-
-		//concept_DEN();
-
-		//concept_INF();
-
-		//concept_IND();
-
-		//concept_NAN();
-
-		//concept_of_NAN_IND_INF_DEN();
-
-		//ieee_754_floating_point();
 
 		//integer_over_under_flow();
 

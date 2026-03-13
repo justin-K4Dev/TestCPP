@@ -1,29 +1,34 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 
 
 
 namespace Classes1
 {
-	class Rectangle {
-		int width, height;
+	class Rectangle
+	{
+		int width, height; // class의 기본 접근 지정자는 private
 	public:
-		Rectangle();
-		Rectangle(int w, int h);
+		Rectangle();                // 기본 생성자
+		Rectangle(int w, int h);    // 매개변수 생성자
 
 		void set_values(int x, int y);
 		int area() { return width * height; }
 	};
 
-	Rectangle::Rectangle() {
+	Rectangle::Rectangle()
+	{
 		width = height = 10;
 	}
 
-	Rectangle::Rectangle(int w, int h) {
-		width = w; height = h;
+	Rectangle::Rectangle(int w, int h)
+	{
+		width = w;
+		height = h;
 	}
 
-	void Rectangle::set_values(int x, int y) {
+	void Rectangle::set_values(int x, int y)
+	{
 		width = x;
 		height = y;
 	}
@@ -32,438 +37,510 @@ namespace Classes1
 	void classes()
 	{
 		/*
-			Classes
+			📚 클래스 (Classes)
 
-			Classes are an expanded concept of data structures:
-			like data structures, they can contain data members,
-			but they can also contain functions as members.
+			클래스는 구조체(struct)를 확장한 개념이다.
+			구조체처럼 데이터 멤버를 가질 수 있을 뿐 아니라,
+			멤버 함수(function)도 함께 가질 수 있다.
 
-			An object is an instantiation of a class.
-			In terms of variables, a class would be the type, and an object would be the variable.
+			즉 클래스는
+			"데이터 + 그 데이터를 다루는 함수"
+			를 하나로 묶는 사용자 정의 타입이라고 볼 수 있다.
 
-			Classes are defined using either keyword class or keyword struct, with the following syntax:
+			객체(object)는 클래스의 실체화된 인스턴스이다.
 
-			class class_name {
-				access_specifier_1:
-				member1;
-				access_specifier_2:
-				member2;
-				...
-			} object_names;
+			비유하면:
+			- class   -> 설계도 / 타입
+			- object  -> 실제로 만들어진 변수
 
-			Where class_name is a valid identifier for the class,
-			object_names is an optional list of names for objects of this class.
-			The body of the declaration can contain members, which can either be data or function declarations,
-			and optionally access specifiers.
+			문법:
+				class 클래스이름
+				{
+					접근지정자:
+						멤버들...
+				};
 
-			Classes have the same format as plain data structures, except that they can also include functions
-			and have these new things called access specifiers.
-			An access specifier is one of the following three keywords:��
-			private, public or protected.
+			접근 지정자:
+				private   : 같은 클래스 내부에서만 접근 가능
+				protected : 같은 클래스 + 파생 클래스에서 접근 가능
+				public    : 어디서든 접근 가능
 
-			These specifiers modify the access rights for the members that follow them:
-
-				* private members of a class are accessible only from within other members of the same class (or from their "friends").
-				* protected members are accessible from other members of the same class (or from their "friends"),
-					but also from members of their derived classes.
-				* Finally, public members are accessible from anywhere where the object is visible.
-
-			By default, all members of a class declared with the class keyword have private access for all its members.
-			Therefore, any member that is declared before any other access specifier has private access automatically.
-			For example:
-
-				class Rectangle {
-						int width, height;
-					public:
-						void set_values (int,int);
-						int area (void);
-				} rect;
-
-			Declares a class (i.e., a type) called Rectangle and an object (i.e., a variable) of this class, called rect.
-			This class contains four members:
-			two data members of type int (member width and member height) with private access
-			(because private is the default access level)
-			and two member functions with public access:
-			the functions set_values and area, of which for now we have only included their declaration,
-			but not their definition.
-
-			Notice the difference between the class name and the object name:
-			In the previous example, Rectangle was the class name (i.e., the type),
-			whereas rect was an object of type Rectangle.
-			It is the same relationship int and a have in the following declaration:
-
-				int a;
-
-			where int is the type name (the class) and a is the variable name (the object).
-
-			After the declarations of Rectangle and rect,
-			any of the public members of object rect can be accessed as if they were normal functions
-			or normal variables, by simply inserting a dot (.) between object name and member name.
-			This follows the same syntax as accessing the members of plain data structures.
-			For example:
-
-				rect.set_values (3,4);
-				myarea = rect.area();
-
-			The only members of rect that cannot be accessed from outside the class are width and height,
-			since they have private access
-			and they can only be referred to from within other members of that same class.
-
-			Here is the complete example of class Rectangle:
+			중요:
+			class 키워드로 정의한 클래스는
+			기본 접근 지정자가 private 이다.
 		*/
+
 		{
 			Rectangle rect;
 			rect.set_values(3, 4);
 
 			std::cout << "area: " << rect.area() << std::endl;
 
-			system("pause");
-
 			/*
-			output:
-				area: 12
+				출력:
+					area: 12
+
+				설명:
+				rect는 Rectangle 타입의 객체이다.
+				set_values(3, 4) 로 width=3, height=4 로 설정한 뒤
+				area() 를 호출하면 3*4 = 12 가 된다.
 			*/
 		}
 
-		/*
-			This example reintroduces the scope operator (::, two colons),
-			seen in earlier chapters in relation to namespaces.
-			Here it is used in the definition of function set_values to define a member of a class outside
-			the class itself.
-
-			Notice that the definition of the member function area has been included directly
-			within the definition of class Rectangle given its extreme simplicity.
-			Conversely, set_values it is merely declared with its prototype within the class,
-			but its definition is outside it.
-			In this outside definition, the operator of scope (::) is used to specify
-			that the function being defined is a member of the class Rectangle
-			and not a regular non-member function.
-
-			The scope operator (::) specifies the class to which the member being declared belongs,
-			granting exactly the same scope properties as if this function definition was directly included within the class definition.
-			For example, the function set_values in the previous example has access to the variables width
-			and height, which are private members of class Rectangle,
-			and thus only accessible from other members of the class, such as this.
-
-			The only difference between defining a member function completely within the class definition
-			or to just include its declaration in the function and define it later outside the class,
-			is that in the first case the function is automatically considered an inline member function by the compiler,
-			while in the second it is a normal (not-inline) class member function.
-			This causes no differences in behavior, but only on possible compiler optimizations.
-
-			Members width and height have private access (remember that if nothing else is specified,
-			all members of a class defined with keyword class have private access).
-			By declaring them private, access from outside the class is not allowed.
-			This makes sense, since we have already defined a member function to set values for those members within the object:
-			the member function set_values.
-			Therefore, the rest of the program does not need to have direct access to them.
-			Perhaps in a so simple example as this,
-			it is difficult to see how restricting access to these variables may be useful,
-			but in greater projects it may be very important that values cannot be modified in an unexpected way
-			(unexpected from the point of view of the object).
-
-			The most important property of a class is that it is a type, and as such,
-			we can declare multiple objects of it.
-			For example, following with the previous example of class Rectangle,
-			we could have declared the object rectb in addition to object rect:
-		*/
 		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] 객체를 여러 개 만들 수 있다" << std::endl;
+			std::cout << "============================================" << std::endl;
+
 			Rectangle rect1, rect2;
+
 			rect1.set_values(3, 4);
 			rect2.set_values(5, 6);
 
 			std::cout << "rect1 area: " << rect1.area() << std::endl;
 			std::cout << "rect2 area: " << rect2.area() << std::endl;
-
-			system("pause");
+			std::cout << std::endl;
 
 			/*
-			ouput:
-				rect1 area: 12
-				rect2 area: 30
+				출력:
+					rect1 area: 12
+					rect2 area: 30
+
+				설명:
+				클래스는 타입이므로 같은 타입의 객체를 여러 개 만들 수 있다.
+				각 객체는 자기만의 멤버 변수(width, height)를 가진다.
 			*/
 		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 3] private 멤버는 외부에서 직접 접근 불가" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			Rectangle rect;
+			rect.set_values(7, 8);
+
+			std::cout << "rect.area() = " << rect.area() << std::endl;
+			std::cout << "width, height는 private 이므로 외부에서 직접 접근할 수 없다." << std::endl;
+			std::cout << std::endl;
+
+			/*
+				예:
+					rect.width = 10;   // 오류
+					rect.height = 20;  // 오류
+
+				설명:
+				width, height 는 private 멤버이므로
+				클래스 밖에서 직접 접근할 수 없다.
+				이런 접근 제한이 캡슐화(encapsulation)의 핵심이다.
+			*/
+		}
+
 		/*
-			In this particular case, the class (type of the objects) is Rectangle,
-			of which there are two instances (i.e., objects): rect and rectb.
-			Each one of them has its own member variables and member functions.
+			추가 설명:
+			Rectangle::set_values 와 같이 :: 연산자를 사용하면
+			클래스 외부에서 멤버 함수 정의를 작성할 수 있다.
 
-			Notice that the call to rect.area() does not give the same result as the call to rectb.area().
-			This is because each object of class Rectangle has its own variables width and height,
-			as they -in some way- have also their own function members set_value
-			and area that operate on the object's own member variables.
-
-			Classes allow programming using object-oriented paradigms:
-			Data and functions are both members of the object, reducing the need to pass and carry handlers
-			or other state variables as arguments to functions,
-			because they are part of the object whose member is called.
-			Notice that no arguments were passed on the calls to rect.area or rectb.area.
-			Those member functions directly used the data members of their respective objects rect and rectb.
+			즉:
+				void Rectangle::set_values(int x, int y)
+			는
+				Rectangle 클래스의 멤버 함수 set_values 를 정의한다는 뜻이다.
 		*/
+
+		system("pause");
 	}
 
 	void constructors()
 	{
 		/*
-			Constructors
+			📚 생성자 (Constructors)
 
-			What would happen in the previous example if we called the member function area before having called set_values?
-			An undetermined result, since the members width and height had never been assigned a value.
+			객체를 만들자마자 멤버 변수를 적절한 값으로 초기화하고 싶을 때
+			생성자(constructor)를 사용한다.
 
-			In order to avoid that, a class can include a special function called its constructor,
-			which is automatically called whenever a new object of this class is created,
-			allowing the class to initialize member variables or allocate storage.
+			생성자는 특별한 멤버 함수이며,
+			객체가 생성될 때 자동으로 호출된다.
 
-			This constructor function is declared just like a regular member function,
-			but with a name that matches the class name and without any return type; not even void.
+			특징:
+			1) 이름이 클래스 이름과 같다.
+			2) 반환형이 없다. (void도 쓰지 않는다)
+			3) 객체 생성 시 자동 호출된다.
 
-			The Rectangle class above can easily be improved by implementing a constructor:
+			생성자를 쓰는 이유:
+			객체가 만들어지는 순간부터 올바른 상태를 갖게 하기 위해서이다.
 		*/
+
 		{
-			Rectangle rect1(3, 4), rect2(5, 6);
+			Rectangle rect1(3, 4);
+			Rectangle rect2(5, 6);
 
 			std::cout << "rect1 area: " << rect1.area() << std::endl;
 			std::cout << "rect2 area: " << rect2.area() << std::endl;
-
-			system("pause");
+			std::cout << std::endl;
 
 			/*
-			output:
-				rect1 area: 12
-				rect2 area: 30 
+				출력:
+					rect1 area: 12
+					rect2 area: 30
+
+				설명:
+				rect1(3,4) 생성 시
+				Rectangle(int w, int h) 생성자가 자동 호출된다.
+
+				즉 객체가 만들어질 때 바로 width, height 가 초기화된다.
 			*/
 		}
-		/*
-			The results of this example are identical to those of the previous example.
-			But now, class Rectangle has no member function set_values,
-			and has instead a constructor that performs a similar action:
-			it initializes the values of width and height with the arguments passed to it.
 
-			Notice how these arguments are passed to the constructor at the moment at which
-			the objects of this class are created:
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] 생성자는 일반 함수처럼 직접 호출하지 않는다" << std::endl;
+			std::cout << "============================================" << std::endl;
 
-				Rectangle rect (3,4);
-				Rectangle rectb (5,6);
+			Rectangle rect(2, 3);
 
-			Constructors cannot be called explicitly as if they were regular member functions.
-			They are only executed once, when a new object of that class is created.
+			std::cout << "rect area = " << rect.area() << std::endl;
+			std::cout << "생성자는 객체 생성 순간 자동 호출된다." << std::endl;
+			std::cout << "일반 멤버 함수처럼 rect.Rectangle(...) 형태로 호출하지 않는다." << std::endl;
+			std::cout << std::endl;
+		}
 
-			Notice how neither the constructor prototype declaration (within the class)
-			nor the latter constructor definition, have return values;
-			not even void: Constructors never return values, they simply initialize the object.
-		*/
+		system("pause");
 	}
 
 	void overloading_constructors()
 	{
 		/*
-			Overloading constructors
+			📚 생성자 오버로딩 (Overloading constructors)
 
-			Like any other function, a constructor can also be overloaded with different versions taking different parameters:
-			with a different number of parameters and/or parameters of different types.
-			The compiler will automatically call the one whose parameters match the arguments:
+			생성자도 일반 함수처럼 오버로딩할 수 있다.
+			즉 매개변수 개수나 타입이 다른 여러 생성자를 만들 수 있다.
+
+			현재 Rectangle 클래스는 생성자가 2개 있다.
+
+				Rectangle();
+				Rectangle(int w, int h);
+
+			따라서 상황에 따라 적절한 생성자가 자동 선택된다.
 		*/
-		{
-			Rectangle rect1; // ok, default constructor called
-			Rectangle rect2(5, 6);
 
-			//Rectangle rect2(); //oops, default constructor NOT called 
+		{
+			Rectangle rect1;      // 기본 생성자 호출
+			Rectangle rect2(5, 6); // 매개변수 생성자 호출
 
 			std::cout << "rect1 area: " << rect1.area() << std::endl;
 			std::cout << "rect2 area: " << rect2.area() << std::endl;
-
-			system("pause");
+			std::cout << std::endl;
 
 			/*
-			output:
-				rect1 area: 12
-				rect2 area: 25  
+				현재 Rectangle 기본 생성자는
+					width = height = 10;
+				으로 초기화하므로
+
+				rect1.area() = 10 * 10 = 100
+				rect2.area() = 5 * 6 = 30
+
+				즉 결과는:
+					rect1 area: 100
+					rect2 area: 30
+
+				원문 주석의 25는 오타에 가깝고,
+				현재 코드 기준으로는 30이 맞다.
 			*/
 		}
-		/*
-			In the above example, two objects of class Rectangle are constructed: rect and rectb.
-			rect is constructed with two arguments, like in the example before.
 
-			But this example also introduces a special kind constructor: the default constructor.
-			The default constructor is the constructor that takes no parameters,
-			and it is special because it is called when an object is declared but is not initialized with any arguments.
-			In the example above, the default constructor is called for rectb.
-			Note how rectb is not even constructed with an empty set of parentheses - in fact,
-			empty parentheses cannot be used to call the default constructor:
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] 기본 생성자와 함수 선언 구분" << std::endl;
+			std::cout << "============================================" << std::endl;
 
-				Rectangle rect1;   // ok, default constructor called
-				Rectangle rect2(); // oops, default constructor NOT called 
+			std::cout << "Rectangle rect1;   -> 객체 생성" << std::endl;
+			std::cout << "Rectangle rect2(); -> 객체가 아니라 함수 선언으로 해석될 수 있음" << std::endl;
+			std::cout << std::endl;
 
-			This is because the empty set of parentheses would make of rectc a function declaration instead of an object declaration:
-			It would be a function that takes no arguments and returns a value of type Rectangle.
-		*/
+			/*
+				중요:
+					Rectangle rect1;   // 기본 생성자 호출, 객체 생성
+					Rectangle rect2(); // 함수 선언으로 해석
+
+				이것은 C++의 유명한 문법 주의점이다.
+				그래서 기본 생성자로 객체를 만들 때는
+				그냥 괄호 없이 선언하는 것이 일반적이다.
+			*/
+		}
+
+		system("pause");
 	}
 
 	void member_initialization_n_constructors()
 	{
 		/*
-			Member initialization in constructors
+			📚 생성자에서 멤버 초기화 리스트 (Member initialization list)
 
-			When a constructor is used to initialize other members, these other members can be initialized directly,
-			without resorting to statements in its body.
-			This is done by inserting, before the constructor's body, a colon (:)
-			and a list of initializations for class members.
-			For example, consider a class with the following declaration:
+			생성자에서 멤버를 초기화하는 방법은 크게 2가지가 있다.
 
-				class Rectangle {
-					int width,height;
-				public:
-					Rectangle(int,int);
-					int area() {return width*height;}
-				};
+			1) 생성자 본문에서 대입
+				Rectangle::Rectangle(int x, int y)
+				{
+					width = x;
+					height = y;
+				}
 
-			The constructor for this class could be defined, as usual, as:
+			2) 멤버 초기화 리스트 사용
+				Rectangle::Rectangle(int x, int y)
+					: width(x), height(y)
+				{
+				}
 
-				Rectangle::Rectangle (int x, int y) { width=x; height=y; }
+			기본 자료형(int, double 등)만 놓고 보면
+			겉보기에는 큰 차이가 없어 보일 수 있다.
 
-			But it could also be defined using member initialization as:
+			하지만 멤버가 클래스 객체인 경우에는
+			멤버 초기화 리스트가 매우 중요하다.
 
-				Rectangle::Rectangle (int x, int y) : width(x) { height=y; }
-
-			Or even:
-
-				Rectangle::Rectangle (int x, int y) : width(x), height(y) { }
-
-			Note how in this last case, the constructor does nothing else than initialize its members,
-			hence it has an empty function body.
-
-			For members of fundamental types, it makes no difference which of the ways above the constructor is defined,
-			because they are not initialized by default, but for member objects (those whose type is a class),
-			if they are not initialized after the colon, they are default-constructed.
-
-			Default-constructing all members of a class may or may always not be convenient: in some cases,
-			this is a waste (when the member is then reinitialized otherwise in the constructor),
-			but in some other cases, default-construction is not even possible
-			(when the class does not have a default constructor).
-			In these cases, members shall be initialized in the member initialization list.
-			For example:
+			이유:
+			멤버 객체는 생성자 본문에 들어오기 전에
+			이미 먼저 생성되어야 하기 때문이다.
 		*/
+
 		{
-			class Circle {
+			class Circle
+			{
 				double radius;
 			public:
-				Circle(double r) : radius(r) { }
+				Circle(double r) : radius(r) {}
 
-				double circum() { return 2 * radius*3.14159265; }
-				double area() { return radius*radius*3.14159265; }
+				double circum() { return 2 * radius * 3.14159265; }
+				double area() { return radius * radius * 3.14159265; }
 			};
 
-			class Cylinder {
-				Circle base;
+			class Cylinder
+			{
+				Circle base;   // 멤버 객체
 				double height;
 			public:
-				Cylinder(double r, double h) : base(r), height(h) {}
+				Cylinder(double r, double h)
+					: base(r), height(h)
+				{
+				}
+
 				double volume() { return base.area() * height; }
 			};
 
 			Cylinder foo(10, 20);
 
 			std::cout << "foo's volume: " << foo.volume() << '\n';
-
-			system("pause");
+			std::cout << std::endl;
 
 			/*
-			output:
-				foo's volume: 6283.19
+				출력:
+					foo's volume: 6283.19...
+
+				설명:
+				Cylinder 안에는 Circle 타입의 멤버 base 가 있다.
+
+				Circle 은 기본 생성자가 없고,
+				Circle(double r) 생성자로만 만들 수 있다.
+
+				따라서 Cylinder 생성자에서
+					: base(r), height(h)
+				처럼 멤버 초기화 리스트로 base를 직접 생성해야 한다.
 			*/
 		}
-		/*
-			In this example, class Cylinder has a member object whose type is another class
-			(base's type is Circle).
-			Because objects of class Circle can only be constructed with a parameter,
-			Cylinder's constructor needs to call base's constructor,
-			and the only way to do this is in the member initializer list.
 
-			These initializations can also use uniform initializer syntax, using braces {} instead of parentheses ():
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] 멤버 초기화 리스트의 의미" << std::endl;
+			std::cout << "============================================" << std::endl;
 
-				Cylinder::Cylinder (double r, double h) : base{r}, height{h} { }			
-		*/
+			std::cout << "멤버 초기화 리스트는 '대입'이 아니라" << std::endl;
+			std::cout << "멤버를 생성하는 순간 바로 초기화하는 방식이다." << std::endl;
+			std::cout << "특히 멤버가 다른 클래스 객체일 때 매우 중요하다." << std::endl;
+			std::cout << std::endl;
+		}
 
+		system("pause");
 	}
 
 	void pointers_to_classes()
 	{
 		/*
-			Pointers to classes
+			📚 클래스에 대한 포인터 (Pointers to classes)
 
-			Objects can also be pointed to by pointers: Once declared, a class becomes a valid type,
-			so it can be used as the type pointed to by a pointer.
-			For example: 
+			클래스도 하나의 타입이므로
+			그 객체를 가리키는 포인터를 만들 수 있다.
 
-				Rectangle * prect;
+			예:
+				Rectangle* prect;
 
-			is a pointer to an object of class Rectangle.
+			객체 포인터를 통해 멤버에 접근할 때는
+			점(.) 연산자가 아니라 화살표(->) 연산자를 사용한다.
 
-			Similarly as with plain data structures,
-			the members of an object can be accessed directly from a pointer by using the arrow operator (->).
-			Here is an example with some possible combinations:
+				obj.area();   // 객체 자체
+				ptr->area();  // 객체 포인터
 		*/
+
 		{
 			Rectangle obj(3, 4);
-			Rectangle *foo, *bar, *baz;
+			Rectangle* foo;
+			Rectangle* bar;
 
-			foo = &obj;
-			bar = new Rectangle(5, 6);
+			foo = &obj;               // 기존 객체의 주소 저장
+			bar = new Rectangle(5, 6); // 동적 생성
 
 			std::cout << "obj's area: " << obj.area() << '\n';
 			std::cout << "*foo's area: " << foo->area() << '\n';
 			std::cout << "*bar's area: " << bar->area() << '\n';
 
 			delete bar;
+			bar = nullptr;
 
-			system("pause");
+			std::cout << std::endl;
 
 			/*
-			output:
-				obj's area: 12
-				*foo's area: 12
-				*bar's area: 30
+				출력:
+					obj's area: 12
+					*foo's area: 12
+					*bar's area: 30
+
+				설명:
+				obj 는 일반 객체
+				foo 는 obj 를 가리키는 포인터
+				bar 는 new 로 만든 동적 객체를 가리키는 포인터
+
+				foo->area() 는 (*foo).area() 와 같은 의미이다.
 			*/
 		}
-		/*			
-			This example makes use of several operators to operate on objects and pointers (operators *, &, ., ->, []).
-			They can be interpreted as:
 
-				expression		can be read as
-				*x				pointed to by x
-				&x				address of x
-				x.y				member y of object x
-				x->y			member y of object pointed to by x
-				(*x).y			member y of object pointed to by x (equivalent to the previous one)
-				x[0]			first object pointed to by x
-				x[1]			second object pointed to by x
-				x[n]			(n+1)th object pointed to by x
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] . 과 -> 차이" << std::endl;
+			std::cout << "============================================" << std::endl;
 
-			Most of these expressions have been introduced in earlier chapters.
-			Most notably, the chapter about arrays introduced the offset operator ([])
-			and the chapter about plain data structures introduced the arrow operator (->).
-		*/
+			Rectangle obj(2, 8);
+			Rectangle* ptr = &obj;
+
+			std::cout << "obj.area()   = " << obj.area() << std::endl;
+			std::cout << "ptr->area()  = " << ptr->area() << std::endl;
+			std::cout << "(*ptr).area()= " << (*ptr).area() << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				객체 자체는 .
+				객체 포인터는 ->
+				를 쓴다.
+
+				그리고
+					ptr->area()
+				는
+					(*ptr).area()
+				와 동일하다.
+			*/
+		}
+
+		system("pause");
 	}
 
 	void classes_defined_with_struct_n_union()
 	{
 		/*
-			Classes defined with struct and union
+			📚 struct 와 union 으로 정의하는 클래스
 
-			Classes can be defined not only with keyword class, but also with keywords struct and union.
-			The keyword struct, generally used to declare plain data structures,
-			can also be used to declare classes that have member functions,
-			with the same syntax as with keyword class.
+			C++에서 클래스는 class 키워드뿐 아니라
+			struct 키워드로도 정의할 수 있다.
 
-			The only difference between both is that members of classes declared with the keyword struct have public access by default,
-			while members of classes declared with the keyword class have private access by default.
-			For all other purposes both keywords are equivalent in this context.
+			중요한 차이:
+			- class  : 기본 접근 지정자가 private
+			- struct : 기본 접근 지정자가 public
 
-			Conversely, the concept of unions is different from that of classes declared with struct and class,
-			since unions only store one data member at a time,
-			but nevertheless they are also classes and can thus also hold member functions.
-			The default access in union classes is public.
+			즉 문법 자체는 거의 비슷하며,
+			멤버 함수도 가질 수 있다.
+
+			union 은 조금 다르다.
+			union 은 여러 멤버가 같은 메모리 공간을 공유한다.
+			즉 한 시점에 하나의 값만 유효하게 저장하는 구조에 가깝다.
+
+			하지만 C++에서는 union 도 멤버 함수를 가질 수 있다.
 		*/
+
+		{
+			struct StructRectangle
+			{
+				int width;
+				int height;
+
+				void set_values(int w, int h)
+				{
+					width = w;
+					height = h;
+				}
+
+				int area()
+				{
+					return width * height;
+				}
+			};
+
+			StructRectangle rect;
+			rect.set_values(3, 4);
+
+			std::cout << "StructRectangle area: " << rect.area() << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				struct 로 정의했기 때문에
+				width, height, set_values, area 모두 기본적으로 public 이다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] class 와 struct 기본 접근 차이" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << "class  -> 기본 접근 지정자 private" << std::endl;
+			std::cout << "struct -> 기본 접근 지정자 public" << std::endl;
+			std::cout << std::endl;
+		}
+
+		{
+			union Number
+			{
+				int i;
+				float f;
+
+				void printInt()
+				{
+					std::cout << "i = " << i << std::endl;
+				}
+
+				void printFloat()
+				{
+					std::cout << "f = " << f << std::endl;
+				}
+			};
+
+			Number num;
+			num.i = 10;
+			num.printInt();
+
+			num.f = 3.14f;
+			num.printFloat();
+
+			std::cout << std::endl;
+
+			/*
+				설명:
+				union 은 멤버들이 같은 메모리를 공유한다.
+				즉 i 와 f 를 동시에 독립적으로 저장하는 것이 아니라,
+				같은 공간을 다른 타입으로 보는 것이다.
+
+				따라서 마지막에 값을 쓴 멤버가 현재 의미 있는 값이 된다.
+			*/
+		}
+
+		system("pause");
 	}
 	
 	void Test()

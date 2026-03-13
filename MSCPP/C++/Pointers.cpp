@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 
 
@@ -7,483 +7,414 @@ namespace Pointers
 	void pointers()
 	{
 		/*
-			Pointers
+			📚 포인터 (Pointers)
 
-			In earlier chapters, variables have been explained as locations in the computer's memory
-			which can be accessed by their identifier (their name).
-			This way, the program does not need to care about the physical address of the data in memory;
-			it simply uses the identifier whenever it needs to refer to the variable.
+			변수는 메모리 어딘가에 저장된다.
+			그리고 그 메모리 위치에는 "주소(address)" 가 있다.
 
-			For a C++ program, the memory of a computer is like a succession of memory cells, each one byte in size,
-			and each with a unique address.
-			These single-byte memory cells are ordered in a way
-			that allows data representations larger than one byte to occupy memory cells
-			that have consecutive addresses.
+			보통 우리는 변수 이름으로 값을 사용한다.
 
-			This way, each cell can be easily located in the memory by means of its unique address.
-			For example, the memory cell with the address 1776 always follows immediately after the cell with address 1775
-			and precedes the one with 1777, and is exactly one thousand cells after 776
-			and exactly one thousand cells before 2776.
+				int x = 10;
 
-			When a variable is declared, the memory needed to store its value is assigned a specific location in memory (its memory address).
-			Generally, C++ programs do not actively decide the exact memory addresses where its variables are stored.
-			Fortunately, that task is left to the environment where the program is run - generally,
-			an operating system that decides the particular memory locations on runtime.
+			하지만 C++에서는
+			그 변수의 "주소" 자체를 다룰 수도 있다.
+			이 주소를 저장하는 변수가 바로 포인터(pointer)이다.
 
-			However, it may be useful for a program to be able to obtain the address of a variable during runtime in order to access data cells
-			that are at a certain position relative to it.
-		*/		
+			즉:
+			- 일반 변수: 값을 저장
+			- 포인터 변수: 주소를 저장
+
+			포인터를 쓰는 이유:
+			1) 다른 변수의 메모리 위치를 직접 다루기 위해
+			2) 배열 / 문자열 / 동적 메모리와 연결되기 위해
+			3) 함수 인자로 주소를 넘겨 원본 값을 수정하기 위해
+			4) 자료구조(리스트, 트리 등)를 만들기 위해
+		*/
+
+		{
+			int value = 10;
+			int* ptr = &value;
+
+			std::cout << "value = " << value << std::endl;
+			std::cout << "&value = " << &value << std::endl;
+			std::cout << "ptr = " << ptr << std::endl;
+			std::cout << "*ptr = " << *ptr << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				ptr 은 value 의 주소를 저장하고 있다.
+				따라서 *ptr 은 value 자체를 가리킨다.
+			*/
+		}
+
+		system("pause");
 	}
 
 	void address_of_operator()
 	{
 		/*
-			Address - of operator (&)
+			📚 주소 연산자 (Address-of operator)
+			
+			(&)
 
-			The address of a variable can be obtained by preceding the name of a variable with an ampersand sign (&),
-			known as address-of operator.
-			For example:
+			변수 앞에 & 를 붙이면
+			그 변수의 메모리 주소를 얻을 수 있다.
 
-				foo = &myvar;
+			예:
+				int myvar = 25;
+				int* foo = &myvar;
 
-			This would assign the address of variable myvar to foo;
-			by preceding the name of the variable myvar with the address-of operator (&),
-			we are no longer assigning the content of the variable itself to foo, but its address.
-
-			The actual address of a variable in memory cannot be known before runtime, but let's assume,
-			in order to help clarify some concepts, that myvar is placed during runtime in the memory address 1776.
-
-			In this case, consider the following code fragment:
-
-				myvar = 25;
-				foo = &myvar;
-				bar = myvar;
-
-			The values contained in each variable after the execution of this are shown in the following diagram:
-
-				&myvar:1776 ( address ) 
-				foo:1776 <- myvar:25 -> bar:25
-					
-			First, we have assigned the value 25 to myvar (a variable whose address in memory we assumed to be 1776).
-
-			The second statement assigns foo the address of myvar, which we have assumed to be 1776.
-
-			Finally, the third statement, assigns the value contained in myvar to bar.
-			This is a standard assignment operation, as already done many times in earlier chapters.
-
-			The main difference between the second and third statements is the appearance of the address-of operator (&).
-
-			The variable that stores the address of another variable
-			(like foo in the previous example) is what in C++ is called a pointer.
-			Pointers are a very powerful feature of the language that has many uses in lower level programming.
-			A bit later, we will see how to declare and use pointers.
+			여기서 &myvar 는
+			"myvar 의 값"이 아니라
+			"myvar 가 저장된 주소"이다.
 		*/
+
+		{
+			int myvar = 25;
+			int* foo = &myvar;
+			int bar = myvar;
+
+			std::cout << "myvar = " << myvar << std::endl;
+			std::cout << "&myvar = " << &myvar << std::endl;
+			std::cout << "foo = " << foo << std::endl;
+			std::cout << "bar = " << bar << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				- myvar 는 값 25
+				- &myvar 는 myvar 의 주소
+				- foo 는 그 주소를 저장한 포인터
+				- bar 는 myvar 값을 그대로 복사한 일반 변수
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] 값과 주소는 다르다" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int x = 100;
+
+			std::cout << "x  = " << x << std::endl;
+			std::cout << "&x = " << &x << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				x 는 저장된 값
+				&x 는 x 가 저장된 위치(주소)
+				즉 둘은 전혀 다른 의미이다.
+			*/
+		}
+
+		system("pause");
 	}
 
 
 	void dereference_operator()
 	{
 		/*
-			Dereference operator
+			📚 역참조 연산자 (Dereference operator)
 
-			As just seen, a variable which stores the address of another variable is called a pointer.
-			Pointers are said to "point to" the variable whose address they store.
+			(*) 
 
-			An interesting property of pointers is that they can be used to access the variable they point to directly.
-			This is done by preceding the pointer name with the dereference operator (*).
-			The operator itself can be read as "value pointed to by".
+			포인터는 주소를 저장한다.
+			그 주소가 가리키는 실제 값을 얻으려면
+			포인터 앞에 * 를 붙인다.
 
-			Therefore, following with the values of the previous example, the following statement:
+			예:
+				int x = 25;
+				int* p = &x;
 
-				baz = *foo;
+				*p  -> x 의 실제 값
 
-			This could be read as: "baz equal to value pointed to by foo",
-			and the statement would actually assign the value 25 to baz, since foo is 1776,
-			and the value pointed to by 1776 (following the example above) would be 25.
-
-				foo:1776 -> myvar:25 -> baz:25
-
-			It is important to clearly differentiate that foo refers to the value 1776,
-			while *foo (with an asterisk * preceding the identifier) refers to the value stored at address 1776,
-			which in this case is 25.
-			Notice the difference of including or not including the dereference operator
-			(I have added an explanatory comment of how each of these two expressions could be read):
-
-				baz = foo;   // baz equal to foo (1776)
-				baz = *foo;  // baz equal to value pointed to by foo (25)
-
-			The reference and dereference operators are thus complementary:
-				* & is the address-of operator, and can be read simply as "address of"
-				* * is the dereference operator, and can be read as "value pointed to by"
-
-			Thus, they have sort of opposite meanings: An address obtained with & can be dereferenced with *.
-
-			Earlier, we performed the following two assignment operations:
-
-				myvar = 25;
-				foo = &myvar;
-
-
-			Right after these two statements, all of the following expressions would give true as result:
-
-				myvar == 25
-				&myvar == 1776
-				foo == 1776
-				*foo == 25
-
-			The first expression is quite clear, considering
-			that the assignment operation performed on myvar was myvar=25.
-			The second one uses the address-of operator (&), which returns the address of myvar,
-			which we assumed it to have a value of 1776. The third one is somewhat obvious,
-			since the second expression was true and the assignment operation performed on foo was foo=&myvar.
-				
-			The fourth expression uses the dereference operator (*) that can be read as "value pointed to by",
-			and the value pointed to by foo is indeed 25.
-
-			So, after all that, you may also infer that for as long as the address pointed to by foo remains unchanged,
-			the following expression will also be true:
-
-				*foo == myvar
+			즉 *p 는
+			"p 가 가리키는 곳에 들어 있는 값"이라는 뜻이다.
 		*/
+
+		{
+			int myvar = 25;
+			int* foo = &myvar;
+			int baz = *foo;
+
+			std::cout << "myvar = " << myvar << std::endl;
+			std::cout << "foo   = " << foo << std::endl;
+			std::cout << "*foo  = " << *foo << std::endl;
+			std::cout << "baz   = " << baz << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				foo 는 주소
+				*foo 는 그 주소에 저장된 값
+				따라서 baz 는 25가 된다.
+			*/
+		}
+
+		{
+			int value = 10;
+			int* ptr = &value;
+
+			*ptr = 99;
+
+			std::cout << "value = " << value << std::endl;
+			std::cout << "*ptr  = " << *ptr << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				*ptr = 99;
+				는 ptr 이 가리키는 실제 변수 value 를 수정한 것이다.
+			*/
+		}
+
+		system("pause");
 	}
 
 
 	void declaring_pointers()
 	{
 		/*
-			Due to the ability of a pointer to directly refer to the value that it points to,
-			a pointer has different properties when it points to a char than when it points to an int or a float.
-			Once dereferenced, the type needs to be known.
-			And for that, the declaration of a pointer needs to include the data type the pointer is going to point to.
+			📚 포인터 선언 (Declaring pointers)
 
-			The declaration of pointers follows this syntax:
+			포인터는 "어떤 타입을 가리키는지"가 중요하다.
+			그래서 선언할 때 가리킬 타입을 함께 적는다.
 
+			문법:
 				type* name;
 
-			where type is the data type pointed to by the pointer.
-			This type is not the type of the pointer itself, but the type of the data the pointer points to. 
-			For example:
-
+			예:
 				int* number;
 				char* character;
 				double* decimals;
 
-			These are three declarations of pointers.
-			Each one is intended to point to a different data type,
-			but, in fact, all of them are pointers
-			and all of them are likely going to occupy the same amount of space in memory
-			(the size in memory of a pointer depends on the platform where the program runs).
-			Nevertheless, the data to which they point to do not occupy the same amount of space nor are of the same type:
-			the first one points to an int, the second one to a char,
-			and the last one to a double.
-			Therefore, although these three example variables are all of them pointers,
-			they actually have different types: int*, char*, and double* respectively,
-			depending on the type they point to.
-
-			Note that the asterisk (*) used when declaring a pointer only means
-			that it is a pointer (it is part of its type compound specifier),
-			and should not be confused with the dereference operator seen a bit earlier,
-			but which is also written with an asterisk (*).
-
-			They are simply two different things represented with the same sign.
-
-			Let's see an example on pointers:
+			의미:
+			- int*    : int 를 가리키는 포인터
+			- char*   : char 를 가리키는 포인터
+			- double* : double 를 가리키는 포인터
 		*/
+
 		{
 			int firstvalue, secondvalue;
-			int *mypointer;
+			int* mypointer;
 
 			mypointer = &firstvalue;
 			*mypointer = 10;
+
 			mypointer = &secondvalue;
 			*mypointer = 20;
 
-			std::cout << "firstvalue is " << firstvalue << '\n';
-			std::cout << "secondvalue is " << secondvalue << '\n';
-
-			system("pause");
+			std::cout << "firstvalue is " << firstvalue << std::endl;
+			std::cout << "secondvalue is " << secondvalue << std::endl;
+			std::cout << std::endl;
 
 			/*
-			output:
-				firstvalue is 10
-				secondvalue is 20
+				출력:
+					firstvalue is 10
+					secondvalue is 20
+
+				설명:
+				같은 포인터도 실행 중 다른 변수를 가리키도록 바꿀 수 있다.
 			*/
 		}
-		/*
-			Notice that even though neither firstvalue nor secondvalue are directly set any value in the program,
-			both end up with a value set indirectly through the use of mypointer.
-			This is how it happens:
 
-			First, mypointer is assigned the address of firstvalue using the address-of operator (&).
-			Then, the value pointed to by mypointer is assigned a value of 10.
-			Because, at this moment, mypointer is pointing to the memory location of firstvalue,
-			this in fact modifies the value of firstvalue.
-
-			In order to demonstrate that a pointer may point to different variables during its lifetime in a program,
-			the example repeats the process with secondvalue and that same pointer, mypointer.
-
-			Here is an example a little bit more elaborated:
-		*/
 		{
 			int firstvalue = 5, secondvalue = 15;
-			int * p1, *p2;
+			int* p1, * p2;
 
-			p1 = &firstvalue;	// p1 = address of firstvalue
-			p2 = &secondvalue;	// p2 = address of secondvalue
-			*p1 = 10;			// value pointed to by p1 = 10
-			*p2 = *p1;			// value pointed to by p2 = value pointed to by p1
-			p1 = p2;			// p1 = p2 (value of pointer is copied)
-			*p1 = 20;			// value pointed to by p1 = 20
+			p1 = &firstvalue;
+			p2 = &secondvalue;
+			*p1 = 10;
+			*p2 = *p1;
+			p1 = p2;
+			*p1 = 20;
 
-			std::cout << "firstvalue is " << firstvalue << '\n';
-			std::cout << "secondvalue is " << secondvalue << '\n';
-
-			system("pause");
+			std::cout << "firstvalue is " << firstvalue << std::endl;
+			std::cout << "secondvalue is " << secondvalue << std::endl;
+			std::cout << std::endl;
 
 			/*
-			output:
-				firstvalue is 10
-				secondvalue is 20
+				출력:
+					firstvalue is 10
+					secondvalue is 20
 			*/
 		}
-		/*
-			Each assignment operation includes a comment on how each line could be read: i.e.,
-			replacing ampersands (&) by "address of", and asterisks (*) by "value pointed to by".
 
-			Notice that there are expressions with pointers p1 and p2, both with and without the dereference operator (*).
-			The meaning of an expression using the dereference operator (*) is very different from one that does not.
-			When this operator precedes the pointer name, the expression refers to the value being pointed,
-			while when a pointer name appears without this operator,
-			it refers to the value of the pointer itself (i.e., the address of what the pointer is pointing to).
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 3] 선언에서 * 의 의미" << std::endl;
+			std::cout << "============================================" << std::endl;
 
-			Another thing that may call your attention is the line:
+			int* p1, * p2;
+			// int* p1, p2;  // p1만 포인터, p2는 int
 
-				int * p1, * p2;
+			std::cout << "포인터 여러 개 선언 시 변수마다 * 를 붙이는 습관이 중요하다." << std::endl;
+			std::cout << std::endl;
+		}
 
-			This declares the two pointers used in the previous example.
-			But notice that there is an asterisk (*) for each pointer, in order for both to have type int* (pointer to int).
-			This is required due to the precedence rules. Note that if, instead, the code was:
-
-				int * p1, p2;
-
-			p1 would indeed be of type int*, but p2 would be of type int.
-			Spaces do not matter at all for this purpose.
-			But anyway, simply remembering to put one asterisk per pointer is enough for most pointer
-			users interested in declaring multiple pointers per statement.
-			Or even better: use a different statemet for each variable.
-		*/
+		system("pause");
 	}
 
 	void pointers_n_arrays()
 	{
 		/*
-			Pointers and arrays
+			📚 포인터와 배열 (Pointers and arrays)
 
-			The concept of arrays is related to that of pointers.
-			In fact, arrays work very much like pointers to their first elements, and, actually,
-			an array can always be implicitly converted to the pointer of the proper type.
-			For example, consider these two declarations:
+			배열 이름은 많은 상황에서
+			첫 번째 원소를 가리키는 포인터처럼 동작한다.
 
-				int myArray [20];
-				int *pMyPointer;
+			예:
+				int numbers[5];
+				int* p = numbers;
 
-			The following assignment operation would be valid:
+			여기서 numbers 는
+			&numbers[0] 과 비슷하게 사용된다.
 
-				pMyPointer = myArray;
-
-			After that, mypointer and myarray would be equivalent and would have very similar properties.
-			The main difference being that mypointer can be assigned a different address,
-			whereas myarray can never be assigned anything,
-			and will always represent the same block of 20 elements of type int.
-			Therefore, the following assignment would not be valid:
-
-				myArray = pMyPointer;
-
-			Let's see an example that mixes arrays and pointers:
+			즉:
+				numbers[0]
+			와
+				*p
+			는 같은 첫 번째 원소를 뜻할 수 있다.
 		*/
+
 		{
 			int numbers[5];
-			int * p;
-				
-			p = numbers;  *p = 10;
-			p++;  *p = 20;
-			p = &numbers[2];  *p = 30;
-			p = numbers + 3;  *p = 40;
-			p = numbers;  *(p + 4) = 50;
+			int* p;
 
-			for (int n = 0; n<5; n++)
+			p = numbers;       *p = 10;
+			p++;               *p = 20;
+			p = &numbers[2];   *p = 30;
+			p = numbers + 3;   *p = 40;
+			p = numbers;       *(p + 4) = 50;
+
+			for (int n = 0; n < 5; n++)
 				std::cout << numbers[n] << ", ";
-
-			system("pause");
+			std::cout << std::endl << std::endl;
 
 			/*
-			output:
-				10, 20, 30, 40, 50,
+				출력:
+					10, 20, 30, 40, 50,
 			*/
 		}
-		/*
-			Pointers and arrays support the same set of operations, with the same meaning for both.
-			The main difference being that pointers can be assigned new addresses, while arrays cannot.
 
-			In the chapter about arrays, brackets ([]) were explained as specifying the index of an element of the array.
-			Well, in fact these brackets are a dereferencing operator known as offset operator.
-			They dereference the variable they follow just as * does,
-			but they also add the number between brackets to the address being dereferenced.
-			For example:
+		{
+			int arr[5] = { 1, 2, 3, 4, 5 };
 
-				a[5] = 0;       // a [offset of 5] = 0
-				*(a+5) = 0;     // pointed to by (a+5) = 0  
+			std::cout << "arr[0]    = " << arr[0] << std::endl;
+			std::cout << "*arr      = " << *arr << std::endl;
+			std::cout << "arr[2]    = " << arr[2] << std::endl;
+			std::cout << "*(arr+2)  = " << *(arr + 2) << std::endl;
+			std::cout << std::endl;
 
-			These two expressions are equivalent and valid, not only if a is a pointer,
-			but also if a is an array. Remember that if an array,
-			its name can be used just like a pointer to its first element.
-		*/
+			/*
+				설명:
+					arr[2]
+				와
+					*(arr + 2)
+				는 같은 의미이다.
+			*/
+		}
+
+		system("pause");
 	}
 
 
 	void pointer_initialization()
 	{
 		/*
-			Pointer initialization
+			📚 포인터 초기화 (Pointer initialization)
 
-			Pointers can be initialized to point to specific locations at the very moment they are defined:
+			포인터는 선언과 동시에
+			어떤 주소를 가리키도록 초기화할 수 있다.
 
+			예:
 				int myvar;
-				int * myptr = &myvar;
+				int* myptr = &myvar;
 
-			The resulting state of variables after this code is the same as after:
-
-				int myvar;
-				int * myptr;
-				myptr = &myvar;
-
-			When pointers are initialized, what is initialized is the address they point to (i.e., myptr),
-			never the value being pointed (i.e., *myptr).
-			Therefore, the code above shall not be confused with: 
-
-				int myvar;
-				int * myptr;
-				*myptr = &myvar;
-
-			Which anyway would not make much sense (and is not valid code).
-
-			The asterisk (*) in the pointer declaration (line 2) only indicates that it is a pointer,
-			it is not the dereference operator (as in line 3).
-			Both things just happen to use the same sign: *. As always, spaces are not relevant,
-			and never change the meaning of an expression.
-
-			Pointers can be initialized either to the address of a variable (such as in the case above),
-			or to the value of another pointer (or array):
-
-				int myvar;
-				int *foo = &myvar;
-				int *bar = foo;			
+			중요:
+			초기화되는 것은 "포인터가 저장하는 주소"이다.
+			가리키는 값이 자동으로 바뀌는 것이 아니다.
 		*/
+
+		{
+			int myvar = 123;
+			int* myptr = &myvar;
+			int* another = myptr;
+
+			std::cout << "myvar   = " << myvar << std::endl;
+			std::cout << "myptr   = " << myptr << std::endl;
+			std::cout << "*myptr  = " << *myptr << std::endl;
+			std::cout << "another = " << another << std::endl;
+			std::cout << "*another= " << *another << std::endl;
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
 
 
 	void pointer_arithmetics()
 	{
 		/*
-			Pointer arithmetics
+			📚 포인터 연산 (Pointer arithmetics)
 
-			To conduct arithmetical operations on pointers is a little different than to conduct them on regular integer types.
-			To begin with, only addition and subtraction operations are allowed; the others make no sense in the world of pointers.
-			But both addition and subtraction have a slightly different behavior with pointers,
-			according to the size of the data type to which they point.
+			포인터는 정수처럼 완전히 자유롭게 계산하는 것이 아니라,
+			주로 +, -, ++, -- 만 의미 있게 사용한다.
 
-			When fundamental data types were introduced, we saw that types have different sizes.
-				
-			For example: char always has a size of 1 byte, short is generally larger than that, 
-			and int and long are even larger; the exact size of these being dependent on the system. 
-				
-			For example, let's imagine that in a given system, char takes 1 byte, short takes 2 bytes, and long takes 4.
+			그리고 포인터에 1을 더하면
+			"다음 원소"를 가리키도록 이동한다.
 
-			Suppose now that we define three pointers in this compiler: 
+			중요:
+			이동 크기는 1바이트가 아니라
+			가리키는 타입의 크기만큼이다.
 
-				char *mychar;
-				short *myshort;
-				long *mylong;
-
-			and that we know that they point to the memory locations 1000, 2000, and 3000, respectively. 
-
-			Therefore, if we write:
-
-				++mychar;
-				++myshort;
-				++mylong;
-
-			mychar, as one would expect, would contain the value 1001. But not so obviously,
-			myshort would contain the value 2002, and mylong would contain 3004,
-			even though they have each been incremented only once.
-			The reason is that, when adding one to a pointer
-			the pointer is made to point to the following element of the same type,
-			and, therefore, the size in bytes of the type it points to is added to the pointer.
-
-				1000 1001
-				[  ] [mv]
-				mychar ->                 : mychar++ 1 byte move !!!
-
-				2000 2001 2002
-				[  ] [  ] [mv]
-				myshort ->                : myshort++ 2 byte move !!!
-
-				3000 3001 3002 3003 3004
-				[  ] [  ] [  ] [  ]	[mv]
-				mylong ->                 : mylong++ 4 byte move !!!
- 
-			This is applicable both when adding and subtracting any number to a pointer.
-			It would happen exactly the same if we wrote: 
-
-				mychar = mychar + 1;
-				myshort = myshort + 1;
-				mylong = mylong + 1;
-
-			Regarding the increment (++) and decrement (--) operators,
-			they both can be used as either prefix or suffix of an expression,
-			with a slight difference in behavior: as a prefix,
-			the increment happens before the expression is evaluated, and as a suffix,
-			the increment happens after the expression is evaluated.
-				
-			This also applies to expressions incrementing and decrementing pointers,
-			which can become part of more complicated expressions that also include dereference operators (*).
-				
-			Remembering operator precedence rules, we can recall that postfix operators,
-			such as increment and decrement, have higher precedence than prefix operators,
-			such as the dereference operator (*). Therefore, the following expression:
-
-				*p++
-
-			is equivalent to *(p++).
-			And what it does is to increase the value of p (so it now points to the next element),
-			but because ++ is used as postfix,
-			the whole expression is evaluated as the value pointed originally by the pointer
-			(the address it pointed to before being incremented).
-
-			Essentially, these are the four possible combinations of the dereference operator with both the prefix
-			and suffix versions of the increment operator (the same being applicable also to the decrement operator):
-
-				*p++   // same as *(p++): increment pointer, and dereference unincremented address
-				*++p   // same as *(++p): increment pointer, and dereference incremented address
-				++*p   // same as ++(*p): dereference pointer, and increment the value it points to
-				(*p)++ // dereference pointer, and post-increment the value it points to 
-
-			A typical -but not so simple- statement involving these operators is:
-
-				*p++ = *q++;
-
-			Because ++ has a higher precedence than *, both p and q are incremented,
-			but because both increment operators (++) are used as postfix and not prefix,
-			the value assigned to *p is *q before both p and q are incremented. And then both are incremented.
-				
-			It would be roughly equivalent to:
-
-				*p = *q;
-				++p;
-				++q;
-
-			Like always, parentheses reduce confusion by adding legibility to expressions.
+			예:
+				char*  -> +1 하면 1바이트 이동
+				int*   -> +1 하면 sizeof(int) 바이트 이동
+				long*  -> +1 하면 sizeof(long) 바이트 이동
 		*/
+
+		{
+			int values[5] = { 10, 20, 30, 40, 50 };
+			int* p = values;
+
+			std::cout << "*p      = " << *p << std::endl;
+			std::cout << "*p++    = " << *p++ << std::endl;
+			std::cout << "*p      = " << *p << std::endl;
+			std::cout << "*++p    = " << *++p << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				*p++  -> *(p++) 와 같음
+						 현재 값 사용 후 p 증가
+				*++p  -> *(++p) 와 같음
+						 먼저 p 증가 후 새 위치 값 사용
+			*/
+		}
+
+		{
+			int values[3] = { 1, 2, 3 };
+			int* p = values;
+
+			++*p;      // values[0] 증가
+			(*p)++;    // values[0] 후위 증가
+
+			for (int i = 0; i < 3; ++i)
+				std::cout << values[i] << ' ';
+			std::cout << std::endl << std::endl;
+
+			/*
+				설명:
+				++*p   -> ++(*p)
+				(*p)++ -> 값 자체를 증가
+				둘 다 포인터가 가리키는 "값"을 바꾼다.
+			*/
+		}
+
+		system("pause");
 	}
 
 
@@ -509,156 +440,143 @@ namespace Pointers
 	void pointers_n_const()
 	{
 		/*
-			Pointers and const
+			📚 포인터와 const (Pointers and const)
 
-			Pointers can be used to access a variable by its address,
-			and this access may include modifying the value pointed.
-			But it is also possible to declare pointers that can access the pointed value to read it,
-			but not to modify it.
-			For this, it is enough with qualifying the type pointed to by the pointer as const.
-			For example:
+			const 와 포인터가 결합되면
+			"포인터 자체를 못 바꾸는지"
+			또는
+			"가리키는 값을 못 바꾸는지"
+			를 구분해야 한다.
 
-				int x;
-				int y = 10;
-				const int * p = &y;
-				x = *p;          // ok: reading p
-				*p = x;          // error: modifying p, which is const-qualified
+			대표 4가지:
 
-			Here p points to a variable, but points to it in a const-qualified manner,
-			meaning that it can read the value pointed, but it cannot modify it.
-			Note also, that the expression &y is of type int*, but this is assigned to a pointer of type const int*.
-			This is allowed: a pointer to non-const can be implicitly converted to a pointer to const.
-			But not the other way around! As a safety feature,
-			pointers to const are not implicitly convertible to pointers to non-const.
+				int* p1;
+					-> non-const pointer to non-const int
 
-			One of the use cases of pointers to const elements is as function parameters:
-			a function that takes a pointer to non-const as parameter can modify the value passed as argument,
-			while a function that takes a pointer to const as parameter cannot.
+				const int* p2;
+					-> non-const pointer to const int
+
+				int* const p3;
+					-> const pointer to non-const int
+
+				const int* const p4;
+					-> const pointer to const int
 		*/
+
 		{
-			int numbers[] = { 10,20,30 };
+			int numbers[] = { 10, 20, 30 };
 
 			increment_all(numbers, numbers + 3);
 			print_all(numbers, numbers + 3);
-
-			system("pause");
+			std::cout << std::endl;
 
 			/*
-			output:
-				11
-				21
-				31
+				출력:
+					11
+					21
+					31
 			*/
 		}
-		/*
-			Note that print_all uses pointers that point to constant elements.
-			These pointers point to constant content they cannot modify,
-			but they are not constant themselves: i.e.,
-			the pointers can still be incremented or assigned different addresses,
-			although they cannot modify the content they point to.
 
-			And this is where a second dimension to constness is added to pointers:
-			Pointers can also be themselves const.
-			And this is specified by appending const to the pointed type (after the asterisk):
+		{
+			int x = 10;
+			int y = 20;
 
-				int x;
-						int *       p1 = &x;  // non-const pointer to non-const int
-				const int *       p2 = &x;  // non-const pointer to const int
-						int * const p3 = &x;  // const pointer to non-const int
-				const int * const p4 = &x;  // const pointer to const int 
+			const int* p2 = &x;   // 값 수정 불가, 주소 변경 가능
+			int* const p3 = &x;   // 값 수정 가능, 주소 변경 불가
 
-			The syntax with const and pointers is definitely tricky,
-			and recognizing the cases that best suit each use tends to require some experience.
-			In any case, it is important to get constness with pointers (and references) right sooner rather than later,
-			but you should not worry too much about grasping everything if this is the first time you are exposed to the mix of const and pointers.
-			More use cases will show up in coming chapters.
+			// *p2 = 30; // 오류
+			p2 = &y;     // 가능
 
-			To add a little bit more confusion to the syntax of const with pointers,
-			the const qualifier can either precede or follow the pointed type, with the exact same meaning:
+			*p3 = 99;    // 가능
+			// p3 = &y;  // 오류
 
-				const int * p2a = &x;  //      non-const pointer to const int
-				int const * p2b = &x;  // also non-const pointer to const int 
+			std::cout << "x = " << x << std::endl;
+			std::cout << "*p2 = " << *p2 << std::endl;
+			std::cout << "*p3 = " << *p3 << std::endl;
+			std::cout << std::endl;
+		}
 
-			As with the spaces surrounding the asterisk, the order of const in this case is simply a matter of style.
-			This chapter uses a prefix const, as for historical reasons this seems to be more extended,
-			but both are exactly equivalent.
-			The merits of each style are still intensely debated on the internet.
-		*/	
+		system("pause");
 	}
 
 
 	void pointers_n_string_literals()
 	{
 		/*
-			Pointers and string literals
+			📚 포인터와 문자열 리터럴 (Pointers and string literals)
 
-			As pointed earlier, string literals are arrays containing null-terminated character sequences.
-			In earlier sections, string literals have been used to be directly inserted into cout,
-			to initialize strings and to initialize arrays of characters.
+			문자열 리터럴은
+			null 종료된 문자 배열처럼 동작한다.
 
-			But they can also be accessed directly.
-			String literals are arrays of the proper array type to contain all its characters plus the terminating null-character,
-			with each of the elements being of type const char (as literals, they can never be modified).
-			For example:
-
+			예:
 				const char* foo = "hello";
 
-			This declares an array with the literal representation for "hello",
-			and then a pointer to its first element is assigned to foo.
-			If we imagine that "hello" is stored at the memory locations that start at address 1702,
-			we can represent the previous declaration as:
+			여기서 foo 는
+			문자열 리터럴의 첫 글자를 가리키는 포인터이다.
 
-				foo:1702 ( address ) -> 1702:'h' 1703:'e' 1704:'l' 1705:'l' 1706:'o'
-
-			Note that here foo is a pointer and contains the value 1702, and not 'h', nor "hello",
-			although 1702 indeed is the address of both of these.
-
-			The pointer foo points to a sequence of characters.
-			And because pointers and arrays behave essentially in the same way in expressions,
-			foo can be used to access the characters in the same way arrays of null-terminated character sequences are.
-			For example:
-
-				*(foo+4)
-				foo[4]
-
-			Both expressions have a value of 'o' (the fifth element of the array).			
+			중요:
+			문자열 리터럴은 수정하면 안 되므로
+			보통 const char* 로 받는다.
 		*/
+
+		{
+			const char* foo = "hello";
+
+			std::cout << "foo    = " << foo << std::endl;
+			std::cout << "foo[0] = " << foo[0] << std::endl;
+			std::cout << "foo[4] = " << foo[4] << std::endl;
+			std::cout << "*(foo+4) = " << *(foo + 4) << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				foo[4] 와 *(foo+4) 는 둘 다 'o' 이다.
+			*/
+		}
+
+		system("pause");
 	}
 
 
 	void pointers_to_pointers()
 	{
 		/*
-			Pointers to pointers
+			📚 포인터를 가리키는 포인터 (Pointers to pointers)
 
-			C++ allows the use of pointers that point to pointers, that these, in its turn,
-			point to data (or even to other pointers).
-			The syntax simply requires an asterisk (*) for each level of indirection in the declaration of the pointer:
+			포인터도 변수이므로 주소를 가진다.
+			따라서 포인터를 가리키는 포인터도 만들 수 있다.
 
+			예:
 				char a;
-				char * b;
-				char ** c;
-				a = 'z';
-				b = &a;
-				c = &b;
+				char* b;
+				char** c;
 
-			This, assuming the randomly chosen memory locations for each variable of 7230, 8092,
-			and 10502, could be represented as:
-
-				a:'z'    <---    b:7230    <---    c:8092 
-				a address 7230   b address 8092    c address 10502
-
-			With the value of each variable represented inside its corresponding cell,
-			and their respective addresses in memory represented by the value under them.
-
-			The new thing in this example is variable c, which is a pointer to a pointer,
-			and can be used in three different levels of indirection,
-			each one of them would correspond to a different value:
-
-				- c is of type char** and a value of 8092
-				- *c is of type char* and a value of 7230
-				- **c is of type char and a value of 'z'
+			의미:
+				a   -> 실제 char 값
+				b   -> a를 가리키는 포인터
+				c   -> b를 가리키는 포인터
 		*/
+
+		{
+			char a = 'z';
+			char* b = &a;
+			char** c = &b;
+
+			std::cout << "a   = " << a << std::endl;
+			std::cout << "*b  = " << *b << std::endl;
+			std::cout << "**c = " << **c << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				c   : char**
+				*c  : char*
+				**c : char
+			*/
+		}
+
+		system("pause");
 	}
 
 
@@ -667,32 +585,32 @@ namespace Pointers
 	{
 		if (psize == sizeof(char))
 		{
-			char* pchar; pchar = (char*)data; ++(*pchar);
+			char* pchar; 
+			pchar = (char*)data;
+			++(*pchar);
 		}
 		else if (psize == sizeof(int))
 		{
-			int* pint; pint = (int*)data; ++(*pint);
+			int* pint;
+			pint = (int*)data;
+			++(*pint);
 		}
 	}
 
 	void void_pointers()
 	{
 		/*
-			void Pointers
+			📚 void 포인터 (void*)
 
-			The void type of pointer is a special type of pointer. In C++, void represents the absence of type.
-			Therefore, void pointers are pointers that point to a value that has no type
-			(and thus also an undetermined length and undetermined dereferencing properties).
+			void* 는 "타입이 정해지지 않은 포인터"이다.
 
-			This gives void pointers a great flexibility, by being able to point to any data type,
-			from an integer value or a float to a string of characters.
-			In exchange, they have a great limitation:
-			the data pointed to by them cannot be directly dereferenced (which is logical, since we have no type to dereference to),
-			and for that reason, any address in a void pointer needs to be transformed into some other pointer type that points to a concrete data type before being dereferenced.
+			즉 어떤 주소든 담을 수 있지만,
+			가리키는 타입 정보가 없으므로
+			직접 역참조할 수는 없다.
 
-			One of its possible uses may be to pass generic parameters to a function.
-			For example:
+			반드시 실제 타입으로 캐스팅한 뒤 써야 한다.
 		*/
+
 		{
 			char a = 'x';
 			int b = 1602;
@@ -700,72 +618,72 @@ namespace Pointers
 			increase(&a, sizeof(a));
 			increase(&b, sizeof(b));
 
-			std::cout << a << ", " << b << '\n';
-
-			system("pause");
+			std::cout << a << ", " << b << std::endl;
+			std::cout << std::endl;
 
 			/*
-			output:
-				y, 1603
+				출력:
+					y, 1603
 			*/
 		}
-		/*
-			sizeof is an operator integrated in the C++ language that returns the size in bytes of its argument.
-			For non-dynamic data types, this value is a constant.
-			Therefore, for example, sizeof(char) is 1, because char has always a size of one byte. 
-		*/
+
+		system("pause");
 	}
 
 
 	void invalid_pointers_n_null_pointers()
 	{
 		/*
-			Invalid pointers and null pointers
-			
-			In principle, pointers are meant to point to valid addresses,
-			such as the address of a variable or the address of an element in an array.
-			But pointers can actually point to any address, including addresses that do not refer to any valid element.
-			Typical examples of this are uninitialized pointers and pointers to nonexistent elements of an array:
+			📚 잘못된 포인터와 null 포인터
+			(Invalid pointers and null pointers)
 
-				int * p;               // uninitialized pointer (local variable)
+			포인터는 주소를 저장하지만,
+			그 주소가 항상 유효한 것은 아니다.
 
-				int myarray[10];
-				int * q = myarray+20;  // element out of bounds 
+			대표적인 위험:
+			1) 초기화되지 않은 포인터
+			2) 배열 범위를 벗어난 포인터
+			3) 이미 해제된 메모리를 가리키는 포인터
 
-			Neither p nor q point to addresses known to contain a value,
-			but none of the above statements causes an error.
-			In C++, pointers are allowed to take any address value,
-			no matter whether there actually is something at that address or not.
-			What can cause an error is to dereference such a pointer (i.e., actually accessing the value they point to).
-			Accessing such a pointer causes undefined behavior,
-			ranging from an error during runtime to accessing some random value.
+			null 포인터는
+			명시적으로 "아무 것도 가리키지 않는다"를 뜻하는 값이다.
 
-			But, sometimes, a pointer really needs to explicitly point to nowhere,
-			and not just an invalid address.
-			For such cases, there exists a special value that any pointer type can take:
-			the null pointer value.
-			This value can be expressed in C++ in two ways:
-			either with an integer value of zero, or with the nullptr keyword:
-
-				int * p = 0;
-				int * q = nullptr;
-
-			Here, both p and q are null pointers, meaning that they explicitly point to nowhere,
-			and they both actually compare equal:
-			all null pointers compare equal to other null pointers.
-			It is also quite usual to see the defined constant NULL be used in older code to refer to the null pointer value:
-
-				int * r = NULL;
-
-			NULL is defined in several headers of the standard library,
-			and is defined as an alias of some null pointer constant value (such as 0 or nullptr).
-
-			Do not confuse null pointers with void pointers!
-			A null pointer is a value that any pointer can take to represent that it is pointing to "nowhere",
-			while a void pointer is a type of pointer that can point to somewhere without a specific type.
-				
-			One refers to the value stored in the pointer, and the other to the type of data it points to.
+			현대 C++에서는 보통 nullptr 를 쓴다.
 		*/
+
+		{
+			int* p = nullptr;
+			int* q = 0;
+
+			if (p == nullptr)
+				std::cout << "p is null" << std::endl;
+			if (q == nullptr)
+				std::cout << "q is null" << std::endl;
+
+			std::cout << std::endl;
+		}
+
+		{
+			int value = 10;
+			int* ptr = &value;
+
+			std::cout << "*ptr = " << *ptr << std::endl;
+
+			ptr = nullptr;
+			if (ptr == nullptr)
+				std::cout << "ptr now points to nowhere" << std::endl;
+
+			std::cout << std::endl;
+		}
+
+		/*
+			주의:
+			null 포인터는 역참조하면 안 된다.
+
+				*ptr   // ptr이 nullptr 이면 매우 위험
+		*/
+
+		system("pause");
 	}
 
 
@@ -787,7 +705,7 @@ namespace Pointers
 		return (g);
 	}
 
-	struct A
+	struct PA
 	{
 		static void call(int v1, int v2)
 		{
@@ -800,7 +718,7 @@ namespace Pointers
 		}
 	};
 
-	void print(int v, A* pObj, void(A::*functocall)(int))
+	void print(int v, PA* pObj, void(PA::* functocall)(int))
 	{
 		(pObj->*functocall)(v);
 	}
@@ -809,48 +727,68 @@ namespace Pointers
 	void pointers_to_functions()
 	{
 		/*
-			Pointers to functions
+			📚 함수 포인터 (Pointers to functions)
 
-			C++ allows operations with pointers to functions.
-			The typical use of this is for passing a function as an argument to another function.
-			Pointers to functions are declared with the same syntax as a regular function declaration,
-			except that the name of the function is enclosed between parentheses ()
-			and an asterisk (*) is inserted before the name:
+			C++에서는 함수의 주소를 저장하는 포인터도 만들 수 있다.
+
+			대표 용도:
+			- 함수를 다른 함수에 인자로 넘기기
+			- 콜백(callback)
+			- 테이블 기반 분기 처리
+
+			문법:
+				반환형 (*포인터이름)(매개변수...)
+
+			예:
+				int(*fp)(int, int) = addition;
 		*/
 
 		{
 			int m, n;
 
-			// global function & static function
-			// return_type + ( + * + function_pointer_variable_name + ( + params ... + )
 			int(*minus)(int, int) = subtraction;
 
 			m = operation(7, 5, addition);
 			n = operation(20, m, minus);
 
-			std::cout << n;
-
-			// object member static function & member function 
-			// return_type + ( + object_name + * + member_function_pointer_variable_name + ( + params ... + )
-			void(*static_func)(int, int) = &A::call;
-			void(A::*member_func)(int) = &A::update;
-
-			A a;
-			(*static_func)(100, 10); // call member static function !!!
-			(a.*member_func)(10); // call member function '.' use !!!
-
-			print(500, &a, member_func);
-
-			system("pause");
+			std::cout << n << std::endl;
+			std::cout << std::endl;
 
 			/*
-			output:
-				8
-				100, 10
-				10
-				500
+				출력:
+					8
+
+				설명:
+				m = 7 + 5 = 12
+				n = 20 - 12 = 8
 			*/
 		}
+
+		{
+			void(*static_func)(int, int) = &PA::call;
+			void(PA:: * member_func)(int) = &PA::update;
+
+			PA a;
+
+			(*static_func)(100, 10);
+			(a.*member_func)(10);
+
+			print(500, &a, member_func);
+			std::cout << std::endl;
+
+			/*
+				출력:
+					100, 10
+					10
+					500
+
+				설명:
+				- static 멤버 함수는 일반 함수 포인터처럼 다룰 수 있다
+				- 일반 멤버 함수 포인터는 객체와 함께 호출해야 한다
+			*/
+		}
+
+		system("pause");
 	}
 
 

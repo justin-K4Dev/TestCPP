@@ -100,11 +100,12 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <AdditionalIncludeDirectories>E:\Library\Boost\1_70_0\msvc-14.0\c++14\x86\boost-1_70;</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4101;4244;4267;4290;4333;</DisableSpecificWarnings>
+      <FloatingPointModel>Strict</FloatingPointModel>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -122,12 +123,13 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <AdditionalIncludeDirectories>E:\Library\Boost\1_70_0\msvc-14.0\c++14\x64\boost-1_70;</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4101;4244;4267;4290;4333;4302;4311;</DisableSpecificWarnings>
+      <FloatingPointModel>Strict</FloatingPointModel>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -148,10 +150,11 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalIncludeDirectories>E:\Library\Boost\1_70_0\msvc-14.0\c++14\x86\boost-1_70;</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4101;4244;4267;4290;4333;</DisableSpecificWarnings>
+      <FloatingPointModel>Strict</FloatingPointModel>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -176,6 +179,7 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalIncludeDirectories>E:\Library\Boost\1_70_0\msvc-14.0\c++14\x64\boost-1_70;</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4101;4244;4267;4290;4333;4302;4311;</DisableSpecificWarnings>
+      <FloatingPointModel>Strict</FloatingPointModel>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -206,6 +210,7 @@
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="ABI.cpp" />
     <ClCompile Include="DeadLockAvoidanceTips.cpp" />
+    <ClCompile Include="FloatingPoint.cpp" />
     <ClCompile Include="Function.cpp" />
     <ClCompile Include="Initialization.cpp" />
     <ClCompile Include="Integer128.cpp" />

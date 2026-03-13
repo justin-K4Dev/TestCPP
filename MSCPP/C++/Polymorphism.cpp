@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 
 namespace Polymorphism
@@ -6,42 +6,91 @@ namespace Polymorphism
 	void polymorphism()
 	{
 		/*
-			Polymorphism
+			📚 다형성 (Polymorphism)
 
-			Before getting any deeper into this chapter, you should have a proper understanding of pointers
-			and class inheritance.
-			If you are not really sure of the meaning of any of the following expressions,
-			you should review the indicated sections:
+			다형성은 "하나의 공통된 인터페이스로
+			여러 다른 실제 타입을 다룰 수 있는 성질"이다.
 
-				Statement:				Explained in:
-				int A::b(int c) { }		Classes
-				a->b					Data structures
-				class A: public B {};	Friendship and inheritance
+			C++에서 다형성은 주로
+			"기반 클래스 포인터 / 참조" 와
+			"virtual 함수"를 통해 구현된다.
+
+			즉,
+			같은 Base* 타입 포인터라도
+			실제로 Rectangle 객체를 가리킬 수도 있고,
+			Triangle 객체를 가리킬 수도 있다.
+
+			그리고 virtual 함수가 있으면
+			포인터 타입이 아니라
+			"실제 객체 타입"에 맞는 함수가 호출된다.
+
+			다형성을 제대로 이해하려면
+			다음 개념이 먼저 익숙해야 한다.
+
+			1) 클래스
+			2) 상속
+			3) 포인터 / 참조
+			4) virtual 함수
+
+			핵심 아이디어:
+				Base* p = new Derived();
+
+			이렇게 기반 클래스 포인터로 파생 클래스 객체를 가리키고,
+			virtual 함수를 호출했을 때
+			Derived 쪽 함수가 호출되면 다형성이 동작하는 것이다.
 		*/
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[다형성 핵심 개념]" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << "기반 클래스 포인터로 파생 클래스 객체를 가리킬 수 있다." << std::endl;
+			std::cout << "virtual 함수가 있으면 실제 객체 타입의 함수가 호출된다." << std::endl;
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
 
 
 	void pointers_to_base_class()
 	{
 		/*
-			Pointers to base class
+			📚 기반 클래스 포인터 (Pointers to base class)
 
-			One of the key features of class inheritance is
-			that a pointer to a derived class is type-compatible with a pointer to its base class.
-			Polymorphism is the art of taking advantage of this simple but powerful and versatile feature.
+			상속의 중요한 특징 중 하나는
+			파생 클래스 객체의 주소를
+			기반 클래스 포인터에 저장할 수 있다는 점이다.
 
-			The example about the rectangle and triangle classes can be rewritten
-			using pointers taking this feature into account:
+			예:
+				Rectangle rect;
+				Polygon* p = &rect;
+
+			이것이 가능한 이유는
+			Rectangle 이 Polygon 을 상속받았기 때문이다.
+
+			즉,
+			"파생 클래스는 기반 클래스의 한 종류"로 볼 수 있기 때문에
+			기반 클래스 포인터로 가리킬 수 있다.
+
+			하지만 주의:
+			포인터의 타입이 Polygon* 이면
+			그 포인터를 통해서는 Polygon 에 있는 멤버만 접근 가능하다.
+			Rectangle 고유 멤버는 직접 접근할 수 없다.
 		*/
+
 		{
 			class Polygon
 			{
 			protected:
 				int width, height;
+
 			public:
 				void set_values(int a, int b)
 				{
-					width = a; height = b;
+					width = a;
+					height = b;
 				}
 			};
 
@@ -66,47 +115,45 @@ namespace Polymorphism
 			Rectangle rect;
 			Triangle trgl;
 
-			Polygon * ppoly1 = &rect;
-			Polygon * ppoly2 = &trgl;
+			Polygon* ppoly1 = &rect;
+			Polygon* ppoly2 = &trgl;
 
 			ppoly1->set_values(4, 5);
 			ppoly2->set_values(4, 5);
-			
-			std::cout << rect.area() << '\n';
-			std::cout << trgl.area() << '\n';
 
-			system("pause");
+			std::cout << rect.area() << std::endl;
+			std::cout << trgl.area() << std::endl;
+			std::cout << std::endl;
 
 			/*
-			output:
-				20
-				10
+				출력:
+					20
+					10
+
+				설명:
+				ppoly1 은 Polygon* 타입이지만 실제로 Rectangle 객체를 가리킨다.
+				ppoly2 는 Polygon* 타입이지만 실제로 Triangle 객체를 가리킨다.
+
+				set_values 는 Polygon 에 정의되어 있으므로
+				기반 클래스 포인터를 통해 호출 가능하다.
+
+				하지만 area() 는 Polygon 에 없고
+				각 파생 클래스에만 있으므로
+				ppoly1->area() 같은 호출은 이 상태에선 불가능하다.
 			*/
 		}
-		/*
-			Function main declares two pointers to Polygon (named ppoly1 and ppoly2).
-			These are assigned the addresses of rect and trgl, respectively, which are objects of type Rectangle
-			and Triangle. Such assignments are valid, since both Rectangle and Triangle are classes derived from Polygon.
 
-			Dereferencing ppoly1 and ppoly2 (with *ppoly1 and *ppoly2) is valid
-			and allows us to access the members of their pointed objects.
-			For example, the following two statements would be equivalent in the previous example:
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] 기반 클래스 포인터의 의미" << std::endl;
+			std::cout << "============================================" << std::endl;
 
-				ppoly1->set_values (4,5);
-				rect.set_values (4,5);
+			std::cout << "Polygon* 는 Rectangle / Triangle 객체를 가리킬 수 있다." << std::endl;
+			std::cout << "하지만 Polygon 에 정의된 멤버만 직접 접근 가능하다." << std::endl;
+			std::cout << std::endl;
+		}
 
-			But because the type of ppoly1 and ppoly2 is pointer to Polygon
-			(and not pointer to Rectangle nor pointer to Triangle),
-			only the members inherited from Polygon can be accessed,
-			and not those of the derived classes Rectangle and Triangle.
-			That is why the program above accesses the area members of both objects using rect and trgl directly,
-			instead of the pointers; the pointers to the base class cannot access the area members.
-
-			Member area could have been accessed with the pointers to Polygon
-			if area were a member of Polygon instead of a member of its derived classes,
-			but the problem is that Rectangle and Triangle implement different versions of area,
-			therefore there is not a single common version that could be implemented in the base class. 
-		*/
+		system("pause");
 	}
 
 
@@ -132,55 +179,115 @@ namespace Polymorphism
 
 	void virtual_members_of_template()
 	{
-		A<std::string> a;
-		B<int> b;
-		B<std::string> c;
+		/*
+			📚 템플릿 클래스의 virtual 멤버
 
-		A<std::string>* p = &a;
-		p->func1("A<std::string> a");
+			템플릿 클래스에서도 virtual 함수와 override 개념은 그대로 적용된다.
 
-		p = dynamic_cast<A<std::string>*>(&c);
-		p->func1("B<std::string> c");
-		
-		B<int>* q = &b;
-		q->func1(3);
+			즉:
+				A<T> 에 virtual 함수가 있고
+				B<T> 가 A<T> 를 상속받아 같은 함수를 재정의하면
+
+			기반 클래스 포인터 A<T>* 로 B<T> 객체를 가리켰을 때도
+			실제 객체 타입에 맞는 함수가 호출된다.
+
+			중요:
+			템플릿 인자 T 가 같아야
+			상속 관계와 포인터 호환이 성립한다.
+
+			예:
+				A<std::string>* 는 B<std::string> 를 가리킬 수 있다.
+			하지만
+				A<std::string>* 는 B<int> 를 가리킬 수 없다.
+		*/
+
+		{
+			A<std::string> a;
+			B<int> b;
+			B<std::string> c;
+
+			A<std::string>* p = &a;
+			p->func1("A<std::string> a");
+
+			p = dynamic_cast<A<std::string>*>(&c);
+			if (p)
+			{
+				p->func1("B<std::string> c");
+			}
+
+			B<int>* q = &b;
+			q->func1(3);
+
+			std::cout << std::endl;
+
+			/*
+				출력:
+					call A::func1() : A<std::string> a
+					call B::func1() : B<std::string> c
+					call B::func1() : 3
+
+				설명:
+				첫 번째는 실제 객체가 A<std::string> 이므로 A::func1 호출
+				두 번째는 포인터 타입은 A<std::string>* 이지만
+				실제 객체는 B<std::string> 이므로 B::func1 호출
+				세 번째는 B<int> 객체를 직접 호출하므로 B::func1 호출
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] 템플릿 타입 인자가 같아야 상속 계층이 맞는다" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << "A<std::string>* 는 B<std::string> 객체를 가리킬 수 있다." << std::endl;
+			std::cout << "하지만 B<int> 는 전혀 다른 타입 계열이다." << std::endl;
+			std::cout << std::endl;
+		}
 
 		system("pause");
-
-		/*
-		output:
-			call A:func1() : A<std::string> a
-			call B:func1() : B<std::string> c <- A not call, override B call !!!
-			call B:func1() : 3
-		*/
 	}
 
 
 	void virtual_members()
 	{
 		/*
-			Virtual members
+			📚 virtual 멤버 함수 (Virtual members)
 
-			A virtual member is a member function that can be redefined in a derived class,
-			while preserving its calling properties through references.
-			The syntax for a function to become virtual is to precede its declaration with the virtual keyword:
+			virtual 함수는
+			기반 클래스에서 선언되고
+			파생 클래스에서 재정의될 수 있는 함수이다.
+
+			virtual 의 핵심은:
+			기반 클래스 포인터 / 참조를 통해 호출하더라도
+			실제 객체 타입에 맞는 함수가 호출되게 하는 것이다.
+
+			즉,
+			포인터의 "타입"이 아니라
+			포인터가 실제로 가리키는 객체의 "실제 타입"을 기준으로
+			함수가 선택된다.
 		*/
+
 		{
-			class Polygon {
+			class Polygon
+			{
 			protected:
 				int width, height;
+
 			public:
 				void set_values(int a, int b)
 				{
-					width = a; height = b;
+					width = a;
+					height = b;
 				}
+
 				virtual int area()
 				{
 					return 0;
 				}
 			};
 
-			class Rectangle : public Polygon {
+			class Rectangle : public Polygon
+			{
 			public:
 				int area()
 				{
@@ -188,11 +295,12 @@ namespace Polymorphism
 				}
 			};
 
-			class Triangle : public Polygon {
+			class Triangle : public Polygon
+			{
 			public:
 				int area()
 				{
-					return (width * height / 2);
+					return width * height / 2;
 				}
 			};
 
@@ -200,268 +308,285 @@ namespace Polymorphism
 			Triangle trgl;
 			Polygon poly;
 
-			Polygon * ppoly1 = &rect;
-			Polygon * ppoly2 = &trgl;
-			Polygon * ppoly3 = &poly;
+			Polygon* ppoly1 = &rect;
+			Polygon* ppoly2 = &trgl;
+			Polygon* ppoly3 = &poly;
 
 			ppoly1->set_values(4, 5);
 			ppoly2->set_values(4, 5);
 			ppoly3->set_values(4, 5);
 
-			std::cout << ppoly1->area() << '\n';
-			std::cout << ppoly2->area() << '\n';
-			std::cout << ppoly3->area() << '\n';
-
-			system("pause");
+			std::cout << ppoly1->area() << std::endl;
+			std::cout << ppoly2->area() << std::endl;
+			std::cout << ppoly3->area() << std::endl;
+			std::cout << std::endl;
 
 			/*
-			output:
-				20
-				10
-				0
+				출력:
+					20
+					10
+					0
+
+				설명:
+				ppoly1 은 Polygon* 이지만 실제 객체는 Rectangle 이므로 Rectangle::area() 호출
+				ppoly2 는 Polygon* 이지만 실제 객체는 Triangle 이므로 Triangle::area() 호출
+				ppoly3 는 Polygon 객체 자체이므로 Polygon::area() 호출
 			*/
 		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] virtual 이 없으면 어떻게 되는가?" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << "virtual 이 없다면 기반 클래스 포인터를 통해 호출 시" << std::endl;
+			std::cout << "기반 클래스 버전 함수가 호출된다." << std::endl;
+			std::cout << "즉 다형성이 동작하지 않는다." << std::endl;
+			std::cout << std::endl;
+		}
+
 		/*
-			In this example, all three classes (Polygon, Rectangle and Triangle) have the same members: width, height,
-			and functions set_values and area.
+			핵심:
+			virtual 을 붙이면
+			기반 클래스 포인터로도
+			파생 클래스의 재정의된 함수가 호출된다.
 
-			The member function area has been declared as virtual in the base class
-			because it is later redefined in each of the derived classes.
-			Non-virtual members can also be redefined in derived classes,
-			but non-virtual members of derived classes cannot be accessed through a reference of the base class: i.e.,
-			if virtual is removed from the declaration of area in the example above,
-			all three calls to area would return zero,
-			because in all cases, the version of the base class would have been called instead.
-
-			Therefore, essentially, what the virtual keyword does is to allow a member of a derived class
-			with the same name as one in the base class to be appropriately called from a pointer,
-			and more precisely when the type of the pointer is a pointer to the base class
-			that is pointing to an object of the derived class,
-			as in the above example.
-
-			A class that declares or inherits a virtual function is called a polymorphic class.
-
-			Note that despite of the virtuality of one of its members, Polygon was a regular class,
-			of which even an object was instantiated (poly),
-			with its own definition of member area that always returns 0.
+			이것이 런타임 다형성의 핵심이다.
 		*/
+
+		system("pause");
 	}
 
 
 	void abstract_base_classes()
 	{
 		/*
-			Abstract base classes
+			📚 추상 기반 클래스 (Abstract base classes)
 
-			Abstract base classes are something very similar to the Polygon class in the previous example.
-			They are classes that can only be used as base classes,
-			and thus are allowed to have virtual member functions without definition (known as pure virtual functions).
-			The syntax is to replace their definition by =0 (an equal sign and a zero):
+			순수 가상 함수(pure virtual function)를 하나라도 가진 클래스는
+			추상 클래스(abstract class)가 된다.
 
-			An abstract base Polygon class could look like this:
-
-				// abstract class CPolygon
-				class Polygon {
-				protected:
-					int width, height;
-				public:
-					void set_values(int a, int b)
-					{
-						width = a; height = b;
-					}
-					virtual int area() = 0;
-				};
-
-			Notice that area has no definition; this has been replaced by =0, which makes it a pure virtual function.
-			Classes that contain at least one pure virtual function are known as abstract base classes.
-
-			Abstract base classes cannot be used to instantiate objects.
-			Therefore, this last abstract base class version of Polygon could not be used to declare objects like:
-
-				Polygon mypolygon;   // not working if Polygon is abstract base class 
-
-			But an abstract base class is not totally useless.
-			It can be used to create pointers to it,
-			and take advantage of all its polymorphic abilities.
-			For example, the following pointer declarations would be valid:
-
-				Polygon * ppoly1;
-				Polygon * ppoly2;
-
-			And can actually be dereferenced when pointing to objects of derived (non-abstract) classes.
-			Here is the entire example:			
-		*/
-		{
-			class Polygon {
-			protected:
-				int width, height;
-			public:
-				void set_values(int a, int b)
-				{
-					width = a; height = b;
-				}
-				virtual int area(void) = 0;
-			};
-
-			class Rectangle : public Polygon {
-			public:
-				int area(void)
-				{
-					return (width * height);
-				}
-			};
-
-			class Triangle : public Polygon {
-			public:
-				int area(void)
-				{
-					return (width * height / 2);
-				}
-			};
-
-			Rectangle rect;
-			Triangle trgl;
-			Polygon * ppoly1 = &rect;
-			Polygon * ppoly2 = &trgl;
-				
-			ppoly1->set_values(4, 5);
-			ppoly2->set_values(4, 5);
-				
-			std::cout << ppoly1->area() << '\n';
-			std::cout << ppoly2->area() << '\n';
-
-			system("pause");
-
-			/*
-			output:
-				20
-				10
-			*/
-		}
-		/*
-			In this example, objects of different but related types are referred to using a unique type of pointer (Polygon*)
-			and the proper member function is called every time, just because they are virtual.
-			This can be really useful in some circumstances.
-			For example, it is even possible for a member of the abstract base class Polygon to use
-			the special pointer this to access the proper virtual members,
-			even though Polygon itself has no implementation for this function:
-		*/
-		{
-			class Polygon {
-			protected:
-				int width, height;
-			public:
-				void set_values(int a, int b)
-				{
-					width = a; height = b;
-				}
+			문법:
 				virtual int area() = 0;
-				void printarea()
-				{
-					std::cout << this->area() << '\n';
-				}
-			};
 
-			class Rectangle : public Polygon {
-			public:
-				int area(void)
-				{
-					return (width * height);
-				}
-			};
+			의미:
+			이 함수는 기반 클래스에서 구현을 제공하지 않고,
+			파생 클래스가 반드시 구현해야 한다는 뜻이다.
 
-			class Triangle : public Polygon {
-			public:
-				int area(void)
-				{
-					return (width * height / 2);
-				}
-			};
+			추상 클래스의 특징:
+			1) 객체를 직접 만들 수 없다.
+			2) 포인터 / 참조 타입으로는 사용할 수 있다.
+			3) 공통 인터페이스 역할을 한다.
 
-			Rectangle rect;
-			Triangle trgl;
-			Polygon * ppoly1 = &rect;
-			Polygon * ppoly2 = &trgl;
-
-			ppoly1->set_values(4, 5);
-			ppoly2->set_values(4, 5);
-
-			ppoly1->printarea();
-			ppoly2->printarea();
-
-			system("pause");
-
-			/*
-			output:
-				20
-				10
-			*/
-		}
-		/*
-			Virtual members and abstract classes grant C++ polymorphic characteristics, most useful for object-oriented projects.
-			Of course, the examples above are very simple use cases,
-			but these features can be applied to arrays of objects or dynamically allocated objects.
-
-			Here is an example that combines some of the features in the latest chapters,
-			such as dynamic memory, constructor initializers and polymorphism:
+			즉 추상 클래스는
+			"공통 규약"을 정의하는 설계도 역할에 매우 적합하다.
 		*/
+
 		{
-			class Polygon {
+			class Polygon
+			{
 			protected:
 				int width, height;
+
 			public:
-				Polygon(int a, int b) : width(a), height(b) {}
-				virtual int area(void) = 0;
-				void printarea()
+				void set_values(int a, int b)
 				{
-					std::cout << this->area() << '\n';
+					width = a;
+					height = b;
 				}
+
+				virtual int area() = 0; // 순수 가상 함수
 			};
 
-			class Rectangle : public Polygon {
+			class Rectangle : public Polygon
+			{
 			public:
-				Rectangle(int a, int b) : Polygon(a, b) {}
 				int area()
 				{
 					return width * height;
 				}
 			};
 
-			class Triangle : public Polygon {
+			class Triangle : public Polygon
+			{
 			public:
-				Triangle(int a, int b) : Polygon(a, b) {}
 				int area()
 				{
 					return width * height / 2;
 				}
 			};
 
-			Polygon * ppoly1 = new Rectangle(4, 5);
-			Polygon * ppoly2 = new Triangle(4, 5);
+			Rectangle rect;
+			Triangle trgl;
+
+			Polygon* ppoly1 = &rect;
+			Polygon* ppoly2 = &trgl;
+
+			ppoly1->set_values(4, 5);
+			ppoly2->set_values(4, 5);
+
+			std::cout << ppoly1->area() << std::endl;
+			std::cout << ppoly2->area() << std::endl;
+			std::cout << std::endl;
+
+			/*
+				출력:
+					20
+					10
+
+				설명:
+				Polygon 은 추상 클래스이므로 객체를 직접 만들 수 없지만,
+				Polygon* 포인터는 사용할 수 있다.
+
+				그리고 실제 객체가 Rectangle / Triangle 이므로
+				각자의 area() 가 호출된다.
+			*/
+		}
+
+		{
+			class Polygon
+			{
+			protected:
+				int width, height;
+
+			public:
+				void set_values(int a, int b)
+				{
+					width = a;
+					height = b;
+				}
+
+				virtual int area() = 0;
+
+				void printarea()
+				{
+					std::cout << this->area() << std::endl;
+				}
+			};
+
+			class Rectangle : public Polygon
+			{
+			public:
+				int area()
+				{
+					return width * height;
+				}
+			};
+
+			class Triangle : public Polygon
+			{
+			public:
+				int area()
+				{
+					return width * height / 2;
+				}
+			};
+
+			Rectangle rect;
+			Triangle trgl;
+
+			Polygon* ppoly1 = &rect;
+			Polygon* ppoly2 = &trgl;
+
+			ppoly1->set_values(4, 5);
+			ppoly2->set_values(4, 5);
 
 			ppoly1->printarea();
 			ppoly2->printarea();
-			
+			std::cout << std::endl;
+
+			/*
+				출력:
+					20
+					10
+
+				설명:
+				Polygon::printarea() 는 기반 클래스에 구현되어 있지만,
+				내부에서 this->area() 를 호출한다.
+
+				area() 는 virtual 이므로
+				실제 객체 타입에 맞는 파생 클래스 area() 가 호출된다.
+			*/
+		}
+
+		{
+			class Polygon
+			{
+			protected:
+				int width, height;
+
+			public:
+				Polygon(int a, int b) : width(a), height(b) {}
+
+				virtual int area() = 0;
+
+				void printarea()
+				{
+					std::cout << this->area() << std::endl;
+				}
+			};
+
+			class Rectangle : public Polygon
+			{
+			public:
+				Rectangle(int a, int b) : Polygon(a, b) {}
+
+				int area()
+				{
+					return width * height;
+				}
+			};
+
+			class Triangle : public Polygon
+			{
+			public:
+				Triangle(int a, int b) : Polygon(a, b) {}
+
+				int area()
+				{
+					return width * height / 2;
+				}
+			};
+
+			Polygon* ppoly1 = new Rectangle(4, 5);
+			Polygon* ppoly2 = new Triangle(4, 5);
+
+			ppoly1->printarea();
+			ppoly2->printarea();
+
 			delete ppoly1;
 			delete ppoly2;
 
-			system("pause");
+			std::cout << std::endl;
 
 			/*
-			output:
-				20
-				10
+				출력:
+					20
+					10
+
+				설명:
+				기반 클래스 포인터로 동적 생성된 파생 클래스 객체를 가리키고 있다.
+				이것은 실무에서도 매우 자주 나오는 다형성 패턴이다.
 			*/
 		}
-		/*
-			Notice that the ppoly pointers:
 
-				Polygon * ppoly1 = new Rectangle (4,5);
-				Polygon * ppoly2 = new Triangle (4,5);
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 4] 추상 클래스는 객체를 직접 만들 수 없다" << std::endl;
+			std::cout << "============================================" << std::endl;
 
-			are declared being of type "pointer to Polygon",
-			but the objects allocated have been declared having the derived class type directly (Rectangle and Triangle).
-		*/
+			std::cout << "순수 가상 함수가 하나라도 있으면 추상 클래스가 된다." << std::endl;
+			std::cout << "추상 클래스는 직접 객체 생성이 불가능하고," << std::endl;
+			std::cout << "주로 인터페이스 / 공통 기반 타입으로 사용된다." << std::endl;
+			std::cout << std::endl;
+
+			/*
+				예:
+					Polygon poly; // 오류
+			*/
+		}
+
+		system("pause");
 	}
 
 	void Test()

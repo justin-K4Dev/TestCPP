@@ -1,11 +1,11 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 namespace OverloadsAndTemplates
 {
 	// Overloaded functions example
 	int operate(int a, int b)
 	{
-		return (a*b);
+		return (a * b);
 	}
 
 	double operate(double a, double b)
@@ -16,51 +16,143 @@ namespace OverloadsAndTemplates
 	void overloaded_functions()
 	{
 		/*
-			Overloaded functions
+			📚 오버로딩 함수 (Overloaded functions)
 
-			In C++, two different functions can have the same name if their parameters are different;
-			either because they have a different number of parameters,
-			or because any of their parameters are of a different type.
-			For example:
+			C++에서는 같은 이름의 함수를 여러 개 정의할 수 있다.
+			단, 매개변수 목록이 서로 달라야 한다.
+
+			즉, 함수 이름은 같아도
+			다음 중 하나 이상이 달라야 한다.
+
+				- 매개변수 개수
+				- 매개변수 타입
+				- 매개변수 순서(타입 조합 차이)
+
+			이 기능을 함수 오버로딩(function overloading)이라고 한다.
+
+			예:
+				int operate(int a, int b)
+				double operate(double a, double b)
+
+			이 두 함수는 이름은 둘 다 operate 이지만
+			매개변수 타입이 서로 다르므로
+			서로 다른 함수로 인정된다.
+
+
+			=======================================================================================
+			1. 컴파일러는 어떻게 구분하는가?
+			=======================================================================================
+
+			컴파일러는 함수 호출 시 전달된 인자의 타입을 보고
+			어떤 버전의 함수를 호출할지 결정한다.
+
+			예:
+				operate(5, 2)
+					-> int, int 버전 호출
+
+				operate(5.0, 2.0)
+					-> double, double 버전 호출
+
+			즉, 같은 이름이라도
+			인자의 타입에 따라 적절한 함수를 선택한다.
+
+
+			=======================================================================================
+			2. 반환형만 다르게 해서는 오버로딩할 수 없다
+			=======================================================================================
+
+			다음은 불가능하다.
+
+				int func(int a);
+				double func(int a);   // 오류
+
+			왜냐하면 호출 시점에는
+			인자만 보고 어떤 함수를 고를지 결정해야 하기 때문이다.
+
+			즉, 오버로딩은 반드시
+			매개변수 목록이 달라야 한다.
+
+
+			=======================================================================================
+			3. 주의사항
+			=======================================================================================
+
+			문법적으로는 같은 이름의 함수가
+			전혀 다른 동작을 가져도 된다.
+
+			예:
+				int operate(int,int)    -> 곱셈
+				double operate(double,double) -> 나눗셈
+
+			이것도 문법상 가능하다.
+
+			하지만 실무적으로는 좋은 설계가 아닐 수 있다.
+
+			보통 같은 이름의 오버로드 함수는
+			"비슷한 의미의 작업"을 해야
+			사용자가 자연스럽게 이해할 수 있다.
+
+			즉:
+				print(int)
+				print(double)
+
+			처럼 같은 개념의 동작을 유지하는 편이 좋다.
+
+
+			=======================================================================================
+			4. 핵심 요약
+			=======================================================================================
+
+				- 함수 이름이 같아도 매개변수가 다르면 오버로딩 가능
+				- 컴파일러는 인자 타입을 보고 적절한 함수를 선택
+				- 반환형만 달라서는 오버로딩 불가
+				- 오버로드 함수는 의미도 비슷하게 유지하는 것이 좋다
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] int 버전과 double 버전 호출
+		//=========================================================================================
 		{
-			int x = 5, y = 2;
-			double n = 5.0, m = 2.0;
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] int 버전과 double 버전 호출" << std::endl;
+			std::cout << "==================================================" << std::endl;
 
-			std::cout << operate(x, y) << '\n';
-			std::cout << operate(n, m) << '\n';
+			int x = 5;
+			int y = 2;
+			double n = 5.0;
+			double m = 2.0;
 
-			system("pause");
+			std::cout << "operate(x, y) = " << operate(x, y) << '\n';
+			std::cout << "operate(n, m) = " << operate(n, m) << '\n';
+			std::cout << std::endl;
 
 			/*
-			output:
-				10
-				2.5
+				예상 출력:
+					operate(x, y) = 10
+					operate(n, m) = 2.5
 			*/
 		}
-		/*
-			In this example, there are two functions called operate,
-			but one of them has two parameters of type int, while the other has them of type double.
-			The compiler knows which one to call in each case by examining the types passed as arguments
-			when the function is called.
-			If it is called with two int arguments, it calls to the function that has two int parameters,
-			and if it is called with two doubles, it calls the one with two doubles.
 
-			In this example, both functions have quite different behaviors, the int version multiplies its arguments,
-			while the double version divides them.
-			This is generally not a good idea.
-				
-			Two functions with the same name are generally expected to have -at least- a similar behavior,
-			but this example demonstrates that is entirely possible for them not to.
-				
-			Two overloaded functions (i.e., two functions with the same name) have entirely different definitions;
-			they are, for all purposes, different functions, that only happen to have the same name.
 
-			Note that a function cannot be overloaded only by its return type.
-			At least one of its parameters must have a different type.
-		*/
+		//=========================================================================================
+		// [테스트 예제 2] 어떤 오버로드가 선택되는지 설명
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] 오버로드 선택 규칙 설명" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			std::cout << "operate(3, 4) 는 int 버전이 선택된다." << std::endl;
+			std::cout << "operate(3.0, 4.0) 는 double 버전이 선택된다." << std::endl;
+			std::cout << "즉, 컴파일러는 인자 타입을 보고 어떤 함수를 호출할지 결정한다." << std::endl;
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	// Function templates example
 	template <class T>
@@ -80,160 +172,218 @@ namespace OverloadsAndTemplates
 	void function_templates()
 	{
 		/*
-			Function templates
+			📚 함수 템플릿 (Function templates)
 
-			Overloaded functions may have the same definition.
-			For example:
-		*/
-		{
-			std::cout << sum(10, 20) << '\n';
-			std::cout << sum(1.0, 1.5) << '\n';
+			오버로딩 함수는 같은 이름의 함수를 여러 타입에 대해 만들 수 있다.
+			하지만 여러 타입에 대해 "함수 본문이 완전히 동일"한 경우가 많다.
 
-			system("pause");
+			예를 들어 다음 두 함수는 사실상 같은 구조이다.
 
-			/*
-			output:
-				30
-				2.5
-			*/
-		}
-		/*
-			Here, sum is overloaded with different parameter types, but with the exact same body.
+				int sum(int a, int b) { return a + b; }
+				double sum(double a, double b) { return a + b; }
 
-			The function sum could be overloaded for a lot of types,
-			and it could make sense for all of them to have the same body.
-			For cases such as this, C++ has the ability to define functions with generic types,
-			known as function templates. Defining a function template follows the same syntax as a regular function,
-			except that it is preceded by the template keyword and a series of template parameters
-			enclosed in angle-brackets <>:
+			이럴 때 타입만 바꿔가며
+			비슷한 함수를 계속 만드는 것은 비효율적이다.
 
-				template <template-parameters> function-declaration 
-				
-			The template parameters are a series of parameters separated by commas.
-			These parameters can be generic template types by specifying either the class
-			or typename keyword followed by an identifier.
-			This identifier can then be used in the function declaration as if it was a regular type.
-			For example, a generic sum function could be defined as:
+			이 문제를 해결하기 위해 C++은
+			함수 템플릿(function template)을 제공한다.
 
-				template <class SomeType>
-				SomeType sum (SomeType a, SomeType b)
+			즉, 타입을 일반화해서
+			하나의 함수 형태로 여러 타입에 대응하게 만들 수 있다.
+
+
+			=======================================================================================
+			1. 기본 문법
+			=======================================================================================
+
+				template <class T>
+				T sum(T a, T b)
 				{
-					return a+b;
+					return a + b;
 				}
 
-			It makes no difference whether the generic type is specified with keyword class
-			or keyword typename in the template argument list (they are 100% synonyms in template declarations).
+			여기서 T는 실제 타입이 아니라
+			"나중에 결정될 타입"이다.
 
-			In the code above, declaring SomeType (a generic type within the template parameters enclosed in angle-brackets)
-			allows SomeType to be used anywhere in the function definition,
-			just as any other type; it can be used as the type for parameters, as return type,
-			or to declare new variables of this type.
-				
-			In all cases, it represents a generic type that will be determined on the moment the template is instantiated.
+			즉, T는 템플릿 매개변수(template parameter)이다.
 
-			Instantiating a template is applying the template to create a function using particular types
-			or values for its template parameters.
-				
-			This is done by calling the function template, with the same syntax as calling a regular function,
-			but specifying the template arguments enclosed in angle brackets:
+			이 함수는:
+				- int용 sum
+				- double용 sum
+				- long용 sum
+				- 사용자 정의 타입용 sum(+, 복사 가능 시)
+			처럼 여러 타입에 대해 사용할 수 있다.
 
-				name <template-arguments> (function-arguments) 
-				
-			For example, the sum function template defined above can be called with:
 
-				x = sum<int>(10,20);
+			=======================================================================================
+			2. 템플릿 인자 지정
+			=======================================================================================
 
-			The function sum<int> is just one of the possible instantiations of function template sum.
-			In this case, by using int as template argument in the call,
-			the compiler automatically instantiates a version of sum where each occurrence of SomeType is replaced by int,
-			as if it was defined as:
+			호출 시 타입을 명시할 수도 있다.
 
-				int sum (int a, int b)
+			예:
+				sum<int>(10, 20)
+				sum<double>(1.0, 1.5)
+
+			이 경우 컴파일러는
+			각각에 맞는 구체적인 함수 버전을 생성한다.
+			이를 템플릿 인스턴스화(template instantiation)라고 한다.
+
+
+			=======================================================================================
+			3. 타입 추론 (template argument deduction)
+			=======================================================================================
+
+			많은 경우 템플릿 인자는 생략할 수 있다.
+
+			예:
+				sum(10, 20)
+				sum(1.0, 1.5)
+
+			컴파일러가 인자 타입을 보고
+			T를 자동으로 추론한다.
+
+			단, 타입이 모호하지 않아야 한다.
+
+
+			=======================================================================================
+			4. 여러 템플릿 매개변수
+			=======================================================================================
+
+			템플릿 매개변수는 여러 개일 수도 있다.
+
+			예:
+				template <class T, class U>
+				bool are_equal(T a, U b)
 				{
-					return a+b;
+					return (a == b);
 				}
 
-			Let's see an actual example:			
-		*/
-		{
-			int i = 5, j = 6, k;
-			double f = 2.0, g = 0.5, h;
-			k = sum<int>(i, j);
-			h = sum<double>(f, g);
-			std::cout << k << '\n';
+			이 함수는 서로 다른 타입 두 개를 받아 비교할 수 있다.
 
-			system("pause");
+			예:
+				are_equal(10, 10.0)
+
+			이 경우:
+				T -> int
+				U -> double
+
+			로 추론될 수 있다.
+
+
+			=======================================================================================
+			5. class 와 typename
+			=======================================================================================
+
+			템플릿 타입 매개변수 선언에서는
+			class 와 typename 을 거의 같은 의미로 쓸 수 있다.
+
+			예:
+				template <class T>
+				template <typename T>
+
+			이 문맥에서는 사실상 동일하다.
+
+
+			=======================================================================================
+			6. 핵심 요약
+			=======================================================================================
+
+				- 함수 템플릿은 타입을 일반화한 함수이다.
+				- 같은 로직을 여러 타입에 재사용할 수 있다.
+				- 컴파일러가 호출 시 실제 타입 버전을 생성한다.
+				- 타입을 직접 적을 수도 있고, 자동 추론도 가능하다.
+		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] sum 템플릿 기본 사용
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] sum 템플릿 기본 사용" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			std::cout << "sum(10, 20)   = " << sum(10, 20) << '\n';
+			std::cout << "sum(1.0, 1.5) = " << sum(1.0, 1.5) << '\n';
+			std::cout << std::endl;
 
 			/*
-			output:
-				11
-				2.5
+				예상 출력:
+					sum(10, 20)   = 30
+					sum(1.0, 1.5) = 2.5
 			*/
 		}
-		/*
-			In this case, we have used T as the template parameter name, instead of SomeType.
-			It makes no difference, and T is actually a quite common template parameter name for generic types. 
 
-			In the example above, we used the function template sum twice.
-			The first time with arguments of type int, and the second one with arguments of type double.
-			The compiler has instantiated and then called each time the appropriate version of the function.
 
-			Note also how T is also used to declare a local variable of that (generic) type within sum:
-
-				T result;
-
-			Therefore, result will be a variable of the same type as the parameters a and b,
-			and as the type returned by the function.
-			In this specific case where the generic type T is used as a parameter for sum,
-			the compiler is even able to deduce the data type automatically without having to explicitly specify it within angle brackets.
-			Therefore, instead of explicitly specifying the template arguments with:
-
-				k = sum<int> (i,j);
-				h = sum<double> (f,g);
-
-			It is possible to instead simply write:
-
-				k = sum (i,j);
-				h = sum (f,g);
-
-			without the type enclosed in angle brackets.
-			Naturally, for that, the type shall be unambiguous.
-			If sum is called with arguments of different types, the compiler may not be able to deduce the type of T automatically.
-
-			Templates are a powerful and versatile feature.
-			They can have multiple template parameters,
-			and the function can still use regular non-templated types.
-			For example:
-		*/
+		//=========================================================================================
+		// [테스트 예제 2] 템플릿 인자 명시
+		//=========================================================================================
 		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] 템플릿 인자 명시" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			int i = 5;
+			int j = 6;
+			int k = sum<int>(i, j);
+
+			double f = 2.0;
+			double g = 0.5;
+			double h = sum<double>(f, g);
+
+			std::cout << "k = " << k << '\n';
+			std::cout << "h = " << h << '\n';
+			std::cout << std::endl;
+
+			/*
+				예상 출력:
+					k = 11
+					h = 2.5
+			*/
+		}
+
+
+		//=========================================================================================
+		// [테스트 예제 3] 서로 다른 타입 두 개를 받는 템플릿
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 3] 서로 다른 타입 두 개를 받는 템플릿" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
 			if (are_equal(10, 10.0))
-				std::cout << "x and y are equal\n";
+				std::cout << "10 and 10.0 are equal\n";
 			else
-				std::cout << "x and y are not equal\n";
+				std::cout << "10 and 10.0 are not equal\n";
 
-			system("pause");
+			std::cout << std::endl;
 
 			/*
-			output;
-				x and y are equal
+				예상 출력:
+					10 and 10.0 are equal
 			*/
 		}
-		/*
-			Note that this example uses automatic template parameter deduction in the call to are_equal:
 
-				are_equal(10,10.0)
 
-			Is equivalent to:
+		//=========================================================================================
+		// [테스트 예제 4] 타입 추론 설명
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 4] 템플릿 타입 추론 설명" << std::endl;
+			std::cout << "==================================================" << std::endl;
 
-				are_equal<int,double>(10,10.0)
+			std::cout << "sum(10, 20) 은 sum<int>(10, 20) 처럼 추론될 수 있다." << std::endl;
+			std::cout << "sum(1.0, 1.5) 는 sum<double>(1.0, 1.5) 처럼 추론될 수 있다." << std::endl;
+			std::cout << "즉, 인자 타입이 명확하면 <T> 를 생략할 수 있다." << std::endl;
+			std::cout << std::endl;
+		}
 
-			There is no ambiguity possible because numerical literals are always of a specific type:
-			Unless otherwise specified with a suffix, integer literals always produce values of type int,
-			and floating-point literals always produce values of type double.
-			Therefore 10 has always type int and 10.0 has always type double.
-		*/
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	// Non-type template arguments example
 	template <class T, int N>
@@ -245,44 +395,154 @@ namespace OverloadsAndTemplates
 	void non_type_template_arguments()
 	{
 		/*
-			Non-type template arguments
+			📚 비타입 템플릿 인자 (Non-type template arguments)
 
-			The template parameters can not only include types introduced by class or typename,
-			but can also include expressions of a particular type:
+			템플릿 매개변수는 타입만 받을 수 있는 것이 아니다.
+			컴파일 타임 상수 값도 템플릿 인자로 받을 수 있다.
+
+			예:
+				template <class T, int N>
+				T fixed_multiply(T val)
+				{
+					return val * N;
+				}
+
+			여기서:
+				T 는 타입 템플릿 인자
+				N 은 int 값 템플릿 인자
+
+			즉, N은 런타임 인자가 아니라
+			컴파일 타임에 결정되는 상수이다.
+
+
+			=======================================================================================
+			1. 일반 함수 인자와의 차이
+			=======================================================================================
+
+			일반 함수 인자:
+				런타임에 값이 전달된다
+
+			비타입 템플릿 인자:
+				컴파일 시점에 값이 결정된다
+
+			즉:
+				fixed_multiply<int, 2>(10)
+
+			은 실행 중에 2를 전달하는 것이 아니라,
+			"2를 곱하는 전용 함수 버전"을 컴파일러가 만든다고 이해하면 된다.
+
+
+			=======================================================================================
+			2. 현재 예제 의미
+			=======================================================================================
+
+				fixed_multiply<int, 2>(10)
+					-> 10 * 2
+
+				fixed_multiply<int, 3>(10)
+					-> 10 * 3
+
+			이 두 호출은 사실상 서로 다른 인스턴스이다.
+
+			즉:
+				- 하나는 항상 2를 곱하는 버전
+				- 하나는 항상 3을 곱하는 버전
+
+			이렇게 컴파일 타임에 고정된 값을 코드 생성에 활용할 수 있다.
+
+
+			=======================================================================================
+			3. 왜 상수식이어야 하나?
+			=======================================================================================
+
+			비타입 템플릿 인자는
+			컴파일 타임에 함수 버전을 생성해야 하므로
+			반드시 컴파일 타임 상수여야 한다.
+
+			즉, 변수처럼 런타임에 바뀌는 값은 일반적으로 넣을 수 없다.
+
+			예:
+				int n = 2;
+				fixed_multiply<int, n>(10);   // 보통 불가
+
+			왜냐하면 n은 컴파일 타임 상수가 아닐 수 있기 때문이다.
+
+
+			=======================================================================================
+			4. 핵심 요약
+			=======================================================================================
+
+				- 템플릿 인자는 타입뿐 아니라 상수 값도 받을 수 있다.
+				- 이런 값을 비타입 템플릿 인자라고 한다.
+				- 값은 컴파일 타임 상수여야 한다.
+				- 서로 다른 값은 서로 다른 템플릿 인스턴스를 만든다.
 		*/
-		{
-			std::cout << fixed_multiply<int, 2>(10) << '\n';
-			std::cout << fixed_multiply<int, 3>(10) << '\n';
 
-			system("pause");
+
+		//=========================================================================================
+		// [테스트 예제 1] 비타입 템플릿 인자 기본 사용
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] 비타입 템플릿 인자 기본 사용" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			std::cout << "fixed_multiply<int, 2>(10) = " << fixed_multiply<int, 2>(10) << '\n';
+			std::cout << "fixed_multiply<int, 3>(10) = " << fixed_multiply<int, 3>(10) << '\n';
+			std::cout << std::endl;
 
 			/*
-			output:
-				20
-				30
+				예상 출력:
+					fixed_multiply<int, 2>(10) = 20
+					fixed_multiply<int, 3>(10) = 30
 			*/
 		}
-		/*
-			The second argument of the fixed_multiply function template is of type int.
-			It just looks like a regular function parameter, and can actually be used just like one.
 
-			But there exists a major difference:
-			the value of template parameters is determined on compile-time to generate a different instantiation of the function fixed_multiply,
-			and thus the value of that argument is never passed during runtime:
-			The two calls to fixed_multiply in main essentially call two versions of the function:
-			one that always multiplies by two, and one that always multiplies by three.
-			For that same reason, the second template argument needs to be a constant expression (it cannot be passed a variable).
-		*/
+
+		//=========================================================================================
+		// [테스트 예제 2] 서로 다른 N은 서로 다른 인스턴스
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] 서로 다른 N은 서로 다른 템플릿 인스턴스" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			int a = fixed_multiply<int, 4>(5);
+			int b = fixed_multiply<int, 5>(5);
+
+			std::cout << "fixed_multiply<int, 4>(5) = " << a << std::endl;
+			std::cout << "fixed_multiply<int, 5>(5) = " << b << std::endl;
+			std::cout << "즉, N 값이 다르면 컴파일러는 서로 다른 함수 버전을 만든다." << std::endl;
+			std::cout << std::endl;
+		}
+
+
+		//=========================================================================================
+		// [테스트 예제 3] 상수식이어야 함
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 3] 비타입 템플릿 인자는 상수식이어야 함" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			std::cout << "예: fixed_multiply<int, 2>(10) 는 가능" << std::endl;
+			std::cout << "하지만 일반 변수 n을 템플릿 인자로 넣는 것은 보통 불가능하다." << std::endl;
+			std::cout << "왜냐하면 템플릿 인자는 컴파일 타임에 결정되어야 하기 때문이다." << std::endl;
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	void Test()
 	{
-		//overloaded_functions();
-
+		//non_type_template_arguments();
+		
 		//function_templates();
 
-		//non_type_template_arguments();
+		//overloaded_functions();
 	}
 
 }// end of OverloadsAndTemplates

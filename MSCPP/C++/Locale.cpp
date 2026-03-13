@@ -3,300 +3,995 @@
 
 namespace Locale
 {
-	void locale_is()
+	void locale_what()
 	{
 		/*
-			Locale
+			📚 로케일 (Locale)
 
-			Computer users all over the world prefer to interact with their systems using their own language and cultural conventions.
-			Cultural differences affect for instance the display of monetary values, of date and time.
-			Just think of the way numeric values are formatted in different cultures:
-				1,000,000.00 in the US is 1.000.000,00 in Germany and 10,00,000.00 in Nepal.
+			로케일은 프로그램이 언어, 국가, 문화권에 따라
+			숫자, 날짜, 시간, 통화, 문자열 비교, 문자 처리 방식을
+			다르게 적용할 수 있도록 해주는 기능이다.
 
-			If you aim for high international acceptance of your products you must build into your software the flexibility to adapt to varying requirements
-			that stem from cultural differences.
-			Building into software the potential for worldwide use is called internationalization .
-			It is one of the challenges of software development in these days.
+			예를 들어 같은 숫자라도 나라에 따라 표기 방법이 달라질 수 있다.
 
-			Traditionally, internationalization was achieved by means of C.
-			Standards like POSIX and X/Open define locales and wide character input and output for standard C.
-			Windows 95 and Windows NT have a C interface, too, the Win32 NLSAPI.
+				미국(US)      : 1,000,000.00
+				독일(Germany) : 1.000.000,00
+				네팔(Nepal)   : 10,00,000.00
 
-			None of the Win32 NLSAPI interfaces matches any of the standard C interfaces though,
-			and locales are thread-specific in Windows whereas they are provided per process in Unix.
-			
-			These are important differences. The concept and level of support, however, is equivalent.
-			There is a common notion of locales, and the services provided cover almost the same range of i18n problems.
+			즉, locale을 사용하면 사용자의 문화권에 맞는 형식으로
+			데이터를 표현하고 처리할 수 있다.
 
-			Naturally, C++ cannot stand back. The ISO/ANSI C++ standard defines an extensible framework
-			that facilitates internationalization of C++ programs in a portable manner.
-			Its main elements are locales and facets.
-			This article gives an overview of the locale framework and the standard facets defined by ISO/ANSI C++.
+			이처럼 여러 나라와 언어 환경을 지원할 수 있도록
+			소프트웨어를 설계하는 것을 국제화(i18n)라고 한다.
 
-				* Facets are divided into six standard categories:
+			C++ 표준 라이브러리는 로케일 프레임워크(Locale Framework)를 통해
+			국제화를 지원한다.
 
-					category	facet			member functions
-					collate		collate			compare, hash, transform
-					ctype		ctype			is, narrow, scan_is, scan_not, tolower, toupper, widen
-								codecvt			always_noconv, encoding, in, length, max_length, out, unshift
-					monetary	moneypunct		curr_symbol, decimal_point, frac_digits, grouping, negative_sign, neg_format, positive_sign, pos_format, thousands_sep
-								money_get		get
-								money_put		put
-					numeric		numpunct		decimal_point, falsename, grouping, thousands_sep, truename
-								num_get			get
-								num_put			put
-					time		time_get		date_order, get_date, get_monthname, get_time, get_weekday, get_year (and get, since C++11)
-								time_put		put
-					messages	messages		close, get, open
+			로케일 프레임워크(Locale Framework)의 핵심 개념은 다음 2가지이다.
 
-				* Categories constant
+				1) locale
+					문화권 규칙의 묶음
 
-					Constant		Explanation
-					LC_ALL			selects the entire C locale
-					LC_COLLATE		selects the collation category of the C locale
-					LC_CTYPE		selects the character classification category of the C locale
-					LC_MONETARY		selects the monetary formatting category of the C locale
-					LC_NUMERIC		selects the numeric formatting category of the C locale
-					LC_TIME			selects the time formatting category of the C locale
+				2) facet
+					locale 내부에서 특정 기능을 담당하는 구성 요소
 
-				* Locale string format
 
-					language[_country[.charset]]
+			=======================================================================================
+			1. 표준 facet 분류
+			=======================================================================================
 
-				* Locale string list
+			ISO/ANSI C++에서 locale의 facet은 6개의 표준 카테고리로 나뉜다.
 
-					Default
+			---------------------------------------------------------------------------------------
+			1) collate 카테고리
+			---------------------------------------------------------------------------------------
 
-						locale name		description
-						C				Default value: ANSI-C convention (English, 7 bit)
-						de_DE			German in Germany
-						de_DE.88591		German in Germany with ISO Latin-1 encoding
-						de_AT			German in Austria
-						de_CH			German in Switzerland
-						en_US			English in the United States
-						en_GB			English in the UK
-						en_AU			English in Australia
-						en_CA			English in Canada
-						fr_FR			French in France
-						fr_CH			French in Switzerland
-						fr_CA			French in Canada
-						ja_JP.jis		Japanese in Japanese with The Japanese Industrial Standard (JIS) encoding
-						ja_JP.sjis		Japanese in Japanese with Shift JIS encoding
-						ja_JP.ujis		Japanese in Japanese with UNXIZED JIS encoding
-						ja_JP.EUC		Japanese in Japanese with Extened UNIX code encoding
-						ko_KR			Korean in Korea
-						zh_CN			Chinese in China
-						zh_TW			Chinese in Taiwan
-						lt_LN.bit7		ISO Latin, 7 bit
-						lt_LN.bit8		ISO Latin, 8-bit
-						POSIX			POSIX convention (English, 7 bit)
+				facet
+					- collate
 
-					Windows
+				역할
+					- 문자열 비교 규칙
+					- 사전식 정렬 규칙
+					- 문화권별 문자열 비교 처리
 
-						package_name	lang_name				locale					localewin								localewincharset
-						af_utf8			Afrikaans				af_ZA.UTF-8				Afrikaans_South							Africa.1252	WINDOWS-1252
-						sq_utf8			Albanian				sq_AL.UTF-8				Albanian_Albania.1250					WINDOWS-1250
-						ar_utf8			Arabic					ar_SA.UTF-8				Arabic_Saudi Arabia.1256				WINDOWS-1256
-						eu_utf8			Basque					eu_ES.UTF-8				Basque_Spain.1252						WINDOWS-1252
-						be_utf8			Belarusian				be_BY.UTF-8				Belarusian_Belarus.1251					WINDOWS-1251
-						bs_utf8			Bosnian					bs_BA.UTF-8				Bosnian (Latin)							WINDOWS-1250
-						bg_utf8			Bulgarian				bg_BG.UTF-8				Bulgarian_Bulgaria.1251					WINDOWS-1251
-						ca_utf8			Catalan					ca_ES.UTF-8				Catalan_Spain.1252						WINDOWS-1252
-						hr_utf8			Croatian				hr_HR.UTF-8				Croatian_Croatia.1250					WINDOWS-1250
-						zh_cn_utf8		Chinese (Simplified)	zh_CN.UTF-8				Chinese_China.936						CP936
-						zh_tw_utf8		Chinese (Traditional)	zh_TW.UTF-8				Chinese_Taiwan.950						CP950
-						cs_utf8			Czech					cs_CZ.UTF-8				Czech_Czech Republic.1250				WINDOWS-1250
-						da_utf8			Danish					da_DK.UTF-8				Danish_Denmark.1252						WINDOWS-1252
-						nl_utf8			Dutch					nl_NL.UTF-8				Dutch_Netherlands.1252					WINDOWS-1252
-						en_utf8			English					en.UTF-8				English_Australia.1252					-empty string-
-						en_us_utf8		English (US)			parent en_utf8 used-	-parent en_utf8 used-					-parent en_utf8 used-
-						et_utf8			Estonian				et_EE.UTF-8				Estonian_Estonia.1257					WINDOWS-1257
-						fa_utf8			Farsi					fa_IR.UTF-8				Farsi_Iran.1256							WINDOWS-1256
-						fil_utf8		Filipino				ph_PH.UTF-8				Filipino_Philippines.1252				WINDOWS-1252
-						fi_utf8			Finnish					fi_FI.UTF-8				Finnish_Finland.1252					WINDOWS-1252
-						fr_utf8			French					fr_FR.UTF-8 or			French_France.1252						WINDOWS-1252
-																fr_CH.UTF-8 or
-																fr_BE.UTF-8
-						fr_ca_utf8		French (Canada)			fr_CA.UTF-8				French_Canada.1252						-parent fr_utf8 used-
-						ga_utf8			Gaelic					ga.UTF-8				Gaelic; Scottish Gaelic					WINDOWS-1252
-						gl_utf8			Gallego					gl_ES.UTF-8				Galician_Spain.1252						WINDOWS-1252
-						ka_utf8			Georgian				ka_GE.UTF-8				Georgian_Georgia.65001					-empty string-
-						de_utf8			German					de_DE.UTF-8				German_Germany.1252						WINDOWS-1252
-						de_du_utf8		German (Personal)		de_DE.UTF-8				-parent de_utf8 used-					-parent de_utf8 used-
-						el_utf8			Greek					el_GR.UTF-8				Greek_Greece.1253						WINDOWS-1253
-						gu_utf8			Gujarati				gu.UTF-8				Gujarati_India.0
-						he_utf8			Hebrew					he_IL.utf8				Hebrew_Israel.1255						WINDOWS-1255
-						hi_utf8			Hindi					hi_IN.UTF-8				Hindi.65001								-empty string-
-						hu_utf8			Hungarian				hu.UTF-8				Hungarian_Hungary.1250					WINDOWS-1250
-						is_utf8			Icelandic				is_IS.UTF-8				Icelandic_Iceland.1252					WINDOWS-1252
-						id_utf8			Indonesian				id_ID.UTF-8				Indonesian_indonesia.1252				WINDOWS-1252
-						it_utf8			Italian					it_IT.UTF-8				Italian_Italy.1252						WINDOWS-1252
-						ja_utf8			Japanese				ja_JP.UTF-8				Japanese_Japan.932						CP932
-						kn_utf8			Kannada					kn_IN.UTF-8				Kannada.65001							-empty string-
-						km_utf8			Khmer					km_KH.UTF-8				Khmer.65001								-empty string-
-						ko_utf8			Korean					ko_KR.UTF-8				Korean_Korea.949						EUC-KR
-						lo_utf8			Lao						lo_LA.UTF-8				Lao_Laos.UTF-8							WINDOWS-1257
-						lt_utf8			Lithuanian				lt_LT.UTF-8				Lithuanian_Lithuania.1257				WINDOWS-1257
-						lv_utf8			Latvian					lat.UTF-8				Latvian_Latvia.1257						WINDOWS-1257
-						ml_utf8			Malayalam				ml_IN.UTF-8				Malayalam_India.x-iscii-ma				x-iscii-ma
-						ms_utf8			Malaysian				ms_MY.UTF-8				Malay_malaysia.1252						WINDOWS-1252
-						mi_tn_utf8		Maori (Ngai Tahu)		mi_NZ.UTF-8				Maori.1252								WINDOWS-1252
-						mi_wwow_utf8	Maori (Waikoto Uni)		mi_NZ.UTF-8				Maori.1252								WINDOWS-1252
-						mn_utf8			Mongolian				mn.UTF-8				Cyrillic_Mongolian.1251					
-						no_utf8			Norwegian				no_NO.UTF-8				Norwegian_Norway.1252					WINDOWS-1252
-						no_gr_utf8		Norwegian (Primary)		no_NO.UTF-8				-parent no_utf8 used-					-parent no_utf8 used-
-						nn_utf8			Nynorsk					nn_NO.UTF-8				Norwegian-Nynorsk_Norway.1252			WINDOWS-1252
-						pl_utf8			Polish					pl.UTF-8				Polish_Poland.1250						WINDOWS-1250
-						pt_utf8			Portuguese				pt_PT.UTF-8				Portuguese_Portugal.1252				WINDOWS-1252
-						pt_br_utf8		Portuguese (Brazil)		pt_BR.UTF-8				Portuguese_Brazil.1252					WINDOWS-1252
-						ro_utf8			Romanian				ro_RO.UTF-8				Romanian_Romania.1250					WINDOWS-1250
-						ru_utf8			Russian					ru_RU.UTF-8				Russian_Russia.1251						WINDOWS-1251
-						sm_utf8			Samoan					mi_NZ.UTF-8				Maori.1252								WINDOWS-1252
-						sr_utf8			Serbian					sr_CS.UTF-8				Bosnian(Cyrillic), Serbian (Cyrillic)	WINDOWS-1251
-						sk_utf8			Slovak					sk_SK.UTF-8				Slovak_Slovakia.1250					WINDOWS-1250
-						sl_utf8			Slovenian				sl_SI.UTF-8				Slovenian_Slovenia.1250					WINDOWS-1250
-						so_utf8			Somali					so_SO.UTF-8				not found!								not found!
-						es_utf8			Spanish (International)	es_ES.UTF-8				Spanish_Spain.1252						WINDOWS-1252
-						sv_utf8			Swedish					sv_SE.UTF-8				Swedish_Sweden.1252						WINDOWS-1252
-						tl_utf8			Tagalog					tl.UTF-8				not found!								not found!
-						ta_utf8			Tamil					ta_IN.UTF-8				English_Australia.1252
-						th_utf8			Thai					th_TH.UTF-8				Thai_Thailand.874						WINDOWS-874
-						to_utf8			Tongan					mi_NZ.UTF-8				Maori.1252								WINDOWS-1252
-						tr_utf8			Turkish					tr_TR.UTF-8				Turkish_Turkey.1254						WINDOWS-1254
-						uk_utf8			Ukrainian				uk_UA.UTF-8				Ukrainian_Ukraine.1251					WINDOWS-1251
-						vi_utf8			Vietnamese				vi_VN.UTF-8				Vietnamese_Viet Nam.1258				WINDOWS-1258
+				주요 멤버 함수
+					- compare
+					- hash
+					- transform
+
+
+			---------------------------------------------------------------------------------------
+			2) ctype 카테고리
+			---------------------------------------------------------------------------------------
+
+				facet
+					- ctype
+					- codecvt
+
+				역할
+					- 문자 분류
+					- 대문자/소문자 변환
+					- narrow/wide 문자 변환
+					- 문자 인코딩 변환
+
+				ctype 주요 멤버 함수
+					- is
+					- narrow
+					- scan_is
+					- scan_not
+					- tolower
+					- toupper
+					- widen
+
+				codecvt 주요 멤버 함수
+					- always_noconv
+					- encoding
+					- in
+					- length
+					- max_length
+					- out
+					- unshift
+
+
+			---------------------------------------------------------------------------------------
+			3) monetary 카테고리
+			---------------------------------------------------------------------------------------
+
+				facet
+					- moneypunct
+					- money_get
+					- money_put
+
+				역할
+					- 통화 기호
+					- 통화 소수점
+					- 통화 음수/양수 형식
+					- 통화 입력/출력
+
+				moneypunct 주요 멤버 함수
+					- curr_symbol
+					- decimal_point
+					- frac_digits
+					- grouping
+					- negative_sign
+					- neg_format
+					- positive_sign
+					- pos_format
+					- thousands_sep
+
+				money_get 주요 멤버 함수
+					- get
+
+				money_put 주요 멤버 함수
+					- put
+
+
+			---------------------------------------------------------------------------------------
+			4) numeric 카테고리
+			---------------------------------------------------------------------------------------
+
+				facet
+					- numpunct
+					- num_get
+					- num_put
+
+				역할
+					- 숫자 소수점 기호
+					- 천 단위 구분 기호
+					- true/false 문자열
+					- 숫자 입력/출력
+
+				numpunct 주요 멤버 함수
+					- decimal_point
+					- falsename
+					- grouping
+					- thousands_sep
+					- truename
+
+				num_get 주요 멤버 함수
+					- get
+
+				num_put 주요 멤버 함수
+					- put
+
+
+			---------------------------------------------------------------------------------------
+			5) time 카테고리
+			---------------------------------------------------------------------------------------
+
+				facet
+					- time_get
+					- time_put
+
+				역할
+					- 날짜/시간 입력
+					- 날짜/시간 출력
+					- 문화권별 날짜 순서 처리
+
+				time_get 주요 멤버 함수
+					- date_order
+					- get_date
+					- get_monthname
+					- get_time
+					- get_weekday
+					- get_year
+					- get (C++11 이후)
+
+				time_put 주요 멤버 함수
+					- put
+
+
+			---------------------------------------------------------------------------------------
+			6) messages 카테고리
+			---------------------------------------------------------------------------------------
+
+				facet
+					- messages
+
+				역할
+					- 메시지 카탈로그 처리
+					- 다국어 메시지 조회
+
+				주요 멤버 함수
+					- close
+					- get
+					- open
+
+
+			=======================================================================================
+			2. C locale category 상수
+			=======================================================================================
+
+			C 스타일 locale에서는 다음 상수들을 통해
+			어떤 카테고리를 설정할지 선택할 수 있다.
+
+				LC_ALL
+					- 전체 C locale 설정
+
+				LC_COLLATE
+					- 문자열 비교 규칙 설정
+
+				LC_CTYPE
+					- 문자 분류 규칙 설정
+
+				LC_MONETARY
+					- 통화 형식 설정
+
+				LC_NUMERIC
+					- 숫자 형식 설정
+
+				LC_TIME
+					- 날짜/시간 형식 설정
+
+
+			=======================================================================================
+			3. locale 문자열 형식
+			=======================================================================================
+
+			일반적인 locale 문자열 형식은 다음과 같다.
+
+				language[_country[.charset]]
+
+			예:
+				C
+				en_US
+				en_US.UTF-8
+				ko_KR
+				ko_KR.UTF-8
+
+			의미:
+				language : 언어
+				country  : 국가
+				charset  : 문자 인코딩
+
+
+			=======================================================================================
+			4. 대표 locale 문자열 예시 - 기본/전통 형식
+			=======================================================================================
+
+				C
+					기본 ANSI-C 규칙(영문, 7비트 기반)
+
+				de_DE
+					독일(독일)
+
+				de_DE.88591
+					독일(독일), ISO Latin-1 인코딩
+
+				de_AT
+					독일어(오스트리아)
+
+				de_CH
+					독일어(스위스)
+
+				en_US
+					영어(미국)
+
+				en_GB
+					영어(영국)
+
+				en_AU
+					영어(호주)
+
+				en_CA
+					영어(캐나다)
+
+				fr_FR
+					프랑스어(프랑스)
+
+				fr_CH
+					프랑스어(스위스)
+
+				fr_CA
+					프랑스어(캐나다)
+
+				ja_JP.jis
+					일본어(일본), JIS 인코딩
+
+				ja_JP.sjis
+					일본어(일본), Shift-JIS 인코딩
+
+				ja_JP.ujis
+					일본어(일본), UNIX JIS 인코딩
+
+				ja_JP.EUC
+					일본어(일본), Extended UNIX Code 인코딩
+
+				ko_KR
+					한국어(대한민국)
+
+				zh_CN
+					중국어(중국)
+
+				zh_TW
+					중국어(대만)
+
+				lt_LN.bit7
+					ISO Latin, 7비트
+
+				lt_LN.bit8
+					ISO Latin, 8비트
+
+				POSIX
+					POSIX 규칙(영문, 7비트)
+
+
+			=======================================================================================
+			5. Windows 계열 locale 예시
+			=======================================================================================
+
+			Windows/MSVC 환경에서는 locale 이름이
+			Linux/GCC/Unix 계열과 다를 수 있다.
+
+			예를 들면 다음과 같은 대응이 존재할 수 있다.
+
+				af_ZA.UTF-8   <-> Afrikaans_South				/ WINDOWS-1252
+				sq_AL.UTF-8   <-> Albanian_Albania.1250			/ WINDOWS-1250
+				ar_SA.UTF-8   <-> Arabic_Saudi Arabia.1256		/ WINDOWS-1256
+				bg_BG.UTF-8   <-> Bulgarian_Bulgaria.1251		/ WINDOWS-1251
+				zh_CN.UTF-8   <-> Chinese_China.936				/ CP936
+				zh_TW.UTF-8   <-> Chinese_Taiwan.950			/ CP950
+				cs_CZ.UTF-8   <-> Czech_Czech Republic.1250		/ WINDOWS-1250
+				da_DK.UTF-8   <-> Danish_Denmark.1252			/ WINDOWS-1252
+				nl_NL.UTF-8   <-> Dutch_Netherlands.1252		/ WINDOWS-1252
+				fi_FI.UTF-8   <-> Finnish_Finland.1252			/ WINDOWS-1252
+				fr_FR.UTF-8   <-> French_France.1252			/ WINDOWS-1252
+				de_DE.UTF-8   <-> German_Germany.1252			/ WINDOWS-1252
+				el_GR.UTF-8   <-> Greek_Greece.1253				/ WINDOWS-1253
+				he_IL.utf8    <-> Hebrew_Israel.1255			/ WINDOWS-1255
+				hi_IN.UTF-8   <-> Hindi.65001
+				it_IT.UTF-8   <-> Italian_Italy.1252			/ WINDOWS-1252
+				ja_JP.UTF-8   <-> Japanese_Japan.932			/ CP932
+				ko_KR.UTF-8   <-> Korean_Korea.949				/ EUC-KR
+				pl.UTF-8      <-> Polish_Poland.1250			/ WINDOWS-1250
+				pt_PT.UTF-8   <-> Portuguese_Portugal.1252		/ WINDOWS-1252
+				pt_BR.UTF-8   <-> Portuguese_Brazil.1252		/ WINDOWS-1252
+				ru_RU.UTF-8   <-> Russian_Russia.1251			/ WINDOWS-1251
+				sk_SK.UTF-8   <-> Slovak_Slovakia.1250			/ WINDOWS-1250
+				sl_SI.UTF-8   <-> Slovenian_Slovenia.1250		/ WINDOWS-1250
+				es_ES.UTF-8   <-> Spanish_Spain.1252			/ WINDOWS-1252
+				sv_SE.UTF-8   <-> Swedish_Sweden.1252			/ WINDOWS-1252
+				th_TH.UTF-8   <-> Thai_Thailand.874				/ WINDOWS-874
+				tr_TR.UTF-8   <-> Turkish_Turkey.1254			/ WINDOWS-1254
+				uk_UA.UTF-8   <-> Ukrainian_Ukraine.1251		/ WINDOWS-1251
+				vi_VN.UTF-8   <-> Vietnamese_Viet Nam.1258		/ WINDOWS-1258
+
+			주의:
+				위 locale 이름들은 운영체제, CRT, Visual Studio 버전,
+				시스템 설치 상태에 따라 동작 여부가 달라질 수 있다.
+
+				즉, 표에 있다고 해서 반드시 locale 생성이 성공하는 것은 아니다.
+
+				특히 VS2015(v140)에서는 UTF-8 기반 locale 문자열이
+				그대로 동작하지 않는 경우가 많다.
+
+				실제로는 다음처럼 Windows 스타일 이름이 더 잘 동작할 수 있다.
+
+					"Korean_Korea"
+					"English_United States"
+					"German_Germany"
+					"Japanese_Japan"
+
+				하지만 이것 역시 시스템 환경에 따라 실패할 수 있으므로
+				try-catch 처리로 확인하는 것이 안전하다.
 
 		*/
+
+		//=========================================================================================
+		// [테스트 예제 1] 현재 C locale 확인
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] 현재 C locale 확인" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			const char* currentCLocale = setlocale(LC_ALL, NULL);
+			if (currentCLocale != NULL)
+				std::cout << "현재 C locale : " << currentCLocale << std::endl;
+			else
+				std::cout << "현재 C locale : (null)" << std::endl;
+
+			std::cout << std::endl;
+		}
+
+		//=========================================================================================
+		// [테스트 예제 2] C locale을 \"C\"로 설정
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] setlocale(LC_ALL, \"C\")" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			setlocale(LC_ALL, "C");
+
+			const char* currentCLocale = setlocale(LC_ALL, NULL);
+			if (currentCLocale != NULL)
+				std::cout << "변경 후 C locale : " << currentCLocale << std::endl;
+			else
+				std::cout << "변경 후 C locale : (null)" << std::endl;
+
+			std::cout << std::endl;
+		}
+
+		//=========================================================================================
+		// [테스트 예제 3] 시스템 기본 locale 적용
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 3] setlocale(LC_ALL, \"\")" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			setlocale(LC_ALL, "");
+
+			const char* currentCLocale = setlocale(LC_ALL, NULL);
+			if (currentCLocale != NULL)
+				std::cout << "시스템 기본 locale 적용 후 : " << currentCLocale << std::endl;
+			else
+				std::cout << "시스템 기본 locale 적용 후 : (null)" << std::endl;
+
+			std::cout << std::endl;
+		}
+
+		//=========================================================================================
+		// [테스트 예제 4] C++ 기본 locale 객체 생성
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 4] C++ 기본 locale 객체" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			try
+			{
+				std::locale locDefault;
+				std::cout << "기본 locale 객체 생성 성공" << std::endl;
+				std::cout << "locale name : " << locDefault.name() << std::endl;
+			}
+			catch (const std::exception& e)
+			{
+				std::cout << "예외 발생 : " << e.what() << std::endl;
+			}
+
+			std::cout << std::endl;
+		}
+
+		//=========================================================================================
+		// [테스트 예제 5] locale(\"C\") 생성
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 5] locale(\"C\") 생성" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			try
+			{
+				std::locale locC("C");
+				std::cout << "locale(\"C\") 생성 성공" << std::endl;
+				std::cout << "locale name : " << locC.name() << std::endl;
+			}
+			catch (const std::exception& e)
+			{
+				std::cout << "예외 발생 : " << e.what() << std::endl;
+			}
+
+			std::cout << std::endl;
+		}
+
+		//=========================================================================================
+		// [테스트 예제 6] 숫자 관련 facet(numpunct) 확인
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 6] numpunct facet 확인" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			try
+			{
+				std::locale loc;
+				const std::numpunct<char>& np = std::use_facet<std::numpunct<char> >(loc);
+
+				std::cout << "소수점 문자(decimal_point) : " << np.decimal_point() << std::endl;
+				std::cout << "천 단위 구분 문자(thousands_sep) : " << np.thousands_sep() << std::endl;
+				std::cout << "true 문자열(truename) : " << np.truename() << std::endl;
+				std::cout << "false 문자열(falsename) : " << np.falsename() << std::endl;
+			}
+			catch (const std::exception& e)
+			{
+				std::cout << "예외 발생 : " << e.what() << std::endl;
+			}
+
+			std::cout << std::endl;
+		}
+
+		//=========================================================================================
+		// [테스트 예제 7] ctype facet으로 대문자/소문자 변환
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 7] ctype facet 확인" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			try
+			{
+				std::locale loc;
+				const std::ctype<char>& ct = std::use_facet<std::ctype<char> >(loc);
+
+				char a = 'a';
+				char z = 'z';
+				char A = 'A';
+
+				std::cout << a << " -> " << ct.toupper(a) << std::endl;
+				std::cout << z << " -> " << ct.toupper(z) << std::endl;
+				std::cout << A << " -> " << ct.tolower(A) << std::endl;
+			}
+			catch (const std::exception& e)
+			{
+				std::cout << "예외 발생 : " << e.what() << std::endl;
+			}
+
+			std::cout << std::endl;
+		}
+
+		//=========================================================================================
+		// [테스트 예제 8] 숫자 출력 형식 확인
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 8] locale을 적용한 숫자 출력" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			try
+			{
+				std::locale loc;
+				std::cout.imbue(loc);
+
+				double value = 1234567.89;
+				std::cout << std::fixed << std::setprecision(2);
+				std::cout << "출력 값 : " << value << std::endl;
+			}
+			catch (const std::exception& e)
+			{
+				std::cout << "예외 발생 : " << e.what() << std::endl;
+			}
+
+			std::cout << std::endl;
+		}
+
+		//=========================================================================================
+		// [테스트 예제 9] 날짜/시간 출력 확인
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 9] locale을 적용한 날짜/시간 출력" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			try
+			{
+				std::locale loc;
+				std::cout.imbue(loc);
+
+				time_t now = time(NULL);
+				tm t;
+				localtime_s(&t, &now);
+
+				std::cout << "현재 날짜/시간 : " << std::put_time(&t, "%c") << std::endl;
+			}
+			catch (const std::exception& e)
+			{
+				std::cout << "예외 발생 : " << e.what() << std::endl;
+			}
+
+			std::cout << std::endl;
+		}
+
+		//=========================================================================================
+		// // [테스트 예제 10] Windows 스타일 locale 이름 생성 시도
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 10] Windows 스타일 locale 생성 시도" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			const char* testLocales[] =
+			{
+				"C",
+				"Korean_Korea",
+				"English_United States",
+				"German_Germany",
+				"Japanese_Japan",
+				"ko_KR.UTF-8",
+				"en_US.UTF-8"
+			};
+
+			for (int i = 0; i < sizeof(testLocales) / sizeof(testLocales[0]); ++i)
+			{
+				try
+				{
+					std::locale testLoc(testLocales[i]);
+					std::cout << "[성공] " << testLocales[i]
+						<< " -> " << testLoc.name() << std::endl;
+				}
+				catch (const std::exception& e)
+				{
+					std::cout << "[실패] " << testLocales[i]
+						<< " -> " << e.what() << std::endl;
+				}
+			}
+
+			std::cout << std::endl;
+		}
+
+		//=========================================================================================
+		// [테스트 예제 11] LC_NUMERIC / LC_TIME 개별 설정 예시
+		//=========================================================================================
+		{
+
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 11] C locale category 개별 설정" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			setlocale(LC_NUMERIC, "C");
+			setlocale(LC_TIME, "");
+
+			std::cout << "LC_NUMERIC : " << setlocale(LC_NUMERIC, NULL) << std::endl;
+			std::cout << "LC_TIME    : " << setlocale(LC_TIME, NULL) << std::endl;
+
+			std::cout << std::endl;
+		}
+
+		//=========================================================================================
+		// [테스트 예제 12] collate facet 간단 설명용 비교 예시
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 12] collate facet 문자열 비교" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			try
+			{
+				std::locale loc;
+				const std::collate<char>& col = std::use_facet<std::collate<char> >(loc);
+
+				std::string s1 = "abc";
+				std::string s2 = "abd";
+
+				int result = col.compare(
+					s1.data(), s1.data() + s1.size(),
+					s2.data(), s2.data() + s2.size());
+
+				if (result < 0)
+					std::cout << "\"" << s1 << "\" < \"" << s2 << "\"" << std::endl;
+				else if (result > 0)
+					std::cout << "\"" << s1 << "\" > \"" << s2 << "\"" << std::endl;
+				else
+					std::cout << "\"" << s1 << "\" == \"" << s2 << "\"" << std::endl;
+			}
+			catch (const std::exception& e)
+			{
+				std::cout << "예외 발생 : " << e.what() << std::endl;
+			}
+
+			std::cout << std::endl;
+
+			system("pause");
+		}
 	}
 
 	void locale_c()
 	{
 		/*
-			Locale C
+			📚 C 로케일 (C Locale)
 
-			As a software developer and reader of C++ Users Journal, you may already have some background in the C programming language,
-			and the internationalization services provided by the ANSI C library.
+			C++의 로케일을 이해하려면 먼저 C 라이브러리의 로케일 개념을 이해하는 것이 좋다.
 
-			For this reason, let us start with a short recap of the internationalization services provided by the C library,
-			and then build on existing knowledge to describe the C++ locales in terms of the C locale.
-			
-			Internationalization requires that developers consciously design and implement their software
-			and avoid hard-coding information or rules that can be localized.
-			
-			For example, careful developers never assume specific conventions for formatting numeric or monetary values,
-			or for displaying date and time, not even for comparing or sorting strings.
-			
-			For internationalization, all culture and language dependencies need to be represented in a kind of language table.
-			Such a table is called a locale.
-			A locale in the C library contains support for the several problem domains.
-			The information in a C locale is composed of categories.
-			Each of the categories represents a set of related information:
+			C 언어에서도 국제화(i18n, internationalization)를 지원하기 위해
+			언어, 국가, 문화권에 따라 달라지는 규칙들을 locale이라는 개념으로 관리한다.
 
-				Category			Content 
-				LC_NUMERIC			Rules and symbols for numbers 
-				LC_TIME				Values for date and time information 
-				LC_MONETARY			Rules and symbols for monetary information 
-				LC_CTYPE			Character classification and case conversion 
-				LC_COLLATE			Collation sequence
-				LC_MESSAGE			Formats and values of messages
+			국제화를 고려한 프로그램은 다음과 같은 규칙을 코드에 고정해서 가정하면 안 된다.
 
-			Inside a program, the C locale is represented by one or more global data structures.
-			The C library provides a functions that use information from those global data structures to adapt their behavior to local conventions.
-			Examples of these functions and the information they cover are listed below:
+				- 숫자의 소수점은 항상 '.' 이다
+				- 날짜 형식은 항상 MM/DD/YYYY 이다
+				- 통화 기호는 항상 '$' 이다
+				- 문자열 비교는 단순 ASCII 순서면 충분하다
+				- 문자 분류 규칙은 모든 언어에서 동일하다
 
-				C locale function							Information covered
-				setlocale(), ...							Locale initialization and language information
-				isalpha() , isupper() , isdigit() , ...		Character classification
-				strftime() , ...							Date and time functions
-				strfmon()									Monetary functions
-				printf() , scanf() , ...					Number parsing and formatting
-				strcoll() , wcscoll() , ...					String collation
-				mblen() , mbtowc() , wctomb() , ...			Multibyte functions
-				cat_open() , catgets() , cat_close()		Message retrieval
+			이처럼 언어/문화권에 따라 달라질 수 있는 정보들을
+			하나의 규칙 집합으로 관리한 것이 locale이다.
+
+			C 라이브러리의 locale은 여러 category(범주)로 구성되며,
+			각 category는 특정 영역의 문화권 규칙을 담당한다.
+
+
+			=======================================================================================
+			1. C locale category
+			=======================================================================================
+
+				LC_NUMERIC
+					숫자 관련 규칙과 기호
+					예: 소수점 문자, 숫자 형식
+
+				LC_TIME
+					날짜/시간 관련 값과 출력 규칙
+
+				LC_MONETARY
+					통화 관련 규칙과 기호
+
+				LC_CTYPE
+					문자 분류 및 대소문자 변환 규칙
+
+				LC_COLLATE
+					문자열 비교 및 정렬 규칙
+
+				LC_MESSAGES
+					메시지 형식 및 메시지 값
+					※ 일부 오래된 자료에는 LC_MESSAGE 라고 쓰이기도 하지만
+					   일반적으로는 LC_MESSAGES 형태를 더 많이 본다.
+
+				LC_ALL
+					모든 category를 한 번에 설정
+
+
+			=======================================================================================
+			2. C locale의 동작 방식
+			=======================================================================================
+
+			C locale은 프로그램 내부에서 전역(global) 정보처럼 동작한다.
+
+			즉, setlocale()로 locale을 바꾸면
+			그 locale 정보를 참조하는 C 라이브러리 함수들의 동작이 함께 달라질 수 있다.
+
+			대표적으로 locale 영향을 받을 수 있는 함수들은 다음과 같다.
+
+				setlocale(), ...
+					locale 초기화 및 변경
+
+				isalpha(), isupper(), isdigit(), ...
+					문자 분류
+
+				strftime(), ...
+					날짜/시간 서식화
+
+				strfmon()
+					통화 서식화
+					※ 환경에 따라 지원 여부가 다를 수 있음
+
+				printf(), scanf(), ...
+					숫자 파싱 및 출력 형식
+
+				strcoll(), wcscoll(), ...
+					문자열 비교/정렬
+
+				mblen(), mbtowc(), wctomb(), ...
+					멀티바이트 문자 처리
+
+				catopen(), catgets(), catclose()
+					메시지 조회
+					※ 환경 의존적
+
+
+			=======================================================================================
+			3. C locale과 C++ locale의 관계
+			=======================================================================================
+
+			C++은 C의 locale 개념을 확장하여 std::locale 클래스를 제공한다.
+
+			차이점은 다음과 같다.
+
+				C locale
+					- 전역 설정 중심
+					- setlocale() 사용
+					- C 함수들에 직접 영향
+					- category 기반
+
+				C++ locale
+					- std::locale 객체 기반
+					- 스트림별 개별 적용 가능
+					- facet 기반 구조
+					- std::cin, std::cout 등에 개별 적용 가능
+
+			즉, C locale은 "전역 규칙 변경"에 가깝고,
+			C++ locale은 "객체 단위의 세밀한 적용"까지 가능하다.
+
+
+			=======================================================================================
+			4. 원문 예제의 핵심 의미
+			=======================================================================================
+
+			이 함수는 다음 3가지를 보여준다.
+
+				1) std::cin / std::cout 에 서로 다른 C++ locale 적용
+				2) C locale category를 각각 다르게 설정
+				3) setlocale()로 전체 locale을 바꿨을 때 날짜 출력 결과가 달라짐
+
+			즉,
+				- 입력은 C locale 기준으로 받고
+				- 출력은 German locale 기준으로 하거나
+				- 숫자와 시간 category를 서로 다른 locale로 섞어 쓰거나
+				- 같은 날짜를 다른 locale로 출력해 차이를 확인하는 예제이다.
+
+
+			=======================================================================================
+			5. VS2015(v140) 기준 주의사항
+			=======================================================================================
+
+			Windows/MSVC에서는 locale 이름이 Linux/GCC 계열과 다를 수 있다.
+
+			예를 들어 다음 locale 이름은 환경에 따라 성공/실패할 수 있다.
+
+				"German_Germany.1252"
+				"English_Australia.1252"
+				"American_America.1252"
+
+			즉, locale 이름은 운영체제 / CRT / Visual Studio 버전 /
+			시스템 설치 상태에 따라 동작 여부가 달라질 수 있다.
+
+			따라서
+				- std::locale(...) 생성은 try-catch 처리
+				- setlocale(...)은 반환값 확인
+			이 안전하다.
+
+
+			=======================================================================================
+			6. 핵심 요약
+			=======================================================================================
+
+				- C locale은 문화권 규칙을 category 단위로 관리한다.
+				- setlocale()은 C locale을 변경하는 대표 함수이다.
+				- C 함수들은 locale 설정에 따라 결과가 달라질 수 있다.
+				- C++ locale은 C locale보다 더 세밀하고 객체지향적으로 사용할 수 있다.
+				- VS2015에서는 locale 이름 지원 여부를 직접 확인하는 것이 가장 안전하다.
 		*/
 
-		//use C locale
+
+		//=========================================================================================
+		// [테스트 예제 1] C++ 스트림에 locale 적용
+		//=========================================================================================
 		{
-			try {
-				//set "C" locale to STD.input
-				std::cin.imbue(std::locale::classic()); //or std::locale("C");
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] C++ 스트림에 locale 적용" << std::endl;
+			std::cout << "==================================================" << std::endl;
 
-				//set German in Germany locale to STD.output
-				std::cout.imbue(std::locale("German_Germany.1252"));	//if the locale setting is not supported,
-																		//an exception is thrown
+			try
+			{
+				// 입력 스트림은 C locale 사용
+				std::cin.imbue(std::locale::classic());		// 또는 std::locale("C")
+
+				// 출력 스트림은 독일 locale 적용 시도
+				std::cout.imbue(std::locale("German_Germany.1252"));
+
+				std::cout << "std::cin  -> locale::classic() 적용" << std::endl;
+				std::cout << "std::cout -> German_Germany.1252 적용" << std::endl;
 			}
-			catch (std::exception &e) {
-				std::cout << "Exception: " << e.what() << std::endl;
+			catch (const std::exception& e)
+			{
+				std::cout << "예외 발생 : " << e.what() << std::endl;
+				std::cout << "해당 locale이 시스템에서 지원되지 않을 수 있습니다." << std::endl;
 			}
 
-			//read and print floating-point values
-			double value;
+			std::cout << "실습용 입력 예시 : 10.5" << std::endl;
+			std::cout << "double value를 입력하세요 : ";
+
+			double value = 0.0;
 			std::cin >> value;
-			std::cout << value << std::endl;
+
+			std::cout << "출력 결과 : " << value << std::endl;
+			std::cout << std::endl;
 
 			/*
-			input:
-				10.5
+				입력 예:
+					10.5
 
-			output:
-				10,5
+				가능한 출력 예:
+					10,5
 
-				-if the "German_Germany.1252" locale setting succeeds: 10,5
+				설명:
+					입력은 C locale 기준으로 '.' 소수점을 사용하고,
+					출력은 German locale 기준으로 ',' 소수점을 사용할 수 있다.
 			*/
 		}
 
-		//use C locale categories
-		{
-			std::setlocale(LC_ALL, "American_America.1252");		//the C locale will be enabled American
-			std::setlocale(LC_NUMERIC, "English_Australia.1252");	//decimal dot will be Australia
-			std::setlocale(LC_TIME, "German_Germany.1252");			//date/time formatting will be Germany
 
-			wchar_t str[100];
+		//=========================================================================================
+		// [테스트 예제 2] C locale category 개별 설정
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] C locale category 개별 설정" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			const char* r1 = std::setlocale(LC_ALL, "American_America.1252");
+			const char* r2 = std::setlocale(LC_NUMERIC, "English_Australia.1252");
+			const char* r3 = std::setlocale(LC_TIME, "German_Germany.1252");
+
+			std::cout << "setlocale(LC_ALL,     \"American_America.1252\") : "
+				<< (r1 ? r1 : "(실패)") << std::endl;
+			std::cout << "setlocale(LC_NUMERIC, \"English_Australia.1252\") : "
+				<< (r2 ? r2 : "(실패)") << std::endl;
+			std::cout << "setlocale(LC_TIME,    \"German_Germany.1252\") : "
+				<< (r3 ? r3 : "(실패)") << std::endl;
+
+			wchar_t str[100] = { 0 };
 			std::time_t t = std::time(nullptr);
-			std::wcsftime(str, 100, L"%A %c", std::localtime(&t));
-			std::wprintf(L"Number: %.2f\nDate: %Ls\n", 3.14, str);
+			tm tmValue;
+			localtime_s(&tmValue, &t);
 
-			std::cout.imbue(std::locale("English_Australia.1252"));
-			std::locale currLocale = std::cout.getloc();
+			std::wcsftime(str, 100, L"%A %c", &tmValue);
+			std::wprintf(L"숫자 출력 예시 : %.2f\n", 3.14);
+			std::wprintf(L"날짜 출력 예시 : %ls\n", str);
 
-			std::cout << currLocale.name() << std::endl;
+			try
+			{
+				std::cout.imbue(std::locale("English_Australia.1252"));
+				std::locale currLocale = std::cout.getloc();
+				std::cout << "std::cout 현재 locale : " << currLocale.name() << std::endl;
+			}
+			catch (const std::exception& e)
+			{
+				std::cout << "std::cout locale 설정 예외 : " << e.what() << std::endl;
+			}
+
+			std::cout << std::endl;
 
 			/*
-			output:
-				Number: 3.14
-				Date: Samstag 05.05.2018 01:36:08
-				English_Australia.1252
+				가능한 출력 예:
+					숫자 출력 예시 : 3.14
+					날짜 출력 예시 : Samstag 05.05.2018 01:36:08
+					English_Australia.1252
+
+				설명:
+					숫자 관련 category와 시간 관련 category를 서로 다른 locale로
+					설정하면 출력 결과도 각 category 규칙을 따른다.
 			*/
 		}
 
-		//use C locale for change
+
+		//=========================================================================================
+		// [테스트 예제 3] setlocale()로 전체 locale 변경
+		//=========================================================================================
 		{
-			if (std::setlocale(LC_ALL, "C") == nullptr) {
-				fprintf(stderr, "Unable to establish locale\n");
-				return;
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 3] setlocale()로 전체 locale 변경" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			if (std::setlocale(LC_ALL, "C") == nullptr)
+			{
+				fprintf(stderr, "Unable to establish locale : C\n");
 			}
-			else {
+			else
+			{
 				time_t system_time = time(NULL);
-				char time_text[81];
-				strftime(time_text, 80, "%x %A %B %d", localtime(&system_time));
-				printf("[%s]\n", time_text);
+				char time_text[81] = { 0 };
+				tm tmValue;
+				localtime_s(&tmValue, &system_time);
+
+				strftime(time_text, 80, "%x %A %B %d", &tmValue);
+				printf("[C locale] %s\n", time_text);
 			}
 
-			if (std::setlocale(LC_ALL, "German_Germany.1252") == nullptr) {
-				fprintf(stderr, "Unable to establish locale\n");
-				return;
+			if (std::setlocale(LC_ALL, "German_Germany.1252") == nullptr)
+			{
+				fprintf(stderr, "Unable to establish locale : German_Germany.1252\n");
 			}
-			else {
+			else
+			{
 				time_t system_time = time(NULL);
-				char time_text[81];
-				strftime(time_text, 80, "%x %A %B %d", localtime(&system_time));
-				printf("[%s]\n", time_text);
+				char time_text[81] = { 0 };
+				tm tmValue;
+				localtime_s(&tmValue, &system_time);
+
+				strftime(time_text, 80, "%x %A %B %d", &tmValue);
+				printf("[German locale] %s\n", time_text);
 			}
+
+			std::cout << std::endl;
 
 			/*
-			output:
-				[05/28/18 Monday May 28]
-				[28.05.2018 Montag Mai 28]
+				가능한 출력 예:
+					[C locale] 05/28/18 Monday May 28
+					[German locale] 28.05.2018 Montag Mai 28
+
+				설명:
+					같은 날짜/시간이라도 locale이 달라지면
+					날짜 형식, 요일 이름, 월 이름이 달라질 수 있다.
 			*/
 		}
 
@@ -306,613 +1001,795 @@ namespace Locale
 	void locale_cpp()
 	{
 		/*
-			Locale C++
+			📚 C++ 로케일 (C++ Locale)
 
-			In C++, internationalization semantics are broken out into separate classes, so-called facets.
-			Each facet offers a set of internationalization services.
-			For instance, the formatting of monetary values is encapsulated in the money_put<> facet.
-			(Don't get distracted by the template parenthesis; they are added because all facets are class templates.)
+			C++에서는 국제화 기능을 하나의 전역 구조로만 다루지 않고,
+			기능별 클래스로 나누어 관리한다.
+			이 기능별 클래스를 facet(패싯)이라고 한다.
 
-			Facets may also represent a set of information about certain culture and language dependencies.
-			The rules and symbols for monetary information are an example; they are contained in a facet called moneypunct<>.
-			In C++, there is also a class called locale.
-			
-			Different from a C locale, which is a global data structure representing various culture and language dependencies,
-			the C++ class locale is an abstraction that manages facets.
+			즉, C++ locale은 단순한 "문화권 정보" 그 자체라기보다,
+			여러 개의 facet을 담고 관리하는 컨테이너 같은 개념이다.
 
-			Basically, you can think of a C++ locale as a container of facets.
-			This concept is illustrated graphically below:
-			
+			쉽게 말하면:
 
-				ref file : locale_cpp_facets.gif
+				- C locale   : 전역적인 문화권 규칙 집합
+				- C++ locale : facet들을 담는 객체
+
+			즉, C++ locale은 여러 facet을 보관하는 "컨테이너(container)"처럼 생각하면 된다.
 
 
-			The Standard Facets
+			=======================================================================================
+			1. facet 이란?
+			=======================================================================================
 
-			The C++ standard defines a number of standard facets.
-			They provide services and information similar to those contained in the C library.
-			As we have seen, the C locale is composed of six categories of information.
-			
-			Similarly, there are six groups of standard facets.
-			Here is a brief overview:
-			
-				* Numeric.
-				  The facets num_get<charT,InputIterator> and num_put<charT, OutputIterator> handle numeric formatting and parsing.
-				  The facets provide get() and put() member functions for values of type long , double , etc.
+			facet은 국제화 기능을 역할별로 나눈 클래스이다.
 
-				  The facet numpunct<charT> specifies numeric formats and punctuation.
-				  It provides functions like decimal_point(),thousands_sep(), etc.
+			예를 들어:
 
-				* Monetary.
-				  The facets money_get<charT,bool,InputIterator> and money_put<charT, bool, OutputIterator> handle formatting
-				  and parsing of monetary values.
-				  They provide get() and put() member functions that parse or produce a sequence of digits,
-				  representing a count of the smallest unit of the currency.
-				  For example, the sequence $1,056.23 in a common US locale would yield 105623 units,
-				  or the character sequence "105623".
+				- 숫자 입출력
+				- 통화 입출력
+				- 날짜/시간 입출력
+				- 문자 분류
+				- 문자열 비교
+				- 문자 인코딩 변환
+				- 메시지 조회
 
-				  The facet moneypunct <charT, bool International> handles monetary formats
-				  and punctuation like the facet numpunct<charT> handles numeric formats and punctuation.
-				  It comes with functions like curr_symbol(), etc.
-				
-				* Time.
-				  The facets time_get<charT,InputIterator> and time_put<charT, OutputIterator> handle date and time formatting and parsing.
-				  They provide functions like put(), get_time(), get_date(), get_weekday(), etc.
-				
-				* Ctype.
-				  The facet ctype<charT> encapsulates the Standard C++ Library ctype features for character classification, like tolower(), toupper(), is(ctype_base::space,...) etc.
-				
-				* Collate.
-				  The facet collate<charT> provides features for string collation, including a compare() function used for string comparison.
-				
-				* Code Conversion.
-				  The facet codecvt<internT,externT,stateT> is used when converting from one encoding scheme to another,
-				  such as from the multibyte encoding JIS to the wide-character encoding Unicode.
-				  The main member functions are in() and out().
-				
-				* Messages.
-				  The facet messages<charT> implements message retrieval.
-				  It provides facilities to access message catalogues via open() and close(catalog),
-				  and to retrieve messages via get(..., int msgid,...).
-				  
-			As you might have noticed, the names of the standard facets obey certain naming rules.
-			The get facets, like num_get and time_get, offer services for parsing.
-			The put facets provide formatting services The punct facets, like numpunct and moneypunct, represent rules and symbols.
+			이 각각이 별도의 facet으로 제공된다.
+
+			예:
+				- money_put<>  : 통화 출력
+				- moneypunct<> : 통화 기호/소수점/천 단위 구분 규칙
+				- numpunct<>   : 숫자 소수점/천 단위 구분 규칙
+				- time_put<>   : 날짜/시간 출력
+				- ctype<>      : 문자 분류/대소문자 변환
+				- collate<>    : 문자열 비교
+				- codecvt<>    : 문자 인코딩 변환
+				- messages<>   : 메시지 조회
+
+
+			=======================================================================================
+			2. C locale 과 C++ locale 차이
+			=======================================================================================
+
+			C locale은 전역(global) 데이터 구조에 가깝다.
+			반면 C++ locale은 facet을 관리하는 객체이다.
+
+			즉:
+
+				C locale
+					- 전역 설정 중심
+					- category 기반
+					- setlocale() 사용
+
+				C++ locale
+					- 객체 기반
+					- facet 기반
+					- std::locale 사용
+					- 스트림별로 개별 적용 가능
+
+
+			=======================================================================================
+			3. 표준 facet 그룹
+			=======================================================================================
+
+			C++ 표준은 여러 종류의 표준 facet을 제공한다.
+
+			---------------------------------------------------------------------------------------
+			1) Numeric 그룹
+			---------------------------------------------------------------------------------------
+
+				num_get<charT, InputIterator>
+					숫자 입력 파싱 담당
+					get() 제공
+
+				num_put<charT, OutputIterator>
+					숫자 출력 서식화 담당
+					put() 제공
+
+				numpunct<charT>
+					숫자 형식 규칙 담당
+					예:
+						- decimal_point()
+						- thousands_sep()
+						- truename()
+						- falsename()
+
+			---------------------------------------------------------------------------------------
+			2) Monetary 그룹
+			---------------------------------------------------------------------------------------
+
+				money_get<charT, bool, InputIterator>
+					통화 입력 파싱 담당
+					get() 제공
+
+				money_put<charT, bool, OutputIterator>
+					통화 출력 서식화 담당
+					put() 제공
+
+				moneypunct<charT, bool>
+					통화 형식 규칙 담당
+					예:
+						- curr_symbol()
+						- decimal_point()
+						- thousands_sep()
+						- positive_sign()
+						- negative_sign()
+
+				예를 들어 미국 locale에서:
+					$1,056.23  ->  105623
+				즉 가장 작은 통화 단위(cent) 기준 정수처럼 다루는 방식이다.
+
+			---------------------------------------------------------------------------------------
+			3) Time 그룹
+			---------------------------------------------------------------------------------------
+
+				time_get<charT, InputIterator>
+					날짜/시간 입력 파싱 담당
+					예:
+						- get_time()
+						- get_date()
+						- get_weekday()
+
+				time_put<charT, OutputIterator>
+					날짜/시간 출력 서식화 담당
+					put() 제공
+
+			---------------------------------------------------------------------------------------
+			4) Ctype 그룹
+			---------------------------------------------------------------------------------------
+
+				ctype<charT>
+					문자 분류와 문자 변환 담당
+					예:
+						- tolower()
+						- toupper()
+						- is(ctype_base::space, ...)
+
+			---------------------------------------------------------------------------------------
+			5) Collate 그룹
+			---------------------------------------------------------------------------------------
+
+				collate<charT>
+					문자열 비교와 정렬 담당
+					예:
+						- compare()
+
+			---------------------------------------------------------------------------------------
+			6) Code Conversion 그룹
+			---------------------------------------------------------------------------------------
+
+				codecvt<internT, externT, stateT>
+					문자 인코딩 변환 담당
+					예:
+						- in()
+						- out()
+
+				예:
+					JIS 멀티바이트 -> Unicode 와이드 문자 변환
+
+			---------------------------------------------------------------------------------------
+			7) Messages 그룹
+			---------------------------------------------------------------------------------------
+
+				messages<charT>
+					메시지 카탈로그 조회 담당
+					예:
+						- open()
+						- close()
+						- get(..., msgid, ...)
+
+
+			=======================================================================================
+			4. facet 이름 규칙
+			=======================================================================================
+
+			C++ 표준 facet 이름은 어느 정도 규칙이 있다.
+
+				get 계열
+					입력 / 파싱 담당
+					예:
+						num_get
+						time_get
+						money_get
+
+				put 계열
+					출력 / 서식화 담당
+					예:
+						num_put
+						time_put
+						money_put
+
+				punct 계열
+					형식 규칙 / 기호 담당
+					예:
+						numpunct
+						moneypunct
+
+
+			=======================================================================================
+			5. 핵심 요약
+			=======================================================================================
+
+				- C++ locale은 facet을 관리하는 객체이다.
+				- facet은 국제화 기능을 역할별로 나눈 클래스이다.
+				- get facet은 입력/파싱 담당이다.
+				- put facet은 출력/서식화 담당이다.
+				- punct facet은 기호와 형식 규칙 담당이다.
+				- C++ locale은 C locale보다 더 세밀하고 객체지향적으로 사용할 수 있다.
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] 기본 locale 객체 생성
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] 기본 locale 객체 생성" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			try
+			{
+				std::locale loc;
+				std::cout << "기본 locale 생성 성공" << std::endl;
+				std::cout << "locale name : " << loc.name() << std::endl;
+			}
+			catch (const std::exception& e)
+			{
+				std::cout << "예외 발생 : " << e.what() << std::endl;
+			}
+
+			std::cout << std::endl;
+		}
+
+		//=========================================================================================
+		// [테스트 예제 2] numpunct facet 확인
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] numpunct facet 확인" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			try
+			{
+				std::locale loc;
+				const std::numpunct<char>& np = std::use_facet<std::numpunct<char> >(loc);
+
+				std::cout << "decimal_point : " << np.decimal_point() << std::endl;
+				std::cout << "thousands_sep : " << np.thousands_sep() << std::endl;
+				std::cout << "truename      : " << np.truename() << std::endl;
+				std::cout << "falsename     : " << np.falsename() << std::endl;
+			}
+			catch (const std::exception& e)
+			{
+				std::cout << "예외 발생 : " << e.what() << std::endl;
+			}
+
+			std::cout << std::endl;
+		}
+
+		//=========================================================================================
+		// [테스트 예제 3] moneypunct facet 확인
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 3] moneypunct facet 확인" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			try
+			{
+				std::locale loc;
+				const std::moneypunct<char, false>& mp =
+					std::use_facet<std::moneypunct<char, false> >(loc);
+
+				std::cout << "curr_symbol   : " << mp.curr_symbol() << std::endl;
+				std::cout << "decimal_point : " << mp.decimal_point() << std::endl;
+				std::cout << "thousands_sep : " << mp.thousands_sep() << std::endl;
+				std::cout << "positive_sign : " << mp.positive_sign() << std::endl;
+				std::cout << "negative_sign : " << mp.negative_sign() << std::endl;
+				std::cout << "frac_digits   : " << mp.frac_digits() << std::endl;
+			}
+			catch (const std::exception& e)
+			{
+				std::cout << "예외 발생 : " << e.what() << std::endl;
+			}
+
+			std::cout << std::endl;
+		}
+
+		//=========================================================================================
+		// [테스트 예제 4] ctype facet 확인
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 4] ctype facet 확인" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			try
+			{
+				std::locale loc;
+				const std::ctype<char>& ct = std::use_facet<std::ctype<char> >(loc);
+
+				char a = 'a';
+				char z = 'z';
+				char A = 'A';
+
+				std::cout << a << " -> " << ct.toupper(a) << std::endl;
+				std::cout << z << " -> " << ct.toupper(z) << std::endl;
+				std::cout << A << " -> " << ct.tolower(A) << std::endl;
+				std::cout << "' ' is space? : "
+					<< ct.is(std::ctype_base::space, ' ') << std::endl;
+			}
+			catch (const std::exception& e)
+			{
+				std::cout << "예외 발생 : " << e.what() << std::endl;
+			}
+
+			std::cout << std::endl;
+		}
+
+		//=========================================================================================
+		// [테스트 예제 5] collate facet 확인
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 5] collate facet 확인" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			try
+			{
+				std::locale loc;
+				const std::collate<char>& col = std::use_facet<std::collate<char> >(loc);
+
+				std::string s1 = "abc";
+				std::string s2 = "abd";
+
+				int result = col.compare(
+					s1.data(), s1.data() + s1.size(),
+					s2.data(), s2.data() + s2.size());
+
+				if (result < 0)
+					std::cout << "\"" << s1 << "\" < \"" << s2 << "\"" << std::endl;
+				else if (result > 0)
+					std::cout << "\"" << s1 << "\" > \"" << s2 << "\"" << std::endl;
+				else
+					std::cout << "\"" << s1 << "\" == \"" << s2 << "\"" << std::endl;
+			}
+			catch (const std::exception& e)
+			{
+				std::cout << "예외 발생 : " << e.what() << std::endl;
+			}
+
+			std::cout << std::endl;
+		}
+
+		//=========================================================================================
+		// [테스트 예제 6] time_put 스타일 날짜/시간 출력 확인
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 6] 날짜/시간 출력 확인" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			try
+			{
+				std::locale loc;
+				std::cout.imbue(loc);
+
+				time_t now = time(NULL);
+				tm t;
+				localtime_s(&t, &now);
+
+				std::cout << "현재 날짜/시간 : " << std::put_time(&t, "%c") << std::endl;
+			}
+			catch (const std::exception& e)
+			{
+				std::cout << "예외 발생 : " << e.what() << std::endl;
+			}
+
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
 
 	void locale_string_check()
 	{
-		//use Original
+		/*
+			📚 locale 문자열 검사 (locale string check)
+
+			이 함수는 다양한 locale 문자열이 현재 환경에서 실제로 사용 가능한지
+			확인하기 위한 테스트 함수이다.
+
+			원문은 크게 2가지 그룹을 검사한다.
+
+				1) 전통적인 locale 문자열 형식
+				2) Microsoft Visual C++ / Windows 스타일 locale 문자열 형식
+
+			이 테스트의 핵심 목적은 다음과 같다.
+
+				- locale 이름이 실제로 지원되는지 확인
+				- setlocale() 또는 std::locale(...) 생성이 성공하는지 확인
+				- 현재 컴파일러/CRT/운영체제에서 어떤 locale 문자열이 유효한지 확인
+
+			특히 VS2015(v140) 환경에서는
+			Linux/Unix 스타일 locale 문자열이 거의 그대로 동작하지 않는 경우가 많다.
+
+			예를 들어:
+				"de_DE"
+				"ko_KR"
+				"en_US.UTF-8"
+
+			이런 문자열은 이론적으로는 익숙하지만,
+			MSVC 환경에서는 실패하거나 실제 효과가 없을 수 있다.
+
+			반대로 Windows/MSVC에서는 다음과 같은 문자열이 더 잘 동작할 수 있다.
+
+				"German_Germany.1252"
+				"Korean_Korea.949"
+				"English_Australia.1252"
+
+			하지만 이것도 절대적인 보장은 없고,
+			설치된 locale 환경에 따라 달라질 수 있다.
+
+
+			=======================================================================================
+			1. 원문 테스트의 의미
+			=======================================================================================
+
+			원문 첫 번째 테스트는 "전통적인 locale 문자열" 목록을 돌면서
+			setlocale()을 호출하고 날짜/숫자 출력 결과를 확인한다.
+
+			그런데 출력 결과를 보면 대부분 Success: C 로 나온다.
+
+			이 의미는:
+				- 해당 문자열이 실제로 locale 변경에 성공하지 않았거나
+				- std::cout에 별도 locale이 적용되지 않았거나
+				- 시스템이 그 locale을 지원하지 않아 사실상 기본값처럼 동작했을 가능성이 높다.
+
+			즉, 문자열이 있다고 해서 실제 적용되는 것은 아니다.
+
+
+			=======================================================================================
+			2. Microsoft VC 스타일 테스트 의미
+			=======================================================================================
+
+			두 번째 테스트는 Windows/MSVC 스타일 locale 이름으로
+			std::locale 객체 생성을 시도한다.
+
+			여기서는 성공한 것도 있고,
+			"bad locale name" 예외가 발생한 것도 있다.
+
+			즉:
+				- 어떤 locale 이름은 현재 시스템에서 유효
+				- 어떤 locale 이름은 현재 시스템에서 무효
+
+			따라서 locale 문자열은 문서만 보고 믿기보다
+			실제 코드로 생성 테스트를 해보는 것이 가장 확실하다.
+
+
+			=======================================================================================
+			3. 핵심 요약
+			=======================================================================================
+
+				- locale 문자열은 환경 의존적이다.
+				- Linux/Unix 스타일 locale 이름은 VS2015에서 잘 안 될 수 있다.
+				- Windows/MSVC 스타일 locale 이름이 더 잘 동작할 수 있다.
+				- std::locale 생성 성공 여부를 직접 테스트하는 것이 가장 정확하다.
+				- "bad locale name" 예외는 지원되지 않는 locale 이름이라는 뜻이다.
+		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] 전통적인 locale 문자열 검사
+		//=========================================================================================
 		{
-			char* localeStringList[] = {
-					"C"
-				,	"de_DE"
-				,	"de_DE.88591"
-				,	"de_AT"
-				,	"de_CH"
-				,	"en_US"
-				,	"en_GB"
-				,	"en_AU"
-				,	"en_CA"
-				,	"fr_FR"
-				,	"fr_CH"
-				,	"fr_CA"
-				,	"ja_JP.jis"
-				,	"ja_JP.sjis"
-				,	"ja_JP.ujis"
-				,	"ja_JP.EUC"
-				,	"ko_KR"
-				,	"zh_CN"
-				,	"zh_TW"
-				,	"lt_LN.bit7"
-				,	"lt_LN.bit8"
-				,	"POSIX"
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] 전통적인 locale 문자열 검사" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			const char* localeStringList[] =
+			{
+				"C",
+				"de_DE",
+				"de_DE.88591",
+				"de_AT",
+				"de_CH",
+				"en_US",
+				"en_GB",
+				"en_AU",
+				"en_CA",
+				"fr_FR",
+				"fr_CH",
+				"fr_CA",
+				"ja_JP.jis",
+				"ja_JP.sjis",
+				"ja_JP.ujis",
+				"ja_JP.EUC",
+				"ko_KR",
+				"zh_CN",
+				"zh_TW",
+				"lt_LN.bit7",
+				"lt_LN.bit8",
+				"POSIX"
 			};
 
-			for (int i = 0; i < (sizeof(localeStringList) / sizeof(char*)); ++i) {
+			for (int i = 0; i < sizeof(localeStringList) / sizeof(localeStringList[0]); ++i)
+			{
+				std::cout << "----------------------------------------------" << std::endl;
+				std::cout << "검사 문자열 : " << localeStringList[i] << std::endl;
 
-				try {
-					std::cout << "loaded Original locale string: " << localeStringList[i] << std::endl;
+				const char* result = std::setlocale(LC_ALL, localeStringList[i]);
+				if (result == NULL)
+				{
+					std::cout << "setlocale 결과 : 실패" << std::endl;
+				}
+				else
+				{
+					std::cout << "setlocale 결과 : 성공 -> " << result << std::endl;
+				}
 
-					std::setlocale(LC_ALL, localeStringList[i]);	//the C locale will be the UTF-8 enabled English
+				wchar_t str[100] = { 0 };
+				std::time_t t = std::time(nullptr);
+				tm tmValue;
+				localtime_s(&tmValue, &t);
 
-					wchar_t str[100];
+				std::wcsftime(str, 100, L"%A %c", &tmValue);
+				std::wprintf(L"Number: %.2f\nDate: %ls\n", 3.14, str);
+
+				std::locale currLocale = std::cout.getloc();
+				std::cout << "std::cout locale : " << currLocale.name() << std::endl;
+			}
+
+			std::cout << std::endl;
+		}
+
+
+		//=========================================================================================
+		// [테스트 예제 2] Microsoft VC 스타일 locale 문자열 검사
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] Microsoft VC 스타일 locale 문자열 검사" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			const char* localeStringList[] =
+			{
+				"Afrikaans_South",
+				"Albanian_Albania.1250",
+				"Arabic_Saudi Arabia.1256",
+				"Basque_Spain.1252",
+				"Belarusian_Belarus.1251",
+				"Bosnian",
+				"Bulgarian_Bulgaria.1251",
+				"Catalan_Spain.1252",
+				"Croatian_Croatia.1250",
+				"Chinese_China.936",
+				"Chinese_Taiwan.950",
+				"Czech_Czech Republic.1250",
+				"Danish_Denmark.1252",
+				"Dutch_Netherlands.1252",
+				"English_Australia.1252",
+				"Estonian_Estonia.1257",
+				"Farsi_Iran.1256",
+				"Filipino_Philippines.1252",
+				"Finnish_Finland.1252",
+				"French_France.1252",
+				"French_Canada.1252",
+				"Galician_Spain.1252",
+				"Georgian_Georgia.65001",
+				"German_Germany.1252",
+				"Greek_Greece.1253",
+				"Gujarati_India.0",
+				"Hebrew_Israel.1255",
+				"Hindi.65001",
+				"Hungarian_Hungary.1250",
+				"Icelandic_Iceland.1252",
+				"Indonesian_Indonesia.1252",
+				"Italian_Italy.1252",
+				"Japanese_Japan.932",
+				"Kannada.65001",
+				"Khmer.65001",
+				"Korean_Korea.949",
+				"Lithuanian_Lithuania.1257",
+				"Latvian_Latvia.1257",
+				"Malay_Malaysia.1252",
+				"Norwegian_Norway.1252",
+				"Polish_Poland.1250",
+				"Portuguese_Portugal.1252",
+				"Portuguese_Brazil.1252",
+				"Romanian_Romania.1250",
+				"Russian_Russia.1251",
+				"Slovak_Slovakia.1250",
+				"Slovenian_Slovenia.1250",
+				"Spanish_Spain.1252",
+				"Swedish_Sweden.1252",
+				"Thai_Thailand.874",
+				"Turkish_Turkey.1254",
+				"Ukrainian_Ukraine.1251",
+				"Vietnamese_Viet Nam.1258"
+			};
+
+			for (int i = 0; i < sizeof(localeStringList) / sizeof(localeStringList[0]); ++i)
+			{
+				std::cout << "----------------------------------------------" << std::endl;
+				std::cout << "검사 문자열 : " << localeStringList[i] << std::endl;
+
+				try
+				{
+					std::locale newLocale(localeStringList[i]);
+					std::cout.imbue(newLocale);
+
+					wchar_t str[100] = { 0 };
 					std::time_t t = std::time(nullptr);
-					std::wcsftime(str, 100, L"%A %c", std::localtime(&t));
-					std::wprintf(L"Number: %.2f\nDate: %Ls\n", 3.14, str);
+					tm tmValue;
+					localtime_s(&tmValue, &t);
+
+					std::wcsftime(str, 100, L"%A %c", &tmValue);
+					std::wprintf(L"Number: %.2f\nDate: %ls\n", 3.14, str);
 
 					std::locale currLocale = std::cout.getloc();
 					std::cout << "Success: " << currLocale.name() << std::endl;
 				}
-				catch (std::exception &e) {
+				catch (const std::exception& e)
+				{
 					std::cout << "Exception: " << e.what() << std::endl;
 				}
 			}
-			/*
-			output:
-				loaded Original locale string: C
-				Number: 3.14
-				Date: Monday 05/28/18 02:09:38
-				Success: C
-				loaded Original locale string: de_DE
-				Number: 3.14
-				Date: Monday 05/28/18 02:09:41
-				Success: C
-				loaded Original locale string: de_DE.88591
-				Number: 3.14
-				Date: Monday 05/28/18 02:09:45
-				Success: C
-				loaded Original locale string: de_AT
-				Number: 3.14
-				Date: Monday 05/28/18 02:09:45
-				Success: C
-				loaded Original locale string: de_CH
-				Number: 3.14
-				Date: Monday 05/28/18 02:09:45
-				Success: C
-				loaded Original locale string: en_US
-				Number: 3.14
-				Date: Monday 05/28/18 02:09:45
-				Success: C
-				loaded Original locale string: en_GB
-				Number: 3.14
-				Date: Monday 05/28/18 02:09:45
-				Success: C
-				loaded Original locale string: en_AU
-				Number: 3.14
-				Date: Monday 05/28/18 02:09:45
-				Success: C
-				loaded Original locale string: en_CA
-				Number: 3.14
-				Date: Monday 05/28/18 02:09:45
-				Success: C
-				loaded Original locale string: fr_FR
-				Number: 3.14
-				Date: Monday 05/28/18 02:09:45
-				Success: C
-				loaded Original locale string: fr_CH
-				Number: 3.14
-				Date: Monday 05/28/18 02:09:45
-				Success: C
-				loaded Original locale string: fr_CA
-				Number: 3.14
-				Date: Monday 05/28/18 02:09:45
-				Success: C
-				loaded Original locale string: ja_JP.jis
-				Number: 3.14
-				Date: Monday 05/28/18 02:09:45
-				Success: C
-				loaded Original locale string: ja_JP.sjis
-				Number: 3.14
-				Date: Monday 05/28/18 02:09:45
-				Success: C
-				loaded Original locale string: ja_JP.ujis
-				Number: 3.14
-				Date: Monday 05/28/18 02:09:45
-				Success: C
-				loaded Original locale string: ja_JP.EUC
-				Number: 3.14
-				Date: Monday 05/28/18 02:09:45
-				Success: C
-				loaded Original locale string: ko_KR
-				Number: 3.14
-				Date: Monday 05/28/18 02:09:45
-				Success: C
-				loaded Original locale string: zh_CN
-				Number: 3.14
-				Date: Monday 05/28/18 02:09:45
-				Success: C
-				loaded Original locale string: zh_TW
-				Number: 3.14
-				Date: Monday 05/28/18 02:09:45
-				Success: C
-				loaded Original locale string: lt_LN.bit7
-				Number: 3.14
-				Date: Monday 05/28/18 02:09:45
-				Success: C
-				loaded Original locale string: lt_LN.bit8
-				Number: 3.14
-				Date: Monday 05/28/18 02:09:45
-				Success: C
-				loaded Original locale string: POSIX
-				Number: 3.14
-				Date: Monday 05/28/18 02:09:45
-				Success: C
-			*/
 
-			system("pause");
+			std::cout << std::endl;
 		}
 
-		//use Microsoft VC
-		{
-			char* localeStringList[] = {
-					"Afrikaans_South"
-				,	"Albanian_Albania.1250"
-				,	"Arabic_Saudi Arabia.1256"
-				,	"Basque_Spain.1252"
-				,	"Belarusian_Belarus.1251"
-				,	"Bosnian"
-				,	"Bulgarian_Bulgaria.1251"
-				,	"Catalan_Spain.1252"
-				,	"Croatian_Croatia.1250"
-				,	"Chinese_China.936"
-				,	"Chinese_Taiwan.950"
-				,	"Czech_Czech Republic.1250"
-				,	"Danish_Denmark.1252"
-				,	"Dutch_Netherlands.1252"
-				,	"English_Australia.1252"
-				,	"- parent en_utf8 used -"
-				,	"Estonian_Estonia.1257"
-				,	"Farsi_Iran.1256"
-				,	"Filipino_Philippines.1252"
-				,	"Finnish_Finland.1252"
-				,	"French_France.1252"
-				,	"French_Canada.1252"
-				,	"Gaelic; Scottish Gaelic"
-				,	"Galician_Spain.1252"
-				,	"Georgian_Georgia.65001"
-				,	"German_Germany.1252"
-				,	"- parent de_utf8 used -"
-				,	"Greek_Greece.1253"
-				,	"Gujarati_India.0"
-				,	"Hebrew_Israel.1255"
-				,	"Hindi.65001"
-				,	"Hungarian_Hungary.1250"
-				,	"Icelandic_Iceland.1252"
-				,	"Indonesian_indonesia.1252"
-				,	"Italian_Italy.1252"
-				,	"Japanese_Japan.932"
-				,	"Kannada.65001"
-				,	"Khmer.65001"
-				,	"Korean_Korea.949"
-				,	"Lao_Laos.UTF - 8"
-				,	"Lithuanian_Lithuania.1257"
-				,	"Latvian_Latvia.1257"
-				,	"Malayalam_India.x - iscii - ma"
-				,	"Malay_malaysia.1252"
-				,	"Maori.1252"
-				,	"Cyrillic_Mongolian.1251"
-				,	"Norwegian_Norway.1252"
-				,	"- parent no_utf8 used -"
-				,	"Norwegian - Nynorsk_Norway.1252"
-				,	"Polish_Poland.1250"
-				,	"Portuguese_Portugal.1252"
-				,	"Portuguese_Brazil.1252"
-				,	"Romanian_Romania.1250"
-				,	"Russian_Russia.1251"
-				,	"Maori.1252"
-				,	"Bosnian(Cyrillic), Serbian(Cyrillic)"
-				,	"Slovak_Slovakia.1250"
-				,	"Slovenian_Slovenia.1250"
-				,	"not found!"
-				,	"Spanish_Spain.1252"
-				,	"Swedish_Sweden.1252"
-				,	"not found!"
-				,	"English_Australia.1252"
-				,	"Thai_Thailand.874"
-				,	"Maori.1252"
-				,	"Turkish_Turkey.1254"
-				,	"Ukrainian_Ukraine.1251"
-				,	"Vietnamese_Viet Nam.1258"
-			};
-
-			for (int i = 0; i < (sizeof(localeStringList) / sizeof(char*)); ++i) {
-
-				try {
-					std::cout << "loaded Microsoft VC locale string: " << localeStringList[i] << std::endl;
-					std::locale newLocale(localeStringList[i]);	//if the locale setting is not supported,
-																//an exception is thrown
-
-												//set inputed locale to STD.output
-					std::cout.imbue(newLocale);	//if the locale setting is not supported,
-												//an exception is thrown
-
-					wchar_t str[100];
-					std::time_t t = std::time(nullptr);
-					std::wcsftime(str, 100, L"%A %c", std::localtime(&t));
-					std::wprintf(L"Number: %.2f\nDate: %Ls\n", 3.14, str);
-
-					std::locale currLocale = std::cout.getloc();
-					std::cout << "Success: " << currLocale.name() << std::endl;
-				}
-				catch (std::exception &e) {
-					std::cout << "Exception: " << e.what() << std::endl;
-				}
-			}
-			/*
-			output:
-				loaded Microsoft VC locale string: Afrikaans_South
-				Exception: bad locale name
-				loaded Microsoft VC locale string: Albanian_Albania.1250
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:16
-				Success: Albanian_Albania.1250
-				loaded Microsoft VC locale string: Arabic_Saudi Arabia.1256
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:16
-				Success: Arabic_Saudi Arabia.1256
-				loaded Microsoft VC locale string: Basque_Spain.1252
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:16
-				Success: Basque_Spain.1252
-				loaded Microsoft VC locale string: Belarusian_Belarus.1251
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:16
-				Success: Belarusian_Belarus.1251
-				loaded Microsoft VC locale string: Bosnian
-				Exception: bad locale name
-				loaded Microsoft VC locale string: Bulgarian_Bulgaria.1251
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:16
-				Success: Bulgarian_Bulgaria.1251
-				loaded Microsoft VC locale string: Catalan_Spain.1252
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:16
-				Success: Catalan_Spain.1252
-				loaded Microsoft VC locale string: Croatian_Croatia.1250
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:16
-				Success: Croatian_Croatia.1250
-				loaded Microsoft VC locale string: Chinese_China.936
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:16
-				Success: Chinese (Simplified)_People's Republic of China.936
-				loaded Microsoft VC locale string: Chinese_Taiwan.950
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:16
-				Success: Chinese (Simplified)_Taiwan.950
-				loaded Microsoft VC locale string: Czech_Czech Republic.1250
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:16
-				Success: Czech_Czech Republic.1250
-				loaded Microsoft VC locale string: Danish_Denmark.1252
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:16
-				Success: Danish_Denmark.1252
-				loaded Microsoft VC locale string: Dutch_Netherlands.1252
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:16
-				Success: Dutch_Netherlands.1252
-				loaded Microsoft VC locale string: English_Australia.1252
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:16
-				Success: English_Australia.1252
-				loaded Microsoft VC locale string: - parent en_utf8 used -
-				Exception: bad locale name
-				loaded Microsoft VC locale string: Estonian_Estonia.1257
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:16
-				Success: Estonian_Estonia.1257
-				loaded Microsoft VC locale string: Farsi_Iran.1256
-				Exception: bad locale name
-				loaded Microsoft VC locale string: Filipino_Philippines.1252
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:16
-				Success: Filipino_Philippines.1252
-				loaded Microsoft VC locale string: Finnish_Finland.1252
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:16
-				Success: Finnish_Finland.1252
-				loaded Microsoft VC locale string: French_France.1252
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:16
-				Success: French_France.1252
-				loaded Microsoft VC locale string: French_Canada.1252
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:16
-				Success: French_Canada.1252
-				loaded Microsoft VC locale string: Gaelic; Scottish Gaelic
-				Exception: bad locale name
-				loaded Microsoft VC locale string: Galician_Spain.1252
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:16
-				Success: Galician_Spain.1252
-				loaded Microsoft VC locale string: Georgian_Georgia.65001
-				Exception: bad locale name
-				loaded Microsoft VC locale string: German_Germany.1252
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:16
-				Success: German_Germany.1252
-				loaded Microsoft VC locale string: - parent de_utf8 used -
-				Exception: bad locale name
-				loaded Microsoft VC locale string: Greek_Greece.1253
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:16
-				Success: Greek_Greece.1253
-				loaded Microsoft VC locale string: Gujarati_India.0
-				Exception: bad locale name
-				loaded Microsoft VC locale string: Hebrew_Israel.1255
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:16
-				Success: Hebrew_Israel.1255
-				loaded Microsoft VC locale string: Hindi.65001
-				Exception: bad locale name
-				loaded Microsoft VC locale string: Hungarian_Hungary.1250
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:16
-				Success: Hungarian_Hungary.1250
-				loaded Microsoft VC locale string: Icelandic_Iceland.1252
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:17
-				Success: Icelandic_Iceland.1252
-				loaded Microsoft VC locale string: Indonesian_indonesia.1252
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:17
-				Success: Indonesian_Indonesia.1252
-				loaded Microsoft VC locale string: Italian_Italy.1252
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:17
-				Success: Italian_Italy.1252
-				loaded Microsoft VC locale string: Japanese_Japan.932
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:17
-				Success: Japanese_Japan.932
-				loaded Microsoft VC locale string: Kannada.65001
-				Exception: bad locale name
-				loaded Microsoft VC locale string: Khmer.65001
-				Exception: bad locale name
-				loaded Microsoft VC locale string: Korean_Korea.949
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:17
-				Success: Korean_Korea.949
-				loaded Microsoft VC locale string: Lao_Laos.UTF - 8
-				Exception: bad locale name
-				loaded Microsoft VC locale string: Lithuanian_Lithuania.1257
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:17
-				Success: Lithuanian_Lithuania.1257
-				loaded Microsoft VC locale string: Latvian_Latvia.1257
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:17
-				Success: Latvian_Latvia.1257
-				loaded Microsoft VC locale string: Malayalam_India.x - iscii - ma
-				Exception: bad locale name
-				loaded Microsoft VC locale string: Malay_malaysia.1252
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:17
-				Success: Malay_Malaysia.1252
-				loaded Microsoft VC locale string: Maori.1252
-				Exception: bad locale name
-				loaded Microsoft VC locale string: Cyrillic_Mongolian.1251
-				Exception: bad locale name
-				loaded Microsoft VC locale string: Norwegian_Norway.1252
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:17
-				Success: Norwegian (Bokm?)_Norway.1252
-				loaded Microsoft VC locale string: - parent no_utf8 used -
-				Exception: bad locale name
-				loaded Microsoft VC locale string: Norwegian - Nynorsk_Norway.1252
-				Exception: bad locale name
-				loaded Microsoft VC locale string: Polish_Poland.1250
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:17
-				Success: Polish_Poland.1250
-				loaded Microsoft VC locale string: Portuguese_Portugal.1252
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:17
-				Success: Portuguese_Portugal.1252
-				loaded Microsoft VC locale string: Portuguese_Brazil.1252
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:17
-				Success: Portuguese_Brazil.1252
-				loaded Microsoft VC locale string: Romanian_Romania.1250
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:17
-				Success: Romanian_Romania.1250
-				loaded Microsoft VC locale string: Russian_Russia.1251
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:17
-				Success: Russian_Russia.1251
-				loaded Microsoft VC locale string: Maori.1252
-				Exception: bad locale name
-				loaded Microsoft VC locale string: Bosnian(Cyrillic), Serbian(Cyrillic)
-				Exception: bad locale name
-				loaded Microsoft VC locale string: Slovak_Slovakia.1250
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:17
-				Success: Slovak_Slovakia.1250
-				loaded Microsoft VC locale string: Slovenian_Slovenia.1250
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:17
-				Success: Slovenian_Slovenia.1250
-				loaded Microsoft VC locale string: not found!
-				Exception: bad locale name
-				loaded Microsoft VC locale string: Spanish_Spain.1252
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:17
-				Success: Spanish_Spain.1252
-				loaded Microsoft VC locale string: Swedish_Sweden.1252
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:17
-				Success: Swedish_Sweden.1252
-				loaded Microsoft VC locale string: not found!
-				Exception: bad locale name
-				loaded Microsoft VC locale string: English_Australia.1252
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:17
-				Success: English_Australia.1252
-				loaded Microsoft VC locale string: Thai_Thailand.874
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:17
-				Success: Thai_Thailand.874
-				loaded Microsoft VC locale string: Maori.1252
-				Exception: bad locale name
-				loaded Microsoft VC locale string: Turkish_Turkey.1254
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:17
-				Success: Turkish_Turkey.1254
-				loaded Microsoft VC locale string: Ukrainian_Ukraine.1251
-				Number: 3.14
-				Date: Monday 05/28/18 02:29:17
-				Success: Ukrainian_Ukraine.1251
-				loaded Microsoft VC locale string: Vietnamese_Viet Nam.1258
-				Exception: bad locale name
-			
-			*/
-			
-			system("pause");
-		}
+		system("pause");
 	}
 
 	void locale_global()
 	{
 		/*
-			Sets the global locale to loc.
+			📚 std::locale::global()
 
-			After the call, the construction of locale objects with its default constructor return a copy of loc.
+			std::locale::global(loc)은 C++ 전역 로케일(global locale)을
+			loc으로 변경하는 함수이다.
 
-			If loc has a name, the function also sets the C global locale (as if the C library function setlocale was called with LC_ALL),
-			affecting all locale-dependent functions of the C library.
-			If loc has no name ("*"), the effect on the C global locale depends on the library implementation.
+			이 함수를 호출한 뒤에는
+			기본 생성자로 생성되는 std::locale 객체가
+			새 전역 로케일의 복사본을 가지게 된다.
 
-			Note that the C++ global locale is always changed to loc by this function, no matter its name.
-			Therefore, if loc has no name, it may cause the C++ global locale (the one used by locale-dependent functions of the C library)
-			to be different from the C++ global locale (the one constructed by default).
+				예:
+					std::locale a;   // 기존 전역 로케일 사용
+					std::locale::global(std::locale(""));
+					std::locale b;   // 변경된 전역 로케일 사용
 
-			Whether a single global locale exists for the entire program, or one for each thread, depends on the library implementation.
+			즉, global() 호출 전후에 기본 생성되는 locale 객체의 내용이 달라질 수 있다.
+
+
+			=======================================================================================
+			1. C++ 전역 로케일과 C 전역 로케일
+			=======================================================================================
+
+			std::locale::global()은 항상 C++ 전역 로케일을 변경한다.
+
+			그리고 전달된 locale 객체가 "이름(name)"을 가지고 있다면,
+			C 전역 로케일도 함께 바꿀 수 있다.
+			이 동작은 마치 setlocale(LC_ALL, ...)이 호출된 것과 비슷하다.
+
+			즉:
+				- C++ 전역 로케일은 항상 변경됨
+				- C 전역 로케일은 loc의 이름 여부와 구현에 따라 함께 변경될 수 있음
+
+			예를 들어:
+				std::locale("C")
+				std::locale("")
+				std::locale("German_Germany.1252")
+
+			이처럼 이름이 있는 locale은 C locale에도 영향을 줄 가능성이 있다.
+
+
+			=======================================================================================
+			2. 기본 생성 locale과 global()
+			=======================================================================================
+
+			std::locale의 기본 생성자:
+
+				std::locale loc;
+
+			이 기본 생성자는 현재 C++ 전역 로케일의 복사본을 만든다.
+
+			따라서 global() 호출 전후를 비교하면
+			기본 생성된 locale 객체의 name()이 달라질 수 있다.
+
+
+			=======================================================================================
+			3. 주의사항
+			=======================================================================================
+
+			- std::locale::global()은 전역 상태를 바꾸므로 영향 범위가 크다.
+			- 여러 컴포넌트가 동시에 실행될 경우 예상치 못한 영향을 줄 수 있다.
+			- 라이브러리 구현에 따라 프로그램 전체 단위일 수도 있고,
+			  스레드별 동작 차이가 있을 수도 있다.
+			- 실무에서는 가능한 한 전역 변경보다는
+			  스트림별 imbue()를 사용하는 것이 더 안전하고 명확하다.
+
+
+			=======================================================================================
+			4. 핵심 요약
+			=======================================================================================
+
+				- std::locale::global()은 C++ 전역 로케일을 바꾼다.
+				- 이후 기본 생성되는 std::locale 객체는 새 전역 로케일을 따른다.
+				- 이름이 있는 locale이면 C 전역 로케일까지 영향을 줄 수 있다.
+				- 전역 변경은 강력하지만 영향 범위가 크므로 주의해야 한다.
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] global() 호출 전후의 기본 locale 비교
+		//=========================================================================================
 		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] global() 호출 전후 기본 locale 비교" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
 			std::setlocale(LC_ALL, "C");
+
 			std::locale bar;
-			std::cout << "bar locale name: " << bar.name() << std::endl;
+			std::cout << "global() 호출 전 locale name : " << bar.name() << std::endl;
 
-			std::locale::global(std::locale("")); //change std::locale object "C" -> "" locale !!!
-			std::locale foo;
-			std::cout << "foo locale name: " << foo.name() << std::endl;
+			try
+			{
+				std::locale::global(std::locale(""));
+				std::locale foo;
 
-			// set global locale object for stream 
-			std::cin.imbue(std::locale());
-			std::cout.imbue(std::locale());
-			std::cerr.imbue(std::locale());
+				std::cout << "global() 호출 후 locale name : " << foo.name() << std::endl;
+
+				// 전역 locale을 스트림에도 반영
+				std::cin.imbue(std::locale());
+				std::cout.imbue(std::locale());
+				std::cerr.imbue(std::locale());
+			}
+			catch (const std::exception& e)
+			{
+				std::cout << "예외 발생 : " << e.what() << std::endl;
+			}
+
+			std::cout << std::endl;
 
 			/*
-			output:
-				bar locale name: C
-				foo locale name: Korean_Korea.949
+				가능한 출력 예:
+					global() 호출 전 locale name : C
+					global() 호출 후 locale name : Korean_Korea.949
 			*/
 		}
 
+
+		//=========================================================================================
+		// [테스트 예제 2] 기존 locale 객체와 새 기본 locale 비교
+		//=========================================================================================
 		{
-			std::locale foo;     //the "C" locale
-			foo.global(std::locale("")); //change std::locale constructor "C" -> "" locale !!!
-			std::locale bar;     //the "" locale
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] 기존 locale 객체와 새 기본 locale 비교" << std::endl;
+			std::cout << "==================================================" << std::endl;
 
-			std::cout << "foo and bar are ";
-			std::cout << (foo == bar ? "the same" : "different");
-			std::cout << ".\n";
+			try
+			{
+				std::locale foo;                // 변경 전 snapshot
+				std::locale::global(std::locale(""));
+				std::locale bar;                // 변경 후 snapshot
 
-			if (foo != bar) {
-				std::cout << "foo locale name: " << foo.name() << std::endl;
-				std::cout << "bar locale name: " << bar.name() << std::endl;
+				std::cout << "foo 와 bar 는 "
+					<< (foo == bar ? "같다" : "다르다") << "." << std::endl;
+
+				if (foo != bar)
+				{
+					std::cout << "foo locale name : " << foo.name() << std::endl;
+					std::cout << "bar locale name : " << bar.name() << std::endl;
+				}
+			}
+			catch (const std::exception& e)
+			{
+				std::cout << "예외 발생 : " << e.what() << std::endl;
 			}
 
-			/*
-			output:
-				foo and bar are different.
-				foo locale name: C
-				bar locale name: Korean_Korea.949
-			*/
+			std::cout << std::endl;
 		}
 
 		system("pause");
@@ -921,395 +1798,427 @@ namespace Locale
 	void locale_c_and_cpp_different()
 	{
 		/*
-			C Locale vs C++ Locales
-		
-			Apparently, the C locale and the C++ locale along with the standard facets offer similar services.
-			However, the semantics of the C++ locale are different from the semantics of the C locale:
-			
-				* The Standard C locale is a global resource: there is only one locale for the entire application.
-			      This makes it hard to build an application that has to handle several locales at a time.
-				
-				* The Standard C++ locale is a class.
-			      Numerous instances of class locale can be c reated at will, so you can have as many locale objects as you need.
-			
-			To explore this difference in further detail, let us see how locales can be used.
-			It may well happen that you have to work with multiple locales.
-			
-			For example, if you have to implement an application for Switzerland,
-			you might want to output messages in Italian, French, and German.
-			
-			As the C locale is a global data structure, you will have to switch locales several times.
-			
-			Let's discuss an application that works with multiple locales.
-			Say, the application runs at a US company that ships products worldwide.
-			
-			Our application's responsibility is printing of invoices to be sent to customers all over the world.
-			Of course, the invoices need to be printed in the customer's native language.
-			
-			Say, the application reads input (the product price list) in US English,
-			and writes output (the invoice) in the customer's native language, say German.
-			
-			Since there is only one global locale in C that affects both input and output,
-			the global locale must change between input and output operations.
+			📚 C 로케일과 C++ 로케일의 차이
+
+			C locale과 C++ locale은 비슷한 서비스를 제공하지만,
+			구조와 사용 방식은 상당히 다르다.
+
+			=======================================================================================
+			1. C locale
+			=======================================================================================
+
+			C locale은 전역(global) 자원이다.
+
+			즉, 프로그램 전체에서 사실상 하나의 locale만 사용된다.
+			그래서 입력과 출력에 서로 다른 locale을 동시에 적용하기가 어렵다.
+
+			예를 들어:
+				- 입력은 미국식 숫자 형식
+				- 출력은 독일식 숫자 형식
+
+			이런 경우 C에서는
+				1) 입력 전에 미국 locale 설정
+				2) 입력 수행
+				3) 출력 전에 독일 locale 설정
+				4) 출력 수행
+
+			처럼 전역 locale을 계속 바꿔야 한다.
 
 
-				ref file: locale_c_io.gif
+			=======================================================================================
+			2. C++ locale
+			=======================================================================================
+
+			C++ locale은 클래스 객체이다.
+
+			즉:
+				- 필요한 만큼 locale 객체를 여러 개 만들 수 있고
+				- 각 스트림에 서로 다른 locale을 붙일 수 있다.
+
+			예를 들어:
+				- std::ifstream 은 미국 locale
+				- std::ofstream 은 독일 locale
+
+			처럼 동시에 서로 다른 locale을 자연스럽게 사용할 수 있다.
+
+
+			=======================================================================================
+			3. 멀티스레드 환경에서의 차이
+			=======================================================================================
+
+			C locale은 전역 자원이므로
+			여러 스레드가 서로 다른 locale을 써야 한다면 충돌 위험이 있다.
+
+			반면 C++ locale은 객체 단위로 분리 가능하므로
+			컴포넌트별 / 스트림별 / 함수 인자별로 독립적으로 사용할 수 있다.
+
+			즉, C++ locale이 훨씬 유연하고 안전하다.
+
+
+			=======================================================================================
+			4. C locale 과 C++ locale의 연결 지점
+			=======================================================================================
+
+			대부분의 경우 둘은 별개처럼 동작한다.
+			하지만 예외적으로 std::locale::global()을 호출하면
+			C++ 전역 로케일이 C 전역 로케일에도 영향을 줄 수 있다.
+
+			즉:
+				- 일반적으로는 서로 독립적
+				- global() 호출 시에는 연결될 수 있음
+
+
+			=======================================================================================
+			5. 핵심 요약
+			=======================================================================================
+
+				- C locale은 전역 자원이다.
+				- C++ locale은 여러 개의 객체를 만들 수 있다.
+				- C는 여러 locale을 동시에 다루기 어렵다.
+				- C++은 스트림마다 locale을 다르게 붙일 수 있다.
+				- 다중 locale 처리에는 C++ locale 방식이 훨씬 유리하다.
 		*/
 
-		//Here is the C code that corresponds to the previous example: 
-		{			
-			float price;
-			
-			try {
+
+		//=========================================================================================
+		// [테스트 예제 1] C 방식 - 입력/출력 사이에서 전역 locale 전환
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] C 방식 - 전역 locale 전환" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			float price = 0.0f;
+
+			try
+			{
 				std::setlocale(LC_ALL, "American_America.1252");
 
 				FILE* inFile = fopen("./locale_in.txt", "r");
-				if (nullptr == inFile) {
-					return;
+				if (inFile != nullptr)
+				{
+					fscanf(inFile, "%f", &price);
+					fclose(inFile);
+					std::cout << "입력 파일에서 읽은 값 : " << price << std::endl;
 				}
-
-				fscanf(inFile, "%f", &price);
-
-				fclose(inFile);
+				else
+				{
+					std::cout << "입력 파일 열기 실패 : ./locale_in.txt" << std::endl;
+				}
 			}
-			catch (std::exception &e) {
-				std::cout << "Exception: " << e.what() << std::endl;
+			catch (const std::exception& e)
+			{
+				std::cout << "입력 예외 발생 : " << e.what() << std::endl;
 			}
 
-			try {
-				//convert $ to DM accosrding to the current exchange rate
+			try
+			{
 				std::setlocale(LC_ALL, "German_Germany.1252");
 
 				FILE* outFile = fopen("./locale_out.txt", "w");
-				if (nullptr == outFile) {
-					return;
+				if (outFile != nullptr)
+				{
+					fprintf(outFile, "%f", price);
+					fclose(outFile);
+					std::cout << "출력 파일 저장 완료 : ./locale_out.txt" << std::endl;
 				}
-
-				fprintf(outFile, "%f", price);
-
-				fclose(outFile);
+				else
+				{
+					std::cout << "출력 파일 열기 실패 : ./locale_out.txt" << std::endl;
+				}
 			}
-			catch (std::exception &e) {
-				std::cout << "Exception: " << e.what() << std::endl;
+			catch (const std::exception& e)
+			{
+				std::cout << "출력 예외 발생 : " << e.what() << std::endl;
 			}
+
+			std::cout << std::endl;
 
 			/*
-			input:
-				49.99
+				입력 파일 예:
+					49.99
 
-			output:
-				49,990002 in file
+				출력 파일 예:
+					49,990002
 			*/
-
-			system("pause");
 		}
 
-		/*
-			Using C++ locale objects dramatically simplifies the task of using multiple locales.
-			The iostreams in the Standard C++ Library are internationalized so that streams can be imbued with separate locale objects.
-			For example, the input stream can be imbued with an English locale object,
-			and the output stream can be imbued with a German locale object.
-			In this way, switching locales becomes unnecessary.
 
-
-				ref file: locale_cpp_io.gif
-		*/
-
-		//Here is the C++ code corresponding to the previous example :
+		//=========================================================================================
+		// [테스트 예제 2] C++ 방식 - 스트림마다 다른 locale 적용
+		//=========================================================================================
 		{
-			float price;
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] C++ 방식 - 스트림마다 다른 locale 적용" << std::endl;
+			std::cout << "==================================================" << std::endl;
 
-			try {
+			float price = 0.0f;
+
+			try
+			{
 				std::ifstream inFile("./locale_in.txt");
-				if (!inFile.is_open()) {
-					return;
+				if (inFile.is_open())
+				{
+					inFile.imbue(std::locale("American_America.1252"));
+					inFile >> price;
+					std::cout << "입력 파일에서 읽은 값 : " << price << std::endl;
 				}
-
-				inFile.imbue(std::locale("American_America.1252"));
-
-				inFile >> price;
+				else
+				{
+					std::cout << "입력 파일 열기 실패 : ./locale_in.txt" << std::endl;
+				}
 			}
-			catch (std::exception &e) {
-				std::cout << "Exception: " << e.what() << std::endl;
+			catch (const std::exception& e)
+			{
+				std::cout << "입력 예외 발생 : " << e.what() << std::endl;
 			}
 
-			try {
+			try
+			{
 				std::ofstream outFile("./locale_out.txt");
-				if (!outFile.is_open()) {
-					return;
+				if (outFile.is_open())
+				{
+					outFile.imbue(std::locale("German_Germany.1252"));
+					outFile << price;
+					std::cout << "출력 파일 저장 완료 : ./locale_out.txt" << std::endl;
 				}
-
-				outFile.imbue(std::locale("German_Germany.1252"));
-
-				//convert $ to DM according to the current exchange rate
-				outFile << price;
+				else
+				{
+					std::cout << "출력 파일 열기 실패 : ./locale_out.txt" << std::endl;
+				}
 			}
-			catch (std::exception &e) {
-				std::cout << "Exception: " << e.what() << std::endl;
+			catch (const std::exception& e)
+			{
+				std::cout << "출력 예외 발생 : " << e.what() << std::endl;
 			}
+
+			std::cout << std::endl;
 
 			/*
-			input:
-				49.99
+				입력 파일 예:
+					49.99
 
-			output:
-				49,99 in file
+				출력 파일 예:
+					49,99
 			*/
-
-			system("pause");
 		}
 
-		/*
-			With these toy examples given above switching locales might look like a minor inconvenience.
-			However, consider the need for multiple locales in an application with multiple threads of execution.
-			
-			Because all threads share one global locale in C, access to the global locale must be serialized by means of mutual exclusion.
-			A lot of locking would occur and mostly slow down the program.
-			Ideally, you would want to have locales be completely independent of each other.
-			Each component shall have a locale of its own, that is unrelated to other locales in your program.
-			
-			This is what you have in C++.
-			You can create infinitely many, independent, light-weight locale objects that you can attach to streams,
-			and exchange between components, or pass around as function arguments for instance.
-
-
-			Relationship between the C Locale and the C++ Locale.
-
-			The C locale and the C++ locales are mostly unrelated.
-			There is only one occasion when they effect each other: making a C++ locale global.
-
-			The matter is that there is a global locale in C++, as there is in C.
-			You can make a given locale object global by calling locale::global().
-			The notion of a global C++ locale was added for all those users who do not want to bother with internationalization
-			and rely on internationalized components to pick a sensible default locale.
-			
-			The global C++ locale is often used as the default locale.
-			IOStreams, for instance, uses it; if you do not explicitly imbue your streams with any particular locale object,
-			a snapshot of the global locale is used.
-
-			Making a C++ locale object global via locale::global() affects the global C locale in that it results in a call to setlocale().
-			When this happens, locale-sensitive C functions called from within a C++ program will use the global C++ locale.
-			Conversely, there is no way to affect the C++ locale from within a C program though.
-		*/
+		system("pause");
 	}
 
 	void try_lower(const std::ctype<wchar_t>& f, wchar_t c)
 	{
-		wchar_t up = f.tolower(c);
-		if (up != c) {
-			std::wcout << "Lower case form of \'" << c << "' is " << up << "\n";
+		wchar_t lower = f.tolower(c);
+
+		if (lower != c)
+		{
+			std::wcout << L"'" << c << L"' 의 소문자 형태는 " << lower << L" 입니다.\n";
 		}
-		else {
-			std::wcout << '\'' << c << "' has no lower case form\n";
+		else
+		{
+			std::wcout << L"'" << c << L"' 는 소문자 형태가 없습니다.\n";
 		}
 	}
 
 	void locale_cpp_facets()
 	{
 		/*
-			Using C++ Locales and Facets
+			📚 C++ 로케일과 facet 사용
 
-			After this brief overview of C++ locales and facets let us now explore how they are used.
-			Remember, a locale in C++ is a container of facets, and a facet is a set of internationalization services and information.
-			
-			The general pattern of usage is:
-				
-				* Create a locale. First, you create a locale object and stuff all the facets you need into the locale.
+			C++에서 locale은 facet의 컨테이너이고,
+			facet은 국제화 기능을 담당하는 서비스 객체이다.
 
-				* Make available a locale. You can pass around such a locale object to those components that might need it;
-				  for instance, you can attach it to a stream and the stream's shift operator will use it.
+			일반적인 사용 패턴은 다음과 같다.
 
-				* Retrieve a facet. When you need a service from the locale, then you ask the locale to give you a handle to the respective facet
-				  that contains the service you need.
-			
-				* Invoke a service. Via this handle you eventually invoke the facet's service.
-			
-			This sounds more complicated than it actually is, as we will see later.
-			However, it points out that the locale does not know anything about the facets' capabilities.
-			The locale only maintains the facets.
-			It registers them and makes them accessible on demand.
-			The locale, however, does not provide you with the internationalization services itself.
-			It only gives you access to facets that provide services.
-			It is your task to memorize which facets you need for which particular service.
-			The advantage of separating maintenance from functionality is that a locale can maintain any kind of facet,
-			not only the predefined standard facets from the C++ library,
-			but also novel facets that are added to the library for special purposes.
-			
-			Creating Locales
-			
-			Class locale has numerous constructors; see Box 2 for a comprehensive list.
-			Basically they fall into three categories:
-			
-				1. By name. You can create a locale object from a C locale's external representation.
-				   Class locale has a constructor std::locale::locale(const char* std_name) that takes the name of a C locale.
-				   This locale name is like the one you would use for a call to the C library function std::setlocale().
-				   We have already used this constructor in the example above when we created a US English locale by invoking std::locale("En_US");.
-				   A locale created this way contains all the standard facets and therefore makes available all services and information equivalent to the C locale you specified.
-				
-				2. The classic locale. The standard C++ library contains a predefined locale object, std::locale::classic(), which represents the US English ASCII environment.
-				   The is the counterpart to the locale named "C" in the C library.
+				1) locale 생성
+				2) locale을 스트림이나 컴포넌트에 전달
+				3) 필요한 facet을 꺼냄
+				4) facet의 서비스 호출
 
-				3. By composition. You can construct a new locale object as a copy of an existing locale object, that has one or several fac et objects replaced.
-				   Below are a couple of constructors of class locale that allow creation of locales by composition.
-			
-
-				class locale
-				{
-				public:
-
-					locale(const locale& other, const char* std_name, category);
-
-					template <class Facet> locale(const locale& other, Facet* f);
-
-					template <class Facet> locale(const locale& other, const locale& one);
-
-					locale(const locale& other, const locale& one, category);
-
-				};
-			
-
-			The following example uses the first constructor
-			and shows how you can construct a locale object as a copy of the classic locale object
-			with the classic numeric facets replaced by the numeric facet objects taken from a German locale object.
-			
-				std::locale loc ( std::locale::classic(), locale("De_DE"), LC_NUMERIC );
-			
-			The classic locale is created via std::locale::classic(), the German locale is crated via std::locale("De_DE").
-			LC_NUMERIC is a locale category.
-
-			As mentioned earlier, the facets fall into categories, and the LC_NUMERIC is the category that designates all numeric facets in a locale.
-			Note that some of the constructors are member templates, which is a language feature that is relatively new to the language and not supported by all compilers.
-
-			Immutability of Locales.
-			It's important to understand that locales are immutable objects:
-				once a locale object is created, it cannot be modified, i.e. no facets can be replaced after construction.
-				This makes locales reliable and easy to use and you can safely pass them around between components.
-
-			Copying locales. Copying a locale object is a cheap operation.
-			You should have no hesitation about passing locale objects around by value.
-			You may copy locale objects for composing new locale objects; you may pass copies of locale objects as arguments to functions, etc.
-
-			Locales are implemented using reference counting and the handle-body-idiom:
-				When a locale object is copied, only its handle is duplicated, a fast and inexpensive action.
-
-			The following figure gives an overview of the locale architecture.
-			A locale is a handle to a body that maintains a sequence of pointers to facets.
-			The facets are reference-counted, too.
-		
-		
-				ref file: locale_cpp_architecture.gif
+			즉, locale이 직접 기능을 수행하는 것이 아니라,
+			locale 안에 들어 있는 facet이 실제 기능을 수행한다.
 
 
-			Accessing a Locale's Facets
-			
-			A ccess to the facet objects of a locale object is via two template functions, use_facet and has_facet :
+			=======================================================================================
+			1. locale 생성 방법
+			=======================================================================================
 
-				template <class Facet> const Facet&     use_facet(const locale&);
+			C++ locale은 대체로 세 가지 방식으로 만든다.
 
-				template <class Facet> bool             has_facet(const locale&);
-			
-			The function std::use_facet() is the one that gives access to a facet by providing a constant reference to a facet.
-			The function std::has_facet() is for checking whether a certain facet is present in a given locale.
-			The requested facet is specified via its type.
-			Note, that both functions are template functions.
-			The template parameter they take is the type of the facet they try to access in a locale.
-			In other words, these function are capable of deciding which facet object is meant from just the information about the facet's type.
-			It works because a locale contains at most one exemplar of a certain facet type. This kind of compile-time dispatch is a novel technique in C++.
-			A discussion of it and the design of the locale framework's architecture is beyond the scope of this article.
-			A detailed description can be found in C++ Report, September 1997, "The Locale Framework" by Klaus Kreft & Angelika Langer.
-			
-			The code below demonstrates how these functions are used to get access to a facet and invoke an internationalization service.
-			It is an example of the conversion service tolower() from the ctype facet;
-			all upper case letters of a string read from the standard input stream are converted to lower case letters and are written to the standard output stream.
+				1) 이름으로 생성
+					std::locale("German_Germany.1252")
+
+				2) classic locale 사용
+					std::locale::classic()
+
+				3) 조합(composition)으로 생성
+					기존 locale을 복사하고 일부 facet/category를 다른 locale 것으로 교체
+
+			예:
+				std::locale loc(std::locale::classic(),
+								std::locale("German_Germany.1252"),
+								LC_NUMERIC);
+
+			이 코드는 classic locale을 기반으로 하되
+			numeric category만 German locale의 facet으로 바꾼 것이다.
 
 
-				std::string in;
-				std::cin >> in;
+			=======================================================================================
+			2. locale은 immutable
+			=======================================================================================
 
-				std::use_facet< ctype<char> >( std::locale::locale() ).tolower( in.c_str(), in.c_str() + in.length() );
+			locale 객체는 생성 후 수정할 수 없다.
+			즉, 한 번 만들어진 locale은 facet 구성이 바뀌지 않는다.
 
-				std::cout << in;
-			
-			The function template std::use_facet< ctype<char> >() returns a constant reference to the locale's facet object.
-			Then the facet object's member function tolower() is called. It has the functionality of the C function tolower();
-			it converts all upper case letters into lower case letters. A couple of further comments on this example:
-			
-			Explicit Template Argument Specification.
-			The syntax of the call std::use_facet < ctype<char> > (std::locale::locale()) might look surprising to you.
-			It is an example of explicit template argument specification, a language feature that is relatively new to C++.
-			Template arguments of a function instantiated from a function template can either be explicitly specified in a call or be deduced from the function arguments.
-			The explicit template argument specification is needed in the call to std::use_facet above,
-			because the compiler can only deduce a template argument if it is the type of one of the function arguments.
+			이 특성 덕분에:
+				- 안전하게 전달 가능
+				- 복사 비용이 작음
+				- reference counting 기반으로 효율적 구현 가능
 
-			Storing references to facets.
-			Note, that we do not store the reference to the facet, but just use the temporary reference returned by use_facet for immediately calling the desired member function of that facet.
-			This is a safe way of using facets retrieved from a locale. If you kept the reference, you needed to keep track of the object's lifetime and validity.
-			The facet reference does stay valid throughout the lifetime of the locale object it was retrieved from.
-			Moreover, the facet referred to does not even change in any way; it is immutable.
-			However, when the locale goes out of scope, the references obtained from it might become invalid.
-			For this reason it is advisable to combine retrieval and invocation as shown in the example above,
-			unless you have a need for doing differently.
+			즉, locale은 값처럼 복사해서 써도 부담이 적다.
 
-			Need for has_facet.
-			Note also, that we did not call has_facet< ctype<char> >() in order to check whether the locale has a ctype facet.
-			In most situations, you do not have to check for the presence of a standard facet object like ctype<char>.
-			This is because locale objects are created by composition; you start with the classic locale or a locale object constructed "by name" from a C locale's external representation.
-			Because you can only add or replace facet objects in a locale object, you cannot compose a locale that misses one of the standard facets.
-			A call to std::has_facet() is useful, however, when you expect that a certain non-standard facet object should be present in a locale object.
+
+			=======================================================================================
+			3. facet 접근
+			=======================================================================================
+
+			facet 접근에는 두 개의 표준 함수가 있다.
+
+				std::use_facet<Facet>(locale)
+					해당 facet 참조 반환
+
+				std::has_facet<Facet>(locale)
+					해당 facet 존재 여부 확인
+
+			보통 표준 facet은 거의 항상 존재하므로
+			use_facet()만 사용하는 경우가 많다.
+
+			하지만 비표준/custom facet을 쓸 때는
+			has_facet()으로 확인하는 것이 유용하다.
+
+
+			=======================================================================================
+			4. facet 참조 저장 주의
+			=======================================================================================
+
+			use_facet()으로 얻은 참조는
+			그 locale 객체가 살아 있는 동안만 안전하다.
+
+			그래서 일반적으로는:
+				- facet을 꺼내서
+				- 바로 함수 호출까지 이어서 쓰는 방식
+
+			이 안전하다.
+
+
+			=======================================================================================
+			5. 핵심 요약
+			=======================================================================================
+
+				- locale은 facet을 담는 컨테이너이다.
+				- use_facet()으로 facet을 꺼낸다.
+				- has_facet()으로 존재 여부를 확인할 수 있다.
+				- locale은 immutable 객체이다.
+				- locale 복사는 저렴하다.
 		*/
 
-		//use cpp
+
+		//=========================================================================================
+		// [테스트 예제 1] has_facet / use_facet 으로 ctype<wchar_t> 사용
+		//=========================================================================================
 		{
-			std::locale myLocale(std::locale("American_America.1252"));
+			std::wcout << L"==================================================\n";
+			std::wcout << L"[테스트 1] has_facet / use_facet 기본 사용\n";
+			std::wcout << L"==================================================\n";
 
-			if (true == std::has_facet< std::ctype<wchar_t> >(myLocale)) {
+			try
+			{
+				std::locale myLocale("American_America.1252");
 
-				std::wcout.imbue(myLocale);
-				std::wcout << "In American_America.1252 locale:\n";
+				if (std::has_facet<std::ctype<wchar_t>>(myLocale))
+				{
+					std::wcout.imbue(myLocale);
+					std::wcout << L"American_America.1252 locale 에서 테스트\n";
 
-				auto& f = std::use_facet<std::ctype<wchar_t>>(myLocale);
-				try_lower(f, L'S');
-				try_lower(f, L'B');
-				try_lower(f, L'A');
+					const std::ctype<wchar_t>& f =
+						std::use_facet<std::ctype<wchar_t>>(myLocale);
 
-				std::wstring str = L"HELLo, wORLD!";
-				std::wcout << "Lowercase form of the string '" << str << "' is ";
-				f.tolower(&str[0], &str[0] + str.size());
-				std::wcout << "'" << str << "'\n";
+					try_lower(f, L'S');
+					try_lower(f, L'B');
+					try_lower(f, L'A');
+
+					std::wstring str = L"HELLo, wORLD!";
+					std::wcout << L"원본 문자열 : " << str << L"\n";
+
+					f.tolower(&str[0], &str[0] + str.size());
+					std::wcout << L"소문자 변환 : " << str << L"\n";
+				}
+				else
+				{
+					std::wcout << L"ctype<wchar_t> facet 이 없습니다.\n";
+				}
 			}
-			/*
-			ouput:
-				In American_America.1252 locale:
-				Lower case form of 'S' is s
-				Lower case form of 'B' is b
-				Lower case form of 'A' is a
-				Lowercase form of the string 'HELLo, wORLD!' is 'hello, world!'
-			*/
+			catch (const std::exception& e)
+			{
+				std::cout << "예외 발생 : " << e.what() << std::endl;
+			}
+
+			std::wcout << std::endl;
 		}
 
-		//use Microsoft VC++
+
+		//=========================================================================================
+		// [테스트 예제 2] classic locale 과 이름 기반 locale 비교
+		//=========================================================================================
 		{
-			using namespace std;
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] classic locale 과 이름 기반 locale 비교" << std::endl;
+			std::cout << "==================================================" << std::endl;
 
-			std::locale myLocale("American_America.1252");
+			try
+			{
+				std::locale classicLoc = std::locale::classic();
+				std::locale namedLoc("C");
 
-			// 표준 방식: facet(ctype<wchar_t>)이 locale에 존재하는지 체크
-			if (std::has_facet<std::ctype<wchar_t>>(myLocale)) {
-				std::wcout.imbue(myLocale);
-				std::wcout << L"In American_America.1252 locale:\n";
-
-				// facet을 표준 방식으로 꺼냄
-				const std::ctype<wchar_t>& f = std::use_facet<std::ctype<wchar_t>>(myLocale);
-
-				try_lower(f, L'S');
-				try_lower(f, L'B');
-				try_lower(f, L'A');
-
-				std::wstring str = L"HELLo, wORLD!";
-				std::wcout << L"Lowercase form of the string '" << str << L"' is ";
-				f.tolower(&str[0], &str[0] + str.size());
-				std::wcout << L"'" << str << L"'\n";
+				std::cout << "classic locale name : " << classicLoc.name() << std::endl;
+				std::cout << "named   locale name : " << namedLoc.name() << std::endl;
+				std::cout << "두 locale 비교 : "
+					<< (classicLoc == namedLoc ? "같음" : "다름") << std::endl;
 			}
+			catch (const std::exception& e)
+			{
+				std::cout << "예외 발생 : " << e.what() << std::endl;
+			}
+
+			std::cout << std::endl;
+		}
+
+
+		//=========================================================================================
+		// [테스트 예제 3] 조합(composition) locale 예시
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 3] 조합 locale 예시" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			try
+			{
+				std::locale composed(
+					std::locale::classic(),
+					std::locale("German_Germany.1252"),
+					LC_NUMERIC);
+
+				std::cout.imbue(composed);
+				std::cout << std::fixed << std::setprecision(2);
+				std::cout << "숫자 출력(조합 locale) : " << 1234567.89 << std::endl;
+			}
+			catch (const std::exception& e)
+			{
+				std::cout << "예외 발생 : " << e.what() << std::endl;
+			}
+
+			std::cout << std::endl;
 		}
 
 		system("pause");
@@ -1337,154 +2246,137 @@ namespace Locale
 	void locale_cpp_iostream()
 	{
 		/*
-			Locales and IOStreams
+			📚 locale 과 iostream
 
-			The standard iostreams are an example of an internationalized component that uses locales and facets.
-			This feature of iostreams enables you to implement locale-sensitive standard i/o operations for your user-defined types.
-			Each stream has a locale object attached.
+			표준 iostream은 locale과 facet을 사용하는 대표적인 국제화 컴포넌트이다.
 
-			Attaching a locale to a stream is done via the stream's imbue() operation.
-			If you do not explicitly imbue a locale the stream uses a snapshot of the current global locale as a default.
-			
-			Here is an example that demonstrates how one can use a stream's locale for printing a date.
-			Let us assume we have a date object of type tm, which is the time structure defined in the standard C library, and we want to print it.
-			Let's assume our program is supposed to run in a German-speaking canton of Switzerland.
-			Hence, we attach a Swiss locale to the standard output stream. When we print the date we expect an output like:		
-				1. September 1989 or 01.09.89
-		
-				tm date; //struct tm
+			각 스트림은 locale 객체를 하나 가지고 있으며,
+			imbue()를 통해 다른 locale을 붙일 수 있다.
 
-				date.tm_year = 1989;
-				date.tm_mon = 9;
-				date.tm_mday = 1;
+			즉:
+				- std::cout 에 German locale
+				- std::ifstream 에 American locale
+				- std::ofstream 에 French locale
 
-				std::cout.imbue( std::locale::locale("De_CH") );
+			처럼 스트림마다 서로 다른 locale을 독립적으로 적용할 수 있다.
 
-				std::cout << date;
-			
-			As there is no operator<<() defined in the Standard C++ Library for the time structure tm from the C library, we have to provide this inserter ourselves.
-			The following code suggests a way this can be done.
-			To keep it simple, the handling of exceptions thrown during the formatting is omitted.
 
-				template< class tyOStream >
-				tyOStream& operator<< (tyOStream& os, const struct tm& date)
-				{
-					typedef typename tyOStream::char_type			char_t;
-					typedef typename tyOStream::traits_type			traits_t;
-					typedef ostreambuf_iterator<char_t,traits_t>	outIter_t;
+			=======================================================================================
+			1. 스트림에 locale 붙이기
+			=======================================================================================
 
-					std::locale loc = os.getloc();
+				stream.imbue(locale)
 
-					const std::time_put< char_t,outIter_t >& fac = std::use_facet< std::time_put<char_t, outIter_t> >(loc);
+			를 사용하면 해당 스트림은 이후 입출력에서
+			그 locale의 facet들을 사용하게 된다.
 
-					outIter_t nextpos = fac.put( os, os, os.fill(), &date, 'x' );
-					if ( nextpos.failed() )
-						os.setstate( std::ios_base::badbit );
+			명시적으로 imbue()하지 않으면
+			현재 전역 locale의 snapshot이 기본값으로 사용된다.
 
-					return os;
-				}
 
-			There's a lot going on here.
-			Let's discuss the interface of the shift operator first.
-			The code above shows a typical stream inserter.
-			As function arguments it takes a reference to an output stream and a constant reference to the object to be printed.
-			It returns a reference to the same stream.
-			The inserter is a template function because the standard iostreams are templates; they take a character type
-			and an associated traits type describing the character type as template arguments.
-			Naturally, we have the same template parameters for our date inserter.
+			=======================================================================================
+			2. 사용자 정의 타입도 locale-aware 출력 가능
+			=======================================================================================
 
-			Now, we need to get hold of the stream's locale object,
-			because we want to use its time formatting facet for output of our date object.
+			사용자 정의 타입에 대해 operator<<를 구현할 때,
+			스트림의 locale을 읽어서 적절한 facet을 사용하면
+			locale-sensitive 출력이 가능하다.
 
-			As you can see in the code above, the stream's locale object is obtained via the stream's member function getloc().
-			We retrieve the time formatting facet from the locale via std::use_facet; that's an old hat meanwhile.
-			We then call the facet's member function put().
+			이 예제에서는 struct tm을 출력할 때
+			time_put facet을 사용한다.
 
-			The put() function does all the magic, i.e. it produces a character sequence that represents the equivalent of the date object,
-			formatted according to culture-dependent rules and information.
-			It then inserts the formatted output into the stream via an output iterator.
-			Before we delve into the details of the put() function let us take a look at its return value.
 
-			The put() function returns an output iterator that points to the position immediately after the last inserted character.
-			The output iterator used here is an output stream buffer iterator.
-			These are special purpose iterators contained in the standard C++ library that bypass the stream's formatting layer
-			and write directly to the output stream's underlying stream buffer.
+			=======================================================================================
+			3. time_put::put()
+			=======================================================================================
 
-			Output stream buffer iterators have a member function failed() for error indication.
-			So we can check for errors happening during the time formatting.
-			If there was an error, we set the stream's state accordingly which is done via the stream's setstate() function.
+			time_put facet의 put()은
+			날짜/시간 정보를 locale 규칙에 맞게 문자열로 변환하여
+			스트림에 기록한다.
 
-			Let's return to the facet's formatting service put() and see what arguments it takes. Here is the function's interface:
+			여기서 format 문자 'x'는
+			"locale에 맞는 날짜 표현"을 의미한다.
+			이는 C의 strftime("%x")와 유사하다.
 
-				iter_type put(	iter_type	(a)
-							 ,	ios_base&	(b)
-							 ,	char_type	(c)
-							 ,	const tm*	(d)
-							 ,	char	)	(e)
 
-			The types iter_type and char_type stand for the types that were provided as template arguments when the facet class was instantiated.
-			In this case, they are ostreambuf_iterator<charT, traits> and charT, where charT and traits are the respective streams template arguments.
+			=======================================================================================
+			4. 핵심 요약
+			=======================================================================================
 
-				Here is the actual call:
-					nextpos = fac.put(os, os, os.fill(), &date, 'x');
-
-			Now let's see what the arguments mean:
-
-				1. The first parameter is supposed to be an output iterator.
-				   We provide an iterator to the stream's underlying stream buffer.
-				   The reference os to the output stream is converted to an output iterator,
-				   because output stream buffer iterators have a constructor taking an output stream, that is, basic_ostream<charT, traits>&.
-
-				2. The second parameter is of type ios_base&, which is one of the stream base classes.
-				   The class ios_base contains data for format control (see the section on iostreams for details).
-				   The facet object uses this formatting information. We provide the output stream's ios_base part here,
-				   using the automatic cast from a reference to an output stream, to a reference to its base class.
-
-				3. The third parameter is the fill character.
-				   It is used when the output has to be adjusted and blank characters have to be filled in.
-				   We provide the stream's fill character, which one can get by calling the stream's fill() function.
-
-				4. The fourth parameter is a pointer to a time structure tm from the C library.
-
-				5. The fifth parameter is a format character as in the C function strftime();
-				   the x stands for the locale's appropriate date representation.
-
-			As you can see from the example of a date inserter function, it is relatively easy to implement powerful,
-			locale-sensitive i/o operations using standard iostreams and locale.
-			It takes just a couple of lines of C++ code.
-
-			Summary
-			This article gave a brief overview of locales and facets - the components in the standard C++ library for support of internationalization of C++ programs.
-			The functionality of the standard facets contained in the standard C++ library covers traditional C functionality.
-			However, C++ allows multiple locales and overcomes the limitation of one, single global locale that was imposed by C.
-			Naturally, this brief introduction to internationalization support in standard C++ is far from being comprehensive.
-			For instance, we concealed that locales and facets are designed as an open and extensible frame.
-			A description of the framework's architecture and of techniques for extending the framework would fill another article.
-
-			Acknowledgements
-			This article is based on material we put together for a book on "Standard C++ IOStreams and Locales" to be published by Addison-Wesley-Longman in 1998.
-			Part of the article was inspired by work Angelika Langer did for Rogue Wave Software, Inc. in 1996.
-			We also want to thank Nathan Myers, who initially proposed locales and facets to the standards committee.
-			He patiently answered countless questions during the past months.
+				- iostream은 locale-aware 컴포넌트이다.
+				- 각 스트림은 locale을 가진다.
+				- getloc()으로 스트림의 locale을 얻을 수 있다.
+				- time_put facet을 사용하면 locale-sensitive 날짜 출력이 가능하다.
+				- 사용자 정의 operator<<에서도 facet을 적극적으로 활용할 수 있다.
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] time_put facet 기반 tm 출력
+		//=========================================================================================
 		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] time_put facet 기반 tm 출력" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
 			tm tDate;
 			::memset(&tDate, 0, sizeof(tDate));
 
-			tDate.tm_year = 1;
-			tDate.tm_mon = 1;
-			tDate.tm_mday = 1;
+			// tm_year는 1900 기준
+			tDate.tm_year = 1;   // 1901
+			tDate.tm_mon = 1;    // 2월
+			tDate.tm_mday = 1;   // 1일
 
-			std::locale myLocale("German_Germany.1252");
+			try
+			{
+				std::locale myLocale("German_Germany.1252");
+				std::cout.imbue(myLocale);
 
-			std::cout.imbue(myLocale);
+				std::cout << "현재 cout locale : " << std::cout.getloc().name() << std::endl;
+				std::cout << "Das Datum: " << tDate << std::endl;
+			}
+			catch (const std::exception& e)
+			{
+				std::cout << "예외 발생 : " << e.what() << std::endl;
+			}
 
-			std::cout << "Das Datum: " << tDate << std::endl;
+			std::cout << std::endl;
 
 			/*
-			output:
-				Das Datum: 01.02.1901
+				가능한 출력 예:
+					Das Datum: 01.02.1901
 			*/
+		}
+
+
+		//=========================================================================================
+		// [테스트 예제 2] C locale 과 C++ locale 날짜 출력 비교
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] C 방식과 C++ 방식 날짜 출력 비교" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			time_t now = time(NULL);
+			tm tmValue;
+			localtime_s(&tmValue, &now);
+
+			char cBuffer[100] = { 0 };
+			strftime(cBuffer, 99, "%x", &tmValue);
+			std::cout << "C 방식(strftime) : " << cBuffer << std::endl;
+
+			try
+			{
+				std::locale myLocale("German_Germany.1252");
+				std::cout.imbue(myLocale);
+				std::cout << "C++ 방식(time_put) : " << tmValue << std::endl;
+			}
+			catch (const std::exception& e)
+			{
+				std::cout << "예외 발생 : " << e.what() << std::endl;
+			}
+
+			std::cout << std::endl;
 		}
 
 		system("pause");
@@ -1492,124 +2384,269 @@ namespace Locale
 
 	void multiple_locales_c()
 	{
-		float price;
-
-		std::setlocale(LC_ALL, "American_America.1252");
-
-		printf("Type in the amount(as float): ");
-
-		scanf("%f", &price);
-
-		//convert $ to DM according to the current exchange rate
-		std::setlocale(LC_ALL, "German_Germany.1252");
-
-		printf("\nDer Betrag ist: %f \n", price);
-
-		std::setlocale(LC_ALL, "American_America.1252");
-
 		/*
-		input:
-			49.99
+			📚 C 방식의 다중 locale 처리
 
-		output:
-			49,99
+			C에서는 locale이 전역 자원이기 때문에
+			입력과 출력에 서로 다른 locale을 동시에 붙일 수 없다.
+
+			따라서 입력과 출력 사이에서 setlocale()을 사용해
+			전역 locale을 계속 바꿔야 한다.
+
+			예:
+				- 입력: American locale
+				- 출력: German locale
+
+			이 방식은 단순한 예제에서는 가능하지만,
+			복잡한 프로그램이나 멀티스레드 환경에서는 불편하고 위험할 수 있다.
+
+
+			=======================================================================================
+			핵심 요약
+			=======================================================================================
+
+				- C locale은 전역 자원이다.
+				- 여러 locale을 동시에 쓰기 어렵다.
+				- 입력/출력마다 setlocale()을 계속 바꿔야 한다.
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] C 방식 입력/출력 locale 전환
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] C 방식 입력/출력 locale 전환" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			float price = 0.0f;
+
+			std::setlocale(LC_ALL, "American_America.1252");
+
+			printf("Type in the amount(as float): ");
+			scanf("%f", &price);
+
+			std::setlocale(LC_ALL, "German_Germany.1252");
+
+			printf("\nDer Betrag ist: %f \n", price);
+
+			std::setlocale(LC_ALL, "American_America.1252");
+
+			std::cout << std::endl;
+
+			/*
+				입력 예:
+					49.99
+
+				출력 예:
+					49,99
+			*/
+		}
 
 		system("pause");
 	}
 
 	void multiple_locales_cpp()
 	{
-		std::cin.imbue(std::locale("American_America.1252"));
-		std::cout.imbue(std::locale("German_Germany.1252"));
-
-		float price;
-
-		std::cout << "Type in the amount(as float): ";
-		std::cin >> price;
-
-		//convert $ to DM according to the current exchange rate
-		std::cout << "\nDer Betrag ist: " << price << std::endl;
-
 		/*
-		input:
-			49.99
+			📚 C++ 방식의 다중 locale 처리
 
-		output:
-			49,99
+			C++에서는 스트림마다 별도의 locale 객체를 붙일 수 있다.
+			따라서 전역 locale을 계속 바꿀 필요 없이,
+			입력 스트림과 출력 스트림에 각각 다른 locale을 적용하면 된다.
+
+			예:
+				- std::cin  -> American locale
+				- std::cout -> German locale
+
+			이 방식은 더 자연스럽고,
+			전역 상태 변경 없이 동시에 여러 locale을 사용할 수 있다.
+
+
+			=======================================================================================
+			핵심 요약
+			=======================================================================================
+
+				- C++ locale은 객체 단위로 적용 가능하다.
+				- 입력/출력 스트림에 서로 다른 locale을 동시에 붙일 수 있다.
+				- setlocale() 전환 없이도 다중 locale 처리가 가능하다.
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] C++ 스트림별 locale 분리
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] C++ 스트림별 locale 분리" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			try
+			{
+				std::cin.imbue(std::locale("American_America.1252"));
+				std::cout.imbue(std::locale("German_Germany.1252"));
+
+				float price = 0.0f;
+
+				std::cout << "Type in the amount(as float): ";
+				std::cin >> price;
+
+				std::cout << "\nDer Betrag ist: " << price << std::endl;
+			}
+			catch (const std::exception& e)
+			{
+				std::cout << "예외 발생 : " << e.what() << std::endl;
+			}
+
+			std::cout << std::endl;
+
+			/*
+				입력 예:
+					49.99
+
+				출력 예:
+					49,99
+			*/
+		}
 
 		system("pause");
 	}
 
 
-	//A useful class to represent an amount of currency.
-	//There is no way to change the amount after construction!
+	// 화폐 금액을 표현하기 위한 간단한 클래스
+	// 생성 이후에는 값을 변경할 수 없도록 설계된 불변(immutable) 객체이다.
 	template<typename T>
 	struct Currency
 	{
 		Currency(T value) : _val(value) {}
-		T value() const { return _val; }
+
+		T value() const
+		{
+			return _val;
+		}
 
 	private:
 		T const _val;
 	};
 
-	//Our custom moneypunct facet to format currency as it's done in Germany
+
+	// 독일식 통화 형식을 직접 정의한 사용자 정의 moneypunct facet
+	// 예:
+	//   13453334  ->  +134.533,34€
+	//  -13453334  ->  -134.533,34€
+	//
+	// 여기서 13453334는 "가장 작은 화폐 단위" 기준 값이다.
+	// 즉, 2자리 소수 기준이라면 13453334 -> 134533,34 로 해석된다.
 	template<typename charT, bool Intl = false>
 	struct GermanPunct : public std::moneypunct<charT, Intl>
 	{
-		GermanPunct(size_t refs = 0) : std::moneypunct<charT, Intl>(refs) {}
-		virtual ~GermanPunct() {}
+		GermanPunct(size_t refs = 0)
+			: std::moneypunct<charT, Intl>(refs)
+		{
+		}
+
+		virtual ~GermanPunct()
+		{
+		}
 
 	protected:
-		typedef typename std::moneypunct<charT>::string_type string_type;
-		typedef typename std::moneypunct<charT>::char_type char_type;
-		typedef typename std::moneypunct<charT>::pattern pattern;
+		typedef typename std::moneypunct<charT, Intl>::string_type string_type;
+		typedef typename std::moneypunct<charT, Intl>::char_type   char_type;
+		typedef typename std::moneypunct<charT, Intl>::pattern     pattern;
 
-		virtual string_type do_curr_symbol() const { return "€"; }
-		virtual char_type do_thousands_sep() const { return '.'; }
-		virtual std::string do_grouping() const { return "\003"; }
-		virtual string_type do_positive_sign() const { return "+"; }
-		virtual string_type do_negative_sign() const { return "-"; }
-		virtual char_type do_decimal_point() const { return ','; }
-		virtual int do_frac_digits() const { return 2; }
+		// 통화 기호
+		virtual string_type do_curr_symbol() const
+		{
+			return "€";
+		}
 
+		// 천 단위 구분 문자
+		virtual char_type do_thousands_sep() const
+		{
+			return '.';
+		}
+
+		// 그룹핑 규칙
+		// "\003" 은 3자리마다 끊는다는 의미
+		virtual std::string do_grouping() const
+		{
+			return "\003";
+		}
+
+		// 양수 부호
+		virtual string_type do_positive_sign() const
+		{
+			return "+";
+		}
+
+		// 음수 부호
+		virtual string_type do_negative_sign() const
+		{
+			return "-";
+		}
+
+		// 소수점 문자
+		virtual char_type do_decimal_point() const
+		{
+			return ',';
+		}
+
+		// 소수 자릿수
+		virtual int do_frac_digits() const
+		{
+			return 2;
+		}
+
+		// 양수 출력 형식
+		// [sign][value][symbol]
+		// 예: +134.533,34€
 		virtual pattern do_pos_format() const
 		{
-			pattern const p = {
+			pattern p =
+			{
 				{
-					std::moneypunct<charT>::sign,
-					std::moneypunct<charT>::value,
-					std::moneypunct<charT>::symbol,
-					std::moneypunct<charT>::none
+					std::moneypunct<charT, Intl>::sign,
+					std::moneypunct<charT, Intl>::value,
+					std::moneypunct<charT, Intl>::symbol,
+					std::moneypunct<charT, Intl>::none
 				}
 			};
 			return p;
 		}
+
+		// 음수 출력 형식
+		// 여기서는 양수와 같은 배치 규칙 사용
 		virtual pattern do_neg_format() const
 		{
 			return do_pos_format();
 		}
 	};
 
-	//The ostream output operator for our Currency class
+
+	// Currency 클래스 전용 ostream 출력 연산자
+	// std::money_put facet을 사용해서 locale 규칙에 따라 통화 형식으로 출력한다.
 	template<typename charT, typename T>
-	std::basic_ostream<charT>& operator<<(std::basic_ostream<charT>& o, Currency<T> const& c)
+	std::basic_ostream<charT>& operator<<(std::basic_ostream<charT>& o, const Currency<T>& c)
 	{
 		typedef typename std::basic_ostream<charT>::char_type char_type;
-		typedef std::ostreambuf_iterator<char_type, std::char_traits<char_type>> iterator;
+		typedef std::ostreambuf_iterator<char_type, std::char_traits<char_type> > iterator;
 		typedef std::money_put<char_type, iterator> money_put;
 
-		std::ostream::sentry s(o);
-		if (!s) return o;
+		typename std::basic_ostream<charT>::sentry s(o);
+		if (!s)
+			return o;
 
-		// Locales are reference counted, so that copying them
-		// is generally trivial.
+		// locale은 내부적으로 참조 카운팅되므로 복사 비용이 작다.
 		std::locale loc = o.getloc();
-		money_put const& mp = std::use_facet<money_put>(loc);
+
+		const money_put& mp = std::use_facet<money_put>(loc);
 
 		iterator begin(o);
+
+		// false : international 형식이 아닌 일반 통화 형식 사용
+		// o     : 스트림
+		// ' '   : fill 문자
+		// c.value() : 가장 작은 화폐 단위 기준 정수값
 		mp.put(begin, false, o, ' ', c.value());
 
 		return o;
@@ -1618,71 +2655,286 @@ namespace Locale
 	void locale_user_define_facet()
 	{
 		/*
-			Facet
-			
-			They provide ways for formatting and parsing special types such as numbers and currencies.
-			Depending on language, culture, and location,
-			the same value can be written in different ways or has different units.
+			📚 사용자 정의 facet (User Defined Facet)
 
-			For example, a US bank account might have the following balance:
+			facet은 숫자, 통화, 날짜/시간, 문자열 정렬 같은
+			국제화 관련 기능을 담당하는 클래스이다.
+
+			언어, 국가, 문화권에 따라
+			같은 값이라도 표현 방식이 달라질 수 있다.
+
+			예를 들어 미국에서는 다음과 같은 통화 형식을 많이 사용한다.
 
 				$300,104.56
 
-			In Germany, a bank account with the same number of Euros could be printed like this:
+			반면 독일에서는 같은 값을 다음과 같이 표기할 수 있다.
 
 				300.104,56€
 
-			Handling these differences is important not only for output,
-			but also for reading values from files or other input streams.
-			Other local differences apply to sorting text.
-			In many Western countries, text is sorted according to an (approximately) 26-letter alphabet.
-			But even in those countries, some languages have extra letters or diacritical marks such as ø, ä, ß, í or ü.
-			These also need to be sorted in the correct place!
+			즉:
+				- 천 단위 구분 문자
+				- 소수점 문자
+				- 통화 기호 위치
+				- 양수/음수 부호 위치
 
-			In the past, J and I were considered to be the same letter in German and sorted accordingly.
-			A category of facets called 'collate' is provided to handle such differences.
+			등이 문화권에 따라 달라질 수 있다.
 
-			Facets are used together with locales.
-			They are grouped into six standard categories, each of which has up to three facets:
+			이런 차이를 처리하는 것이 facet의 중요한 역할 중 하나이다.
 
-				* numeric
-				* monetary
-				* time
-				* collate
-				* messages
-				* ctype
-			
-			Some categories, such as ctype and numeric, are used automatically.
-			Using a locale with a custom numeric facet can change input and output of all numbers.
-			Others, such as the monetary category, are available only for use in your own implementation,
-			for instance when writing a class for handling currency.
+
+			=======================================================================================
+			1. facet 과 locale 관계
+			=======================================================================================
+
+			C++에서 locale은 facet의 컨테이너이고,
+			facet은 실제 국제화 기능을 수행하는 서비스 객체이다.
+
+			즉:
+				- locale은 facet을 보관한다.
+				- facet은 실제 기능을 제공한다.
+
+			이번 예제에서는 monetary category 중
+			moneypunct facet을 직접 상속해서
+			독일식 통화 형식을 새로 정의한다.
+
+
+			=======================================================================================
+			2. 왜 사용자 정의 facet이 필요한가?
+			=======================================================================================
+
+			표준 locale만으로 충분한 경우도 많지만,
+			실무에서는 원하는 형식을 정확히 지원하지 않는 경우가 있다.
+
+			예:
+				- 특정 국가의 커스텀 통화 표기
+				- 내부 회계 전용 포맷
+				- 게임 내 화폐 형식
+				- 로그/리포트 전용 숫자 형식
+
+			이럴 때 사용자 정의 facet을 만들면
+			locale 시스템 안에서 자연스럽게 재사용할 수 있다.
+
+
+			=======================================================================================
+			3. GermanPunct facet 이 재정의하는 항목
+			=======================================================================================
+
+			이 예제의 GermanPunct 는 다음 규칙을 정의한다.
+
+				통화 기호
+					€
+
+				천 단위 구분 문자
+					.
+
+				소수점 문자
+					,
+
+				그룹핑
+					3자리마다 구분
+
+				양수 부호
+					+
+
+				음수 부호
+					-
+
+				소수 자릿수
+					2
+
+				양수 출력 형식
+					[부호][값][통화기호]
+					예: +134.533,34€
+
+				음수 출력 형식
+					[부호][값][통화기호]
+					예: -134.533,34€
+
+
+			=======================================================================================
+			4. Currency 클래스 의미
+			=======================================================================================
+
+			Currency<T> 는 화폐 금액을 담기 위한 간단한 클래스이다.
+
+			이 클래스는 내부 값을 변경할 수 없도록 만들어져 있다.
+			즉, 생성 시 값을 정하고 이후에는 읽기만 가능하다.
+
+			또한 이 클래스는 operator<< 를 통해
+			locale의 money_put facet을 사용하여 출력된다.
+
+			즉, 출력 형식은 클래스 내부가 아니라
+			현재 스트림에 연결된 locale 규칙을 따른다.
+
+
+			=======================================================================================
+			5. money_put 과 moneypunct 관계
+			=======================================================================================
+
+			중요한 점은 다음과 같다.
+
+				- money_put
+					실제로 통화 문자열을 출력하는 facet
+
+				- moneypunct
+					통화 기호, 소수점, 천 단위 구분, 부호 위치 같은
+					통화 형식 규칙을 제공하는 facet
+
+			즉, money_put 이 출력 작업을 수행할 때
+			moneypunct 의 규칙을 참고해서 최종 문자열을 만든다.
+
+
+			=======================================================================================
+			6. showbase 의미
+			=======================================================================================
+
+			통화 기호는 showbase 조작자가 활성화되어야 출력되는 경우가 많다.
+
+				std::cout << std::showbase << moneyValue;
+
+			이 예제에서도 통화 기호(€)를 보이게 하려면
+			showbase 를 켜는 것이 중요하다.
+
+
+			=======================================================================================
+			7. facet 수명 관리
+			=======================================================================================
+
+			new GermanPunct<char>() 로 facet을 동적 생성해서 locale에 넣는다.
+
+			표준 라이브러리의 locale은 facet을 참조 카운팅 방식으로 관리하므로,
+			더 이상 참조가 없을 때 자동으로 정리된다.
+
+			즉, 일반적인 사용에서는 직접 delete 하지 않아도 된다.
+
+
+			=======================================================================================
+			8. 핵심 요약
+			=======================================================================================
+
+				- locale은 facet의 컨테이너이다.
+				- facet은 국제화 기능을 실제로 수행한다.
+				- moneypunct는 통화 형식 규칙을 담당한다.
+				- money_put은 통화 문자열 출력을 담당한다.
+				- 사용자 정의 facet을 만들면 원하는 문화권 형식을 직접 구현할 수 있다.
+				- stream에 imbue() 하면 해당 locale 규칙으로 출력된다.
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] 현재 locale 확인
+		//=========================================================================================
 		{
-			//Create a locale based on the current output locale, but with
-			//the monetary facet replaced by our custom one.
-			//Note that facets are reference-counted by the standard library. 
-			//By default they will be destroyed when no references remain.
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] 현재 locale 확인" << std::endl;
+			std::cout << "==================================================" << std::endl;
 
 			std::locale myLoc;
-			std::cout << "current locale: " << myLoc.name() << std::endl;
+			std::cout << "현재 locale name : " << myLoc.name() << std::endl;
+			std::cout << std::endl;
+		}
 
-			std::locale loc(std::cout.getloc(), new GermanPunct<char>());
-			std::cout.imbue(loc);
 
-			Currency<int> const t(13453334);
-			Currency<int> const t2(-13453334);
+		//=========================================================================================
+		// [테스트 예제 2] 사용자 정의 GermanPunct facet 적용
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] 사용자 정의 GermanPunct facet 적용" << std::endl;
+			std::cout << "==================================================" << std::endl;
 
-			//The currency symbol is only displayed when showbase
-			//is active.
-			std::cout << std::showbase << t << "\n";
-			std::cout << std::showbase << t2 << "\n";
+			try
+			{
+				// 현재 cout locale을 기반으로 하되
+				// monetary 관련 형식을 GermanPunct facet으로 교체한 locale 생성
+				std::locale loc(std::cout.getloc(), new GermanPunct<char>());
+
+				// cout 에 새 locale 적용
+				std::cout.imbue(loc);
+
+				Currency<int> t(13453334);
+				Currency<int> t2(-13453334);
+
+				// showbase 가 켜져야 통화 기호가 보이는 경우가 많다.
+				std::cout << std::showbase;
+
+				std::cout << "양수 통화 출력 : " << t << std::endl;
+				std::cout << "음수 통화 출력 : " << t2 << std::endl;
+			}
+			catch (const std::exception& e)
+			{
+				std::cout << "예외 발생 : " << e.what() << std::endl;
+			}
+
+			std::cout << std::endl;
 
 			/*
-			output:
-				current locale: C
-				+134.533,34€
-				-134.533,34€
+				가능한 출력 예:
+					양수 통화 출력 : +134.533,34€
+					음수 통화 출력 : -134.533,34€
 			*/
+		}
+
+
+		//=========================================================================================
+		// [테스트 예제 3] 기본 locale 과 사용자 정의 locale 비교
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 3] 기본 locale 과 사용자 정의 locale 비교" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			try
+			{
+				Currency<int> value(12345678);
+
+				// 기본 C locale 출력
+				std::cout.imbue(std::locale::classic());
+				std::cout << std::showbase;
+				std::cout << "기본 locale 출력      : " << value << std::endl;
+
+				// 사용자 정의 독일식 locale 출력
+				std::locale germanMoney(std::cout.getloc(), new GermanPunct<char>());
+				std::cout.imbue(germanMoney);
+				std::cout << "GermanPunct 출력     : " << value << std::endl;
+			}
+			catch (const std::exception& e)
+			{
+				std::cout << "예외 발생 : " << e.what() << std::endl;
+			}
+
+			std::cout << std::endl;
+		}
+
+
+		//=========================================================================================
+		// [테스트 예제 4] GermanPunct facet 세부 규칙 확인
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 4] GermanPunct facet 세부 규칙 확인" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			try
+			{
+				std::locale loc(std::locale::classic(), new GermanPunct<char>());
+
+				const std::moneypunct<char, false>& mp =
+					std::use_facet<std::moneypunct<char, false> >(loc);
+
+				std::cout << "curr_symbol   : " << mp.curr_symbol() << std::endl;
+				std::cout << "decimal_point : " << mp.decimal_point() << std::endl;
+				std::cout << "thousands_sep : " << mp.thousands_sep() << std::endl;
+				std::cout << "positive_sign : " << mp.positive_sign() << std::endl;
+				std::cout << "negative_sign : " << mp.negative_sign() << std::endl;
+				std::cout << "frac_digits   : " << mp.frac_digits() << std::endl;
+			}
+			catch (const std::exception& e)
+			{
+				std::cout << "예외 발생 : " << e.what() << std::endl;
+			}
+
+			std::cout << std::endl;
 		}
 
 		system("pause");
@@ -1691,26 +2943,26 @@ namespace Locale
 
 	void Test()
 	{		
-		//locale_is();
+		//locale_user_define_facet();
 
-		//locale_c();
+		//multiple_locales_cpp();
 
-		//locale_cpp();
-
-		//locale_string_check();
-
-		//locale_global();
-
-		//locale_c_and_cpp_different();
-
-		//locale_cpp_facets();
+		//multiple_locales_c();
 
 		//locale_cpp_iostream();
 
-		//multiple_locales_c();
-		
-		//multiple_locales_cpp();
+		//locale_cpp_facets();
 
-		//locale_user_define_facet();
+		//locale_c_and_cpp_different();
+
+		//locale_global();
+
+		//locale_string_check();
+
+		//locale_cpp();
+
+		//locale_c();
+
+		//locale_what();
 	}
 }

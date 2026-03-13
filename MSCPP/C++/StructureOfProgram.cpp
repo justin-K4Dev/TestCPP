@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 
 
@@ -8,241 +8,333 @@ namespace StructureOfProgram
 	void structure_of_program()
 	{
 		/*
-			Structure of program
+			📚 프로그램의 구조 (Structure of program)
 
-			The best way to learn a programming language is by writing programs.
-			Typically, the first program beginners write is a program called "Hello World",
-			which simply prints "Hello World" to your computer screen. Although it is very simple,
-			it contains all the fundamental components C++ programs have:
+			프로그래밍 언어를 배우는 가장 좋은 방법은 직접 프로그램을 작성해보는 것이다.
+			보통 가장 먼저 만드는 프로그램은 "Hello World" 프로그램이며,
+			화면에 단순히 Hello World를 출력한다.
+
+			비록 매우 단순한 프로그램이지만,
+			C++ 프로그램의 핵심 구성 요소를 모두 포함하고 있다.
+
+			예시 형태:
+
+				#include <iostream>
+
+				int main()
+				{
+					std::cout << "Hello World!";
+				}
+
+			구성 요소 설명:
+			1) #include <iostream>
+			   표준 입출력을 사용하기 위한 헤더 포함
+
+			2) int main()
+			   프로그램이 시작되는 특별한 함수
+
+			3) { ... }
+			   함수의 시작과 끝을 나타내는 중괄호
+
+			4) std::cout << "Hello World!";
+			   실제로 화면에 문장을 출력하는 실행문(statement)
+
+			5) ;
+			   문장의 끝을 나타내는 세미콜론
 		*/
+
 		{
-			// my first program in C++
-			// #include <iostream>
-
-			// int main()
-			// {
-			//     std::cout << "Hello World!";
-			// }
-
 			std::cout << "Hello World!";
 
-			system("pause");
-
 			/*
-			output:
-				Hello World!
+				출력 결과:
+					Hello World!
+
+				설명:
+				std::cout 는 표준 출력 장치(보통 콘솔 화면)에
+				문자열을 출력한다.
 			*/
 		}
-		/*
-			The left panel above shows the C++ code for this program.
-			The right panel shows the result when the program is executed by a computer.
-			The grey numbers to the left of the panels are line numbers to make discussing programs and researching errors easier.
-			They are not part of the program.
 
-			Let's examine this program line by line:
-
-			Line 1: // my first program in C++
-				Two slash signs indicate that the rest of the line is a comment inserted by the programmer
-				but which has no effect on the behavior of the program.
-				Programmers use them to include short explanations or observations concerning the code or program.
-				In this case, it is a brief introductory description of the program.
-
-			Line 2: #include <iostream>
-				Lines beginning with a hash sign (#) are directives read and interpreted by what is known as the preprocessor.
-				They are special lines interpreted before the compilation of the program itself begins.
-				In this case, the directive #include <iostream>, instructs the preprocessor to include a section of standard C++ code,
-				known as header iostream, that allows to perform standard input and output operations,
-				such as writing the output of this program (Hello World) to the screen.
-
-			Line 3: A blank line.
-				Blank lines have no effect on a program. They simply improve readability of the code.
-
-			Line 4: int main ()
-				This line initiates the declaration of a function.
-				Essentially, a function is a group of code statements which are given a name:
-				in this case, this gives the name "main" to the group of code statements that follow.
-				Functions will be discussed in detail in a later chapter, but essentially,
-				their definition is introduced with a succession of a type (int), a name (main) and a pair of parentheses (()),
-				optionally including parameters.
-
-				The function named main is a special function in all C++ programs; it is the function called when the program is run.
-				The execution of all C++ programs begins with the main function,
-				regardless of where the function is actually located within the code.
-
-			Lines 5 and 7: { and }
-				The open brace ({) at line 5 indicates the beginning of main's function definition,
-				and the closing brace (}) at line 7, indicates its end.
-				Everything between these braces is the function's body that defines what happens when main is called.
-				All functions use braces to indicate the beginning and end of their definitions.
-
-			Line 6: std::cout << "Hello World!";
-				This line is a C++ statement. A statement is an expression that can actually produce some effect.
-				It is the meat of a program, specifying its actual behavior.
-				Statements are executed in the same order that they appear within a function's body.
-
-				This statement has three parts: First, std::cout,
-				which identifies the standard character output device (usually, this is the computer screen). Second, the insertion operator (<<),
-				which indicates that what follows is inserted into std::cout.
-				Finally, a sentence within quotes ("Hello world!"), is the content inserted into the standard output.
-
-				Notice that the statement ends with a semicolon (;).
-				This character marks the end of the statement, just as the period ends a sentence in English.
-				All C++ statements must end with a semicolon character.
-				One of the most common syntax errors in C++ is forgetting to end a statement with a semicolon.
-
-			You may have noticed that not all the lines of this program perform actions when the code is executed.
-			There is a line containing a comment (beginning with //).
-			There is a line with a directive for the preprocessor (beginning with #).
-			There is a line that defines a function (in this case, the main function).
-			And, finally, a line with a statements ending with a semicolon (the insertion into cout),
-			which was within the block delimited by the braces ( { } ) of the main function.
-
-			The program has been structured in different lines and properly indented,
-			in order to make it easier to understand for the humans reading it.
-			But C++ does not have strict rules on indentation or on how to split instructions in different lines.
-			For example, instead of
-
-				int main ()
-				{
-					std::cout << " Hello World!";
-				}
-				
-			We could have written:
-
-				int main () { std::cout << "Hello World!"; }
-
-			all in a single line, and this would have had exactly the same meaning as the preceding code.
-
-			In C++, the separation between statements is specified with an ending semicolon (;),
-			with the separation into different lines not mattering at all for this purpose.
-			Many statements can be written in a single line, or each statement can be in its own line.
-			The division of code in different lines serves only to make it more legible and schematic for the humans that may read it,
-			but has no effect on the actual behavior of the program.
-
-			Now, let's add an additional statement to our first program:
-		*/
 		{
+			std::cout << std::endl;
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] 여러 문장을 순서대로 실행" << std::endl;
+			std::cout << "============================================" << std::endl;
+
 			std::cout << "Hello World! ";
 			std::cout << "I'm a C++ program";
-
-			system("pause");
+			std::cout << std::endl;
 
 			/*
-			output:
-				Hello World! I'm a C++ program
+				출력 결과:
+					Hello World! I'm a C++ program
+
+				설명:
+				C++에서는 문장이 나타나는 순서대로 실행된다.
+				여기서는 std::cout 를 두 번 사용해서
+				문자열 두 개를 순서대로 이어서 출력했다.
 			*/
 		}
-		/*
-			In this case, the program performed two insertions into std::cout in two different statements.
-			Once again, the separation in different lines of code simply gives greater readability to the program,
-			since main could have been perfectly valid defined in this way:
 
-				int main () { std::cout << " Hello World! "; std::cout << " I'm a C++ program "; }
+		{
+			std::cout << std::endl;
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 3] 줄바꿈은 사람이 보기 좋게 만드는 역할" << std::endl;
+			std::cout << "============================================" << std::endl;
 
-			The source code could have also been divided into more code lines instead:
+			std::cout << "첫 번째 문장" << std::endl;
+			std::cout << "두 번째 문장" << std::endl;
+			std::cout << "세 번째 문장" << std::endl;
+			std::cout << std::endl;
 
-				int main ()
-				{
-					std::cout <<
-						"Hello World!";
-					std::cout
-						<< "I'm a C++ program";
-				}
+			/*
+				설명:
+				C++는 줄바꿈 자체로 문장을 구분하지 않는다.
+				문장의 끝은 세미콜론(;)이 결정한다.
 
-			And the result would again have been exactly the same as in the previous examples.
+				즉, 코드를 여러 줄로 쓰는 이유는
+				사람이 읽기 쉽게 만들기 위해서이다.
+			*/
+		}
 
-			Preprocessor directives (those that begin by #) are out of this general rule since they are not statements.
-			They are lines read and processed by the preprocessor before proper compilation begins.
-			Preprocessor directives must be specified in their own line and, because they are not statements,
-			do not have to end with a semicolon (;).
-		*/
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 4] 세미콜론(;)의 중요성" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << "모든 C++ 실행문은 보통 세미콜론으로 끝난다." << std::endl;
+			std::cout << "세미콜론을 빼먹으면 매우 흔한 문법 오류가 발생한다." << std::endl;
+			std::cout << std::endl;
+
+			/*
+				예:
+					std::cout << "Hello";   // 정상
+					std::cout << "Hello"    // 오류 가능
+
+				설명:
+				세미콜론은 문장의 끝을 표시한다.
+			*/
+		}
+
+		system("pause");
 	}
 
 	void comments()
 	{
 		/*
-			Comments
+			📚 주석 (Comments)
 
-			As noted above, comments do not affect the operation of the program;
-			however, they provide an important tool to document directly within the source code what the program does and how it operates.
+			주석은 프로그램 실행에는 영향을 주지 않지만,
+			소스 코드 안에 설명을 남길 수 있는 매우 중요한 도구이다.
 
-			C++ supports two ways of commenting code:
-		*/
-				// line comment
-				/* block comment */
-		/*
-			The first of them, known as line comment,
-			discards everything from where the pair of slash signs(//) are found up to the end of that same line.
-			The second one, known as block comment, discards everything between the
-		*/
-		/* characters and the first appearance of the */
-		/*
-			characters, with the possibility of including multiple lines.
+			C++에서는 두 가지 방식의 주석을 지원한다.
 
-			Let's add comments to our second program:
+			1) 한 줄 주석
+				// 내용
+
+			   // 가 나온 위치부터 그 줄 끝까지 모두 주석 처리된다.
+
+			2) 여러 줄 주석(블록 주석)
+				/* 내용 *\/
+
+			   시작과 끝 사이의 모든 내용을 주석 처리한다.
+			   여러 줄에 걸쳐 작성할 수 있다.
 		*/
+
+		// 한 줄 주석 예제
+		/* 여러 줄 주석 예제 */
+
 		{
-			/* my second program in C++ with more comments */
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 1] 한 줄 주석과 여러 줄 주석" << std::endl;
+			std::cout << "============================================" << std::endl;
 
-			std::cout << "Hello World! ";     // prints Hello World!
-			std::cout << "I'm a C++ program"; // prints I'm a C++ program
+			/* 이 프로그램은 Hello World를 출력하는 예제이다. */
 
-			system("pause");
+			std::cout << "Hello World! ";     // Hello World 출력
+			std::cout << "I'm a C++ program"; // 두 번째 문장 출력
+			std::cout << std::endl;
 
 			/*
-			output:
-				Hello World!I'm a C++ program
+				출력 결과:
+					Hello World! I'm a C++ program
+
+				설명:
+				주석은 사람이 코드를 이해하기 쉽게 설명을 붙이는 용도이며,
+				컴파일러는 주석 내용을 실행하지 않는다.
 			*/
 		}
-		//	If comments are included within the source code of a program without
-		//	using the comment characters combinations //, /* or */
-		//	the compiler takes them as if they were C++ expressions, most likely causing the compilation to fail with one,
-		//	or several, error messages.
+
+		{
+			std::cout << std::endl;
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] 주석은 실행에 영향을 주지 않음" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int a = 10;
+			// a = 999;   // 이 코드는 주석 처리되었으므로 실행되지 않음
+			std::cout << "a = " << a << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				주석 처리된 코드는
+				실제로 없는 것처럼 취급된다.
+
+				따라서 a는 여전히 10이다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 3] 여러 줄 설명에 블록 주석 사용" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			/*
+				여러 줄에 걸쳐
+				설명을 작성하고 싶을 때는
+				블록 주석이 편리하다.
+			*/
+
+			std::cout << "블록 주석 예제" << std::endl;
+			std::cout << std::endl;
+		}
+
+		/*
+			주의:
+			주석 기호 없이 일반 문장을 코드 중간에 써버리면
+			컴파일러는 그것을 C++ 코드로 해석하려고 하므로
+			컴파일 오류가 발생할 가능성이 매우 높다.
+		*/
+
+		system("pause");
 	}
 
 	void using_namespace_std()
 	{
 		/*
-			Using namespace std
+			📚 using namespace std
 
-			If you have seen C++ code before, you may have seen cout being used instead of std::cout.Both name the same object :
-			the first one uses its unqualified name(cout), while the second qualifies it directly within the namespace std(as std::cout).
+			C++ 표준 라이브러리의 많은 요소들은 std 라는 네임스페이스(namespace) 안에 들어 있다.
 
-			cout is part of the standard library,
-			and all the elements in the standard C++ library are declared within what is called a namespace : the namespace std.
+			예를 들어:
+				std::cout
+				std::cin
+				std::string
+				std::endl
 
-			In order to refer to the elements in the std namespace a program shall either qualify each
-			and every use of elements of the library(as we have done by prefixing cout with std::),
-			or introduce visibility of its components.
+			여기서 std:: 는
+			"std 네임스페이스 안에 있는 요소"라는 뜻이다.
 
-			The most typical way to introduce visibility of these components is by means of using declarations :
+			따라서 cout 을 정확하게 쓰려면:
 
-			using namespace std;
+				std::cout
 
-			The above declaration allows all elements in the std namespace to be accessed in an unqualified manner(without the std::prefix).
-			With this in mind, the last example can be rewritten to make unqualified uses of cout as :
+			처럼 작성해야 한다.
+
+			하지만 아래와 같이 쓰면:
+
+				using namespace std;
+
+			std 네임스페이스 안의 요소들을
+			std:: 없이 바로 사용할 수 있다.
+
+				cout
+				string
+				endl
+
+			즉:
+				std::cout << "Hello";
+			와
+				cout << "Hello";
+			는 같은 대상을 가리킨다.
 		*/
+
 		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 1] std:: 를 직접 붙여서 사용" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << "Hello World! ";
+			std::cout << "I'm a C++ program";
+			std::cout << std::endl;
+
+			/*
+				설명:
+				std::cout 처럼 직접 std:: 를 붙이면
+				어느 네임스페이스의 cout 인지 명확하다.
+			*/
+		}
+
+		{
+			std::cout << std::endl;
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] using namespace std 사용" << std::endl;
+			std::cout << "============================================" << std::endl;
+
 			using namespace std;
 
 			cout << "Hello World! ";
 			cout << "I'm a C++ program";
-
-			system("pause");
+			cout << endl;
 
 			/*
-			output:
-				Hello World! I'm a C++ program
+				출력 결과:
+					Hello World! I'm a C++ program
+
+				설명:
+				using namespace std; 를 선언하면
+				std 안에 있는 이름들을 std:: 없이 사용할 수 있다.
 			*/
 		}
-		/*
-			Both ways of accessing the elements of the std namespace (explicit qualification and using declarations) are valid in C++
-			and produce the exact same behavior.For simplicity, and to improve readability,
-			the examples in these tutorials will more often use this latter approach with using declarations,
-			although note that explicit qualification is the only way to guarantee that name collisions never happen.
 
-			Namespaces are explained in more detail in a later chapter.
-		*/
+		{
+			std::cout << std::endl;
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 3] string 도 std 네임스페이스에 속함" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			using namespace std;
+
+			string text = "Namespace test";
+			cout << "text = " << text << endl;
+			cout << endl;
+
+			/*
+				설명:
+				string 역시 std 네임스페이스 안에 있기 때문에
+				using namespace std; 가 있으면
+				std::string 대신 string 만 써도 된다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 4] 어떤 방식을 쓰는 것이 좋은가?" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << "1) std::cout 처럼 직접 쓰는 방식" << std::endl;
+			std::cout << "2) using namespace std; 후 cout 만 쓰는 방식" << std::endl;
+			std::cout << std::endl;
+			std::cout << "둘 다 가능하지만, std:: 를 직접 쓰면 이름 충돌을 줄이기 쉽다." << std::endl;
+			std::cout << "학습용 예제에서는 using namespace std; 가 더 간단해 보일 수 있다." << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				실무에서는 전역 범위에서 using namespace std; 를
+				무분별하게 사용하는 것을 피하는 경우가 많다.
+
+				이유:
+				이름 충돌(name collision) 가능성이 있기 때문이다.
+
+				하지만 학습 단계에서는
+				코드를 간단하게 보기 위해 자주 사용한다.
+			*/
+		}
+
+		system("pause");
 	}
 
 	void Test()

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 
 #include <windows.h> // for win32 api 
@@ -13,294 +13,473 @@ namespace Random
 	void c_standard_random_generator()
 	{
 		/*
-			C standard random generator
+			📚 C 표준 난수 생성기 (rand, srand, rand_s)
 
-			The operation of generating pseudo-random numbers to imitate the genuine random number uses a specific algorithm.
-			Such an algorithm is called
-			a PRNG (Pseudo Random Number Generator) or a DRBG (Deterministic Random Bit Generator).
-			A random number generator generates a specific sequence based on an initial value called a seed (PRNG's seed).
-			The sequence generally has a certain period according to the seed value,
-			and selects some values of the generated sequence, Use.
-			Generally, if the seeds are the same, the algorithm generates the same sequence,
-			so it is necessary to carefully check whether the seed value is appropriately given
-			when generating the random number sequence through the random number generator.
+			컴퓨터가 만드는 일반적인 난수는 대부분 "진짜 무작위"가 아니라
+			알고리즘으로 만들어낸 의사 난수(pseudo-random number)이다.
 
-			The rand() function discards the high order word in the result of the 32-bit operation
-			and generates only the remaining 16 bits as the result.
-			Among the various algorithms generating random numbers,
-			the same value repeatedly appears at regular intervals due to the characteristics of the LCG (Linear Congruential Generator).
-			Generally, when a random number is generated,
-			the period of repeating groups of higher bits is longer than that of lower bits.
-			Therefore, random number generators use a fast way to generate a better quality random number by truncating the lower bits.
-			In Microsoft's rand() implementation, the truncated size is 16 bits,
-			The random number is 32767 which is the maximum value of 16 bits.
-			The constant RAND_MAX is defined in stdlib.h and is defined as 0x7FFFF.
+			즉, 난수 생성기는 내부적으로 어떤 규칙에 따라 수열을 만들고,
+			그 수열이 충분히 무작위처럼 보이도록 사용하는 것이다.
 
-			// stdlib.h
-			// Maximum value that can be returned by the rand function.
-			// #define RAND_MAX 0x7fff
+			이때 시작값을 seed(시드)라고 한다.
+
+			중요한 특징:
+				- 시드가 같으면 같은 난수열이 나온다.
+				- 시드가 다르면 다른 난수열이 나올 가능성이 크다.
+
+			즉:
+				srand(1234);
+				rand();
+
+			를 실행한 결과는,
+			같은 구현 환경에서는 매번 같은 순서의 값이 나올 수 있다.
+
+
+			=======================================================================================
+			1. rand() / srand()
+			=======================================================================================
+
+			rand()
+				의사 난수를 하나 반환
+
+			srand(seed)
+				rand()가 사용할 시작 시드 설정
+
+			보통 사용 패턴:
+				srand((unsigned)time(0));
+				int value = rand();
+
+			즉, 현재 시간을 시드로 넣어
+			프로그램 실행마다 다른 난수열이 나오도록 시도한다.
+
+
+			=======================================================================================
+			2. rand() 의 한계
+			=======================================================================================
+
+			rand()는 오래된 방식이고 여러 한계가 있다.
+
+				- 구현 품질이 좋지 않을 수 있음
+				- 구현체마다 알고리즘이 다를 수 있음
+				- 전역 상태를 사용함
+				- 멀티스레드에서 다루기 불편함
+				- 낮은 비트 품질이 좋지 않을 수 있음
+				- RAND_MAX 범위가 작을 수 있음
+
+			특히 MSVC 계열에서는 RAND_MAX 가 보통 32767(0x7fff)이다.
+			즉, 결과 범위가 비교적 작다.
+
+
+			=======================================================================================
+			3. 같은 시드 = 같은 결과
+			=======================================================================================
+
+			time()은 보통 초 단위 값을 반환한다.
+			그래서 같은 초 안에 srand(time(NULL))를 여러 번 호출하면
+			같은 시드가 들어가고,
+			결국 같은 첫 난수가 나올 수 있다.
+
+			즉:
+				srand(seconds);
+				rand();
+
+			를 같은 seconds 값으로 두 번 실행하면
+			같은 결과가 쉽게 나온다.
+
+
+			=======================================================================================
+			4. rand_s()
+			=======================================================================================
+
+			rand_s()는 Windows CRT에서 제공하는 보안 강화 난수 함수이다.
+
+			특징:
+				- srand() 필요 없음
+				- seed를 직접 관리하지 않음
+				- unsigned int 범위 난수 생성
+				- 멀티스레드에서 사용하기 더 편함
+				- 내부적으로 운영체제 자원을 활용
+
+			즉, rand()보다 안전성과 사용 편의가 더 좋다.
+
+			단:
+				- C 표준 함수는 아님
+				- Windows / MSVC 계열 의존성이 있다
+
+
+			=======================================================================================
+			5. 핵심 요약
+			=======================================================================================
+
+				- rand()는 오래된 의사 난수 생성기이다.
+				- srand()로 seed를 설정한다.
+				- 같은 seed는 같은 난수열을 만든다.
+				- rand()는 전역 상태와 품질 문제를 가진다.
+				- rand_s()는 Windows에서 더 안전한 대안이다.
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] srand(time(0)) + rand() 기본 사용
+		//=========================================================================================
 		{
-			srand((unsigned)time(0)); // seed by time
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] rand() 기본 사용" << std::endl;
+			std::cout << "==================================================" << std::endl;
 
-			int lowest = 1, highest = 10;
+			srand((unsigned)time(0));
 
-			#define randRange(low, high) low + ( static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * ((high - low ) + 1) )
+			int lowest = 1;
+			int highest = 10;
 
-			int random_integer;
-			for (int index = 0; index < 20; index++) {
-				random_integer = randRange(lowest, highest);
+#define RAND_RANGE(low, high) ((low) + (int)(static_cast<double>(rand()) / (RAND_MAX + 1.0) * (((high) - (low)) + 1)))
+
+			for (int i = 0; i < 20; ++i)
+			{
+				int random_integer = RAND_RANGE(lowest, highest);
 				std::cout << random_integer << ", ";
 			}
 			std::cout << std::endl;
 
-			system("pause");
+#undef RAND_RANGE
 
-			/*
-			output:
-				3, 5, 8, 3, 3, 8, 2, 9, 6, 1, 3, 5, 9, 6, 6, 3, 6, 7, 5, 10,
-			*/
+			std::cout << "RAND_MAX = " << RAND_MAX << std::endl;
+			std::cout << std::endl;
 		}
 
-		/*
-			rand() usability issues
 
-			The rand() function uses the seed value set via the srand() function as a global variable.
-			Therefore, in a multithreaded environment,
-			you should make sure that the rand() function of the other thread is not affected by the seed value changed
-			when using the srand() function.
-			The rand() function in Visual C ++ can be used safely in a multithreaded environment,
-			but since the implementation of the rand() function is not complicated in general,
-			in a multithreaded environment, a seed value is included in each thread context,
-			You can also use the implementation method.
-			The rand implementation may be different for each vendor, system, and compiler.
-
-			In particular, if the rand() function and the seed value assignment are not clear,
-			the return value of the time function is in seconds.
-			The time of 1 second is short in human's time during debugging,
-			The likelihood of generating the same random number increases.
-		*/
+		//=========================================================================================
+		// [테스트 예제 2] 같은 시드면 같은 첫 난수
+		//=========================================================================================
 		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] 같은 시드 -> 같은 결과" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
 			time_t seconds;
 			time(&seconds);
 
 			{
-				srand((unsigned int)seconds); // same seed value !!!
-
-				auto value = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-				std::cout << value << std::endl; // same random
+				srand((unsigned int)seconds);
+				double value = static_cast<double>(rand()) / static_cast<double>(RAND_MAX);
+				std::cout << "첫 번째 값 : " << value << std::endl;
 			}
 
 			{
-				srand((unsigned int)seconds); // same seed value !!!
-
-				auto value = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-				std::cout << value << std::endl; // same random
+				srand((unsigned int)seconds);
+				double value = static_cast<double>(rand()) / static_cast<double>(RAND_MAX);
+				std::cout << "두 번째 값 : " << value << std::endl;
 			}
 
-			system("pause");
-
-			/*
-			output:
-				0.369446
-				0.369446
-			*/
+			std::cout << "같은 seed 를 사용했기 때문에 동일한 값이 나올 수 있다." << std::endl;
+			std::cout << std::endl;
 		}
 
-		/*
-			rand_s() improved security
 
-			Security functions are improved when _s is added to the CRT function.
-			For example, strcpy, a function that copies strings, has strcpy_s with improved security.
-			For security-enhanced functions, the parameters passed to the function are strictly checked,
-			the buffer size value is explicitly input, the success or
-			failure of the function is reported through the return value,
-			and if the function is executed incorrectly,
-			Rather than completing the execution of a function with unhandled operations,
-			it improves the reliability of the application by killing the program or making the exception handling strict.
-			The rand() function also provides a security-enhanced version of rand_s().
-			Unlike the rand() function, which returns a random number, the rand_s() function returns an error value.
-			An exception occurs if the pointer value entered as an argument is NULL and
-			an EINVAL constant is returned as a return value when the random number generation fails.
-
-			The type of random number that can be generated by rand_s is defined as an unsigned integer.
-			rand_s() uses the resources of the internal artifact operating system.
-			Therefore, the implementation method may be different for each operating system,
-			and the same value may not be obtained because the implementation method is different.
-			For Windows, it creates a value between 0 and UINT_MAX.
-			One thing to keep in mind when using the rand_s() function is that you must declare the _CRT_RAND_S constant,
-			which you can see in the declaration of the rand_s() function.
-			It is best to declare constants at the top of a predefined header file,
-			commonly known as stdafx.h, and if there is no predefined header file,
-			it is a good place to declare it before any other header files.
-
-			Unlike the rand() function, the rand_s() function does not need a seed value.
-			It is multithread safe because it does not need a seed value.
-			It has the advantage of not having to worry about the srand function argument and
-			the execution order of srand function and rand function, which is one of the problems of rand function.
-			You can escape the problem.
-		*/
+		//=========================================================================================
+		// [테스트 예제 3] rand_s() 사용
+		//=========================================================================================
 		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 3] rand_s() 사용" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
 			double max = 100.0;
+			unsigned int number = 0;
 
-			unsigned int number;
-
-			errno_t err;
-			for (int i = 0; i < 10; ++i) {
-				err = rand_s(&number);
-				printf_s( " %g,"
-					    , static_cast<double>( (static_cast<double>(number) / static_cast<double>(UINT_MAX)) * max )
-				);
+			for (int i = 0; i < 10; ++i)
+			{
+				errno_t err = rand_s(&number);
+				if (err == 0)
+				{
+					double value = (static_cast<double>(number) / static_cast<double>(UINT_MAX)) * max;
+					printf_s("%g, ", value);
+				}
+				else
+				{
+					std::cout << "rand_s 실패, err = " << err << std::endl;
+				}
 			}
-			std::cout << "\n";
-
-			system("pause");
-
-			/*
-			output:
-				27.3091, 2.05628, 94.5901, 29.2618, 72.9515, 35.4508, 1.71361, 8.21151, 25.721, 11.4752,
-			*/
+			std::cout << std::endl << std::endl;
 		}
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	void win32_api_random_generator()
 	{
 		/*
-			Win32 API random generator
+			📚 Win32 API 난수 생성기
 
-			CryptGenRandom() is a CryptoAPI API that can use Cryptographic Service Providers (CSP) among Windows components.
-			This function, like rand_s(), does not require the developer to worry about the seed value and
-			can be used safely in multi-threaded applications.
-			The CryptGenRandom() function safely generates a seed value by combining the various values that Windows has.
-			This includes the process ID, thread ID, system time, clock value, system counter,
-			memory state, disk cluster state, hash of the user environment block,
-			and uses AES encryption.
+			Windows는 운영체제 수준에서
+			보다 강한 난수 생성 기능을 제공한다.
 
-			Because the CryptGenRandom function uses the operating system's cryptographic service provider,
-			it uses the provider handle obtained using the CryptAcquireContext().
-			If you run the CryptGenRandom() function with a cryptographic service provider handle,
-			you can get a random number stream with a buffer argument.
-			The obtained random number stream can be appropriately processed to
-			generate a random number according to the application situation.
+			원문 예제의 CryptGenRandom()은
+			Windows CryptoAPI 기반 난수 생성 함수이다.
 
-			CryptGenRandom() has the commonality that the seed is not set by the developer and is multithread safe,
-			while rand_s can only generate random numbers in the range of unsigned integers,
-			and CryptGenRandom() does not have this restriction.
-			Both rand_s and CryptGenRandom() internally use the RtlGenRandom() function, and a similar .NET class,
-			RNGCryptoServiceProvider(), also calls RtlGenRando()m internally.
-			rand_s() and CryptGenRandom() commonly use relatively heavy operating system resources to obtain random numbers.
-			It should be noted that the speed difference may be
-			several tens times as many as several hundred times as many as the algorithm-based random number generator
-			which can be easily obtained.
+			특징:
+				- 개발자가 seed를 직접 관리하지 않아도 된다.
+				- 멀티스레드 환경에서 사용하기 편하다.
+				- 운영체제 내부 자원을 활용한다.
+				- rand()보다 보안적으로 더 적합하다.
+
+			즉, 보안 관련 난수가 필요할 때
+			rand()보다 훨씬 적절하다.
+
+
+			=======================================================================================
+			1. CryptGenRandom()
+			=======================================================================================
+
+			이 함수는 CryptoAPI provider handle을 통해 난수를 생성한다.
+
+			흐름:
+				1) CryptAcquireContext() 로 provider 획득
+				2) CryptGenRandom() 으로 바이트 채움
+				3) CryptReleaseContext() 로 해제
+
+			즉, 바이트 스트림을 얻고
+			그걸 필요한 형식으로 해석해서 사용한다.
+
+
+			=======================================================================================
+			2. 장점과 단점
+			=======================================================================================
+
+			장점:
+				- seed 직접 관리 불필요
+				- rand()보다 안전
+				- 운영체제 기반
+
+			단점:
+				- 비교적 무거울 수 있음
+				- 단순 PRNG보다 느릴 수 있음
+				- Windows API 의존적
+
+			즉, 게임 로직용 대량 난수보다는
+			보안/토큰/식별값 쪽에 더 적합하다.
+
+
+			=======================================================================================
+			3. 현대적 관점
+			=======================================================================================
+
+			CryptGenRandom()은 구형 Windows CryptoAPI 계열 함수로 보는 편이다.
+			현재는 더 현대적인 대안이 있을 수 있다.
+
+			하지만 VS2015 / Win32 학습 문맥에서는
+			운영체제 난수 생성기 개념을 이해하는 데 충분히 의미가 있다.
+
+
+			=======================================================================================
+			4. 핵심 요약
+			=======================================================================================
+
+				- CryptGenRandom()은 운영체제 기반 난수 생성기이다.
+				- seed를 직접 넣지 않는다.
+				- rand()보다 보안적으로 유리하다.
+				- 빠른 일반 게임 로직 PRNG와는 목적이 다르다.
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] CryptGenRandom 으로 바이트 스트림 생성
+		//=========================================================================================
 		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] CryptGenRandom 바이트 생성" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
 			HCRYPTPROV hProvider = 0;
 
-			if (!::CryptAcquireContext( &hProvider, NULL, NULL
-					                    , PROV_RSA_FULL
-					                    , CRYPT_VERIFYCONTEXT | CRYPT_SILENT))
-				return;
+			if (!::CryptAcquireContext(
+				&hProvider,
+				NULL,
+				NULL,
+				PROV_RSA_FULL,
+				CRYPT_VERIFYCONTEXT | CRYPT_SILENT))
+			{
+				std::cout << "CryptAcquireContext 실패" << std::endl;
+				std::cout << std::endl;
+			}
+			else
+			{
+				const DWORD dwLength = 8;
+				BYTE pbBuffer[dwLength] = {};
 
-			const DWORD dwLength = 8;
-			BYTE pbBuffer[dwLength] = {};
+				if (!::CryptGenRandom(hProvider, dwLength, pbBuffer))
+				{
+					std::cout << "CryptGenRandom 실패" << std::endl;
+				}
+				else
+				{
+					std::cout << "생성된 바이트 : ";
+					for (DWORD i = 0; i < dwLength; ++i)
+					{
+						std::cout << std::hex << static_cast<unsigned int>(pbBuffer[i]) << ", ";
+					}
+					std::cout << std::dec << std::endl;
+				}
 
-			if (!::CryptGenRandom(hProvider, dwLength, pbBuffer)) {
 				::CryptReleaseContext(hProvider, 0);
-				return;
+				std::cout << std::endl;
 			}
-
-			for (DWORD i = 0; i < dwLength; ++i) {
-				std::cout << std::hex << static_cast<unsigned int>(pbBuffer[i]) << ", ";
-			}
-			std::cout << "\n";
-
-			if (!::CryptReleaseContext(hProvider, 0))
-				return;
-
-			system("pause");
-
-			/*
-			output:
-				f7, 90, 7e, 40, 8e, 75, 6, 2c,
-			*/
 		}
+
+		system("pause");
 	}
+
+	//---------------------------------------------------------------------------------------------
 
 	void nonuniform_distribution_random_generator()
 	{
 		/*
-			Nonuniform Distribution random generator
+			📚 비균등 분포 난수 (Nonuniform Distribution)
 
-			When specifying a random number range, you usually use the remainder operator.
-			If you set the maximum value by using the remaining operators,
-			you can get the random value of the desired range in the remaining form.
-			This usability is problematic because the range of random values obtained
-			through the remaining operators is a nonuniform distribution.
+			난수 범위를 줄일 때 흔히 다음처럼 쓴다.
 
-			Using rand() % 100 will get a random number between 0 and 99.
-			However, since the maximum value of rand() is 32767,
-			the probability that the value of rand() % 100 is between 68 and 99
-			becomes smaller than the probability of the value of 0 to 67,
-			resulting in a nonuniform distribution.
-			These differences may seem small,
-			but they can be one of the weaknesses if they are related to security concerns or
-			if they are used as financial related factors.
+				rand() % 100
 
-			One way to compensate for this is to multiply random numbers by a real number of 1.0.
-			This results in a uniform distribution compared to the other operations,
-			but it can be seen that non-uniform distribution is obtained when the number of all cases is obtained.
-			32767 must be generated from the rand() function to be able to output 99.
+			이 방식은 편리하지만,
+			항상 균등한(uniform) 분포를 보장하지는 않는다.
+
+			즉, 어떤 값은 더 자주 나오고
+			어떤 값은 덜 나올 수 있다.
+			이런 현상을 편향(bias) 또는 비균등 분포라고 볼 수 있다.
+
+
+			=======================================================================================
+			1. 왜 rand() % N 이 문제인가?
+			=======================================================================================
+
+			rand()가 만들어내는 전체 값 개수와
+			N으로 나눈 나머지 개수가 딱 맞아떨어지지 않으면
+			일부 값이 더 많이 매핑된다.
+
+			예를 들어:
+				RAND_MAX = 32767
+				rand() % 100
+
+			이라면 0~99 중 어떤 값은
+			다른 값보다 한 번 더 많이 나올 수 있다.
+
+			즉, 완전히 균등하지 않다.
+
+			이 차이는 작아 보일 수 있지만
+			다음 상황에서는 중요해질 수 있다.
+
+				- 보안
+				- 확률/통계
+				- 금융/과금
+				- 밸런스 민감한 게임 로직
+
+
+			=======================================================================================
+			2. 실수 곱셈 방식도 완전하지 않다
+			=======================================================================================
+
+			다음처럼 쓰는 경우도 있다.
+
+				(rand() / RAND_MAX) * 99
+
+			이 방식은 % 보다 나을 수 있지만
+			정수 캐스팅, 끝값 도달 확률, RAND_MAX 한계 때문에
+			여전히 완벽한 균등 분포는 아니다.
+
+			예를 들어 99가 나오려면
+			매우 끝값에 가까운 난수만 필요한 경우가 생길 수 있다.
+
+
+			=======================================================================================
+			3. 핵심 요약
+			=======================================================================================
+
+				- rand() % N 은 편향이 생길 수 있다.
+				- 실수 스케일링도 완벽하지 않을 수 있다.
+				- 정확한 균등 분포가 중요하면 더 좋은 방법이 필요하다.
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] rand() % 100
+		//=========================================================================================
 		{
-			// if the remaining values are used, the range of the random value is nonuniform.
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] rand() % 100" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			srand((unsigned)time(NULL));
+
+			for (int i = 0; i < 10; ++i)
 			{
-				srand(time(NULL));
-				for (int i = 0; i < 10; ++i) {
-					std::cout << rand() % 100 << ", ";
-				}
-				std::cout << "\n";
+				std::cout << rand() % 100 << ", ";
 			}
-
-			{
-				srand(time(NULL));
-				for (int i = 0; i < 10; ++i) {
-					std::cout << static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * 99 << ", ";
-				}
-				std::cout << "\n";
-			}
-
-			{
-				srand(time(NULL));
-				for (int i = 0; i < 10; ++i) {
-					std::cout << static_cast<int>( (rand() * 1.0 / RAND_MAX * 1.0) * 99 ) << ", ";
-				}
-				std::cout << std::endl;
-
-				// Only 32767 can yield 99 results.
-				// static_cast<int>( (32765 * 1.0 / 32767 * 1.0) * 99 ) == 98
-				// static_cast<int>( (32766 * 1.0 / 32767 * 1.0) * 99 ) == 98
-				// static_cast<int>( (32767 * 1.0 / 32767 * 1.0) * 99 ) == 99
-			}
-
-			system("pause");
-
-			/*
-			output:
-				96, 67, 28, 7, 42, 85, 68, 3, 89, 57,
-				87.6066, 5.64083, 77.7328, 29.9323, 83.2135, 86.3648, 58.5172, 22.9712, 69.1553, 28.5727,
-				87, 5, 77, 29, 83, 86, 58, 22, 69, 28,
-			*/
+			std::cout << std::endl << std::endl;
 		}
+
+
+		//=========================================================================================
+		// [테스트 예제 2] 실수 스케일링 방식
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] 실수 스케일링 방식" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			srand((unsigned)time(NULL));
+
+			for (int i = 0; i < 10; ++i)
+			{
+				std::cout
+					<< static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * 99
+					<< ", ";
+			}
+			std::cout << std::endl << std::endl;
+		}
+
+
+		//=========================================================================================
+		// [테스트 예제 3] 정수화한 스케일링 방식
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 3] 정수화한 스케일링 방식" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			srand((unsigned)time(NULL));
+
+			for (int i = 0; i < 10; ++i)
+			{
+				std::cout
+					<< static_cast<int>((rand() * 1.0 / RAND_MAX) * 99)
+					<< ", ";
+			}
+			std::cout << std::endl;
+
+			std::cout << "설명:" << std::endl;
+			std::cout << "32765 -> " << static_cast<int>((32765 * 1.0 / 32767) * 99) << std::endl;
+			std::cout << "32766 -> " << static_cast<int>((32766 * 1.0 / 32767) * 99) << std::endl;
+			std::cout << "32767 -> " << static_cast<int>((32767 * 1.0 / 32767) * 99) << std::endl;
+			std::cout << std::endl;
+
+			std::cout << "즉, 99는 끝값에서만 나오므로 확률 구조가 균등하지 않을 수 있다." << std::endl;
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
+
+	//---------------------------------------------------------------------------------------------
 
 	void Test()
 	{
-		//c_standard_random_generator();
-
-		//win32_api_random_generator();
-
 		//nonuniform_distribution_random_generator();
+		 
+		//win32_api_random_generator(); 
+		
+		//c_standard_random_generator();
 	}
 
 }// end of Random

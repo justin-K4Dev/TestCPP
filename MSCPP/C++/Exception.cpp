@@ -9,238 +9,542 @@ namespace Exception
 	void exceptions()
 	{
 		/*
-			Exceptions
+			📚 예외 처리 (Exceptions)
 
-			Exceptions provide a way to react to exceptional circumstances (like runtime errors) in programs
-			by transferring control to special functions called handlers.
+			예외(Exception)는 프로그램 실행 중 발생하는 비정상 상황
+			(예: 런타임 오류, 잘못된 입력, 자원 부족 등)에 대응하기 위한
+			C++의 제어 흐름 메커니즘이다.
 
-			To catch exceptions, a portion of code is placed under exception inspection.
-			This is done by enclosing that portion of code in a try-block.
-			When an exceptional circumstance arises within that block,
-			an exception is thrown that transfers the control to the exception handler.
+			예외가 발생하면 일반적인 순차 실행 흐름을 중단하고,
+			해당 예외를 처리할 수 있는 핸들러(handler)로 제어가 이동한다.
 
-			If no exception is thrown, the code continues normally and all handlers are ignored.
+			C++ 예외 처리의 기본 구성 요소는 다음과 같다.
 
-			An exception is thrown by using the throw keyword from inside the try block.
-			Exception handlers are declared with the keyword catch,
-			which must be placed immediately after the try block:
+				try
+					예외가 발생할 수 있는 코드를 감싸는 블록
+
+				throw
+					예외를 발생시키는 키워드
+
+				catch
+					발생한 예외를 받아서 처리하는 블록
+
+			기본 흐름:
+
+				try
+				{
+					예외가 발생할 수 있는 코드
+					throw 예외값;
+				}
+				catch (타입 변수)
+				{
+					예외 처리 코드
+				}
+
+
+			=======================================================================================
+			1. 예외 발생과 처리
+			=======================================================================================
+
+			try 블록 안에서 throw가 실행되면
+			현재 실행 흐름은 중단되고,
+			해당 예외 타입과 일치하는 catch 블록으로 이동한다.
+
+			예:
+				throw 20;
+
+			이면 int 타입 예외가 던져지고,
+			catch(int e) 가 이를 받는다.
+
+			중요:
+				throw 다음 코드는 바로 실행되지 않는다.
+				제어는 catch로 이동한다.
+
+
+			=======================================================================================
+			2. catch 타입 일치
+			=======================================================================================
+
+			catch의 매개변수 타입은 매우 중요하다.
+
+			예외를 던질 때의 타입과
+			catch가 받는 타입이 맞아야 해당 catch가 실행된다.
+
+			예:
+				throw 10;        -> catch(int)
+				throw 'a';       -> catch(char)
+				throw MyType();  -> catch(MyType)
+
+
+			=======================================================================================
+			3. 여러 catch 블록
+			=======================================================================================
+
+			catch는 여러 개 둘 수 있다.
+
+			예:
+				catch (int)
+				catch (char)
+				catch (...)
+
+			이 경우 예외 타입에 맞는 첫 번째 catch만 실행된다.
+
+			catch(...) 는 모든 예외를 받는 기본 핸들러 역할을 한다.
+
+
+			=======================================================================================
+			4. 예외 처리 후 흐름
+			=======================================================================================
+
+			예외가 catch에서 처리되면
+			프로그램 실행은 throw 지점으로 돌아가지 않고,
+			try-catch 블록 다음 문장부터 이어진다.
+
+			즉:
+				throw 문장 다음부터 재개되는 것이 아니다.
+
+
+			=======================================================================================
+			5. 중첩 try-catch 와 재던지기
+			=======================================================================================
+
+			중첩된 try-catch 안에서 예외를 잡은 뒤
+			다시 바깥쪽으로 전달할 수 있다.
+
+				throw;
+
+			처럼 인자 없이 쓰면
+			현재 잡은 예외를 그대로 다시 던진다.
+
+
+			=======================================================================================
+			6. 핵심 요약
+			=======================================================================================
+
+				- try 는 예외 감시 구간이다.
+				- throw 는 예외를 발생시킨다.
+				- catch 는 예외를 처리한다.
+				- 예외 처리 후 실행은 try-catch 블록 다음부터 이어진다.
+				- catch(...) 는 모든 예외를 받을 수 있다.
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] 가장 기본적인 throw / catch
+		//=========================================================================================
 		{
-			try {
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] 기본 throw / catch" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			try
+			{
 				throw 20;
 			}
-			catch (int e) {
-				std::cout << "An exception occurred. Exception Nr. " << e << '\n';
+			catch (int e)
+			{
+				std::cout << "예외 발생. 예외 값 = " << e << std::endl;
 			}
 
-			system("pause");
-
-			/*
-			output:
-				An exception occurred. Exception Nr. 20
-
-				예외 발생(0x000007FEFD63A06D, C++_d64.exe): Microsoft C++ 예외: int, 메모리 위치 0x000000000025FB44.
-				'C++_d64.exe'(Win32): 'C:\Windows\System32\apphelp.dll'을(를) 로드했습니다. 기호가 로드되었습니다.
-			*/
+			std::cout << "try-catch 이후 실행 계속" << std::endl;
+			std::cout << std::endl;
 		}
-		/*
-			The code under exception handling is enclosed in a try block.
-			In this example this code simply throws an exception:
 
-				throw 20;
 
-			A throw expression accepts one parameter (in this case the integer value 20),
-			which is passed as an argument to the exception handler.
+		//=========================================================================================
+		// [테스트 예제 2] 여러 catch 블록
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] 여러 catch 블록" << std::endl;
+			std::cout << "==================================================" << std::endl;
 
-			The exception handler is declared with the catch keyword immediately after the closing brace of the try block.
-			The syntax for catch is similar to a regular function with one parameter.
-			The type of this parameter is very important,
-			since the type of the argument passed by the throw expression is checked against it,
-			and only in the case they match, the exception is caught by that handler.
+			try
+			{
+				throw 'A';
+			}
+			catch (int e)
+			{
+				std::cout << "int 예외 : " << e << std::endl;
+			}
+			catch (char e)
+			{
+				std::cout << "char 예외 : " << e << std::endl;
+			}
+			catch (...)
+			{
+				std::cout << "기본 예외 처리" << std::endl;
+			}
 
-			Multiple handlers (i.e., catch expressions) can be chained; each one with a different parameter type.
-			Only the handler whose argument type matches the type of the exception specified in the throw statement is executed.
+			std::cout << std::endl;
+		}
 
-			If an ellipsis (...) is used as the parameter of catch, that handler will catch any exception no matter
-			what the type of the exception thrown.
-			This can be used as a default handler that catches all exceptions not caught by other handlers:
 
-				try {
-					// code here
+		//=========================================================================================
+		// [테스트 예제 3] catch(...) 기본 핸들러
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 3] catch(...) 기본 핸들러" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			try
+			{
+				throw 3.14;
+			}
+			catch (int)
+			{
+				std::cout << "int 예외" << std::endl;
+			}
+			catch (...)
+			{
+				std::cout << "알 수 없는 예외를 catch(... )가 처리" << std::endl;
+			}
+
+			std::cout << std::endl;
+		}
+
+
+		//=========================================================================================
+		// [테스트 예제 4] 중첩 try-catch 와 재던지기
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 4] 중첩 try-catch 와 재던지기" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			try
+			{
+				try
+				{
+					throw 100;
 				}
-				catch (int param) { 
-					std::cout << "int exception"; 
+				catch (int n)
+				{
+					std::cout << "내부 catch 에서 처리 후 다시 던짐 : " << n << std::endl;
+					throw; // 현재 예외를 바깥으로 다시 전달
 				}
-				catch (char param) { 
-					std::cout << "char exception";
-				}
-				catch (...) {
-					std::cout << "default exception";
-				}
+			}
+			catch (...)
+			{
+				std::cout << "외부 catch 에서 최종 처리" << std::endl;
+			}
 
-			In this case, the last handler would catch any exception thrown of a type that is neither int nor char.
+			std::cout << std::endl;
+		}
 
-			After an exception has been handled the program, execution resumes after the try-catch block, not after the throw statement!.
-
-			It is also possible to nest try-catch blocks within more external try blocks.
-			In these cases, we have the possibility that an internal catch block forwards the exception to its external level.
-			This is done with the expression throw; with no arguments.
-			For example:
-			
-				try {
-					try {
-						// code here
-					}
-					catch (int n) {
-						throw;
-					}
-				}
-				catch (...) {
-					std::cout << "Exception occurred";
-				}
-		*/
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	class X {};
 	class Y {};
 
 	void f() throw(X, Y)
 	{
-		throw X(); // OK
+		throw X();
 	}
 
 	void exception_specification()
 	{
 		/*
-			 Exception specification
+			📚 예외 명세(Exception Specification)
 
-			Older code may contain dynamic exception specifications.
-			They are now deprecated in C++, but still supported.
-			A dynamic exception specification follows the declaration of a function, appending a throw specifier to it.
-			For example:
+			옛날 C++ 코드에서는 함수 선언 뒤에
+			"이 함수는 어떤 예외를 던질 수 있다"는 식의 명세를 붙이는 문법이 있었다.
 
-				Syntax
-				throw( )						(deprecated in c++11)
-				throw(typeid, typeid, ...)		(deprecated in C++11)(until C++17)
+			예:
+				void f() throw(X, Y);
 
-			This specification may appear only on lambda-declarator or on a function declarator that
-			is the top-level (until C++17) declarator of a function, variable, or non-static data member,
-			whose type is a function type, a pointer to function type, a reference to function type,
-			a pointer to member function type.
-			It may appear on the declarator of a parameter or on the declarator of a return type.
+			의미:
+				이 함수는 X 또는 Y 타입의 예외만 던진다고 약속하는 형태
 
-				double myfunction (char param) throw (int);
+			하지만 이 방식은 현대 C++에서는 deprecated 되었고,
+			C++17 이후 사실상 제거된 오래된 문법으로 보는 것이 맞다.
 
-				void f() throw(int);			// OK: function declaration
-				void (*fp)() throw (int);		// OK: pointer to function declaration
-				void g(void pfa() throw(int));	// OK: pointer to function parameter declaration
-				typedef int (*pf)() throw(int); // Error: typedef declaration
+			즉, 학습용으로는 의미가 있지만
+			실무에서는 거의 쓰지 않는다.
 
-			This declares a function called myfunction, which takes one argument of type char and returns a value of type double.
-			If this function throws an exception of some type other than int,
-			the function calls std::unexpected instead of looking for a handler or calling std::terminate.
+			현대 C++에서는 대신 다음을 주로 사용한다.
 
-			If this throw specifier is left empty with no type, this means that std::unexpected is called for any exception.
-			Functions with no throw specifier (regular functions) never call std::unexpected,
-			but follow the normal path of looking for their exception handler.
+				noexcept
+					예외를 던지지 않음을 표현
 
-				int myfunction (int param) throw();		// all exceptions call unexpected
-				int myfunction (int param);				// normal exception handling
+			예:
+				void g() noexcept;
+
+
+			=======================================================================================
+			1. 구식 throw(...) 문법
+			=======================================================================================
+
+				throw()
+					어떤 예외도 던지지 않는다는 오래된 문법
+					현대에서는 noexcept 로 대체
+
+				throw(X, Y)
+					X, Y 타입만 던진다는 오래된 문법
+
+			이 문법은 과거에는 의미가 있었지만,
+			현재는 권장되지 않는다.
+
+
+			=======================================================================================
+			2. 왜 비권장인가?
+			=======================================================================================
+
+			이 방식은:
+				- 사용이 불편하고
+				- 구현 복잡성이 있고
+				- 기대만큼 유용하지 않았고
+				- 현대 C++의 예외 설계와 잘 맞지 않았다
+
+			그래서 현재는 noexcept 중심으로 바뀌었다.
+
+
+			=======================================================================================
+			3. 이 예제의 의미
+			=======================================================================================
+
+			void f() throw(X, Y)
+			{
+				throw X();
+			}
+
+			이 코드는 선언상 X 또는 Y만 던진다고 되어 있고,
+			실제로 X를 던지고 있으므로 "옛 규칙 기준"으로는 정상이다.
+
+			하지만 catch가 없으면 예외는 처리되지 않고 프로그램이 종료될 수 있다.
+
+
+			=======================================================================================
+			4. 핵심 요약
+			=======================================================================================
+
+				- throw(X, Y)는 오래된 예외 명세 문법이다.
+				- 현대 C++에서는 거의 사용하지 않는다.
+				- 예외 미발생 보장은 noexcept를 사용한다.
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] 구식 예외 명세 함수 호출
+		//=========================================================================================
 		{
-			f();
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] 구식 예외 명세 함수 호출" << std::endl;
+			std::cout << "==================================================" << std::endl;
 
-			system("pause");
+			try
+			{
+				f();
+			}
+			catch (const X&)
+			{
+				std::cout << "X 예외를 잡았습니다." << std::endl;
+			}
+			catch (const Y&)
+			{
+				std::cout << "Y 예외를 잡았습니다." << std::endl;
+			}
+			catch (...)
+			{
+				std::cout << "기타 예외를 잡았습니다." << std::endl;
+			}
 
-			/*
-			output:
-
-				예외 발생(0x000007FEFD63A06D, C++_d64.exe): Microsoft C++ 예외: Exception::X, 메모리 위치 0x000000000018FAF0.
-				처리되지 않은 예외 발생(0x000007FEFD63A06D, C++_d64.exe): Microsoft C++ 예외: Exception::X, 메모리 위치 0x000000000018FAF0.
-			*/
+			std::cout << std::endl;
 		}
+
+
+		//=========================================================================================
+		// [테스트 예제 2] 현대 C++ 관점 설명
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] 현대 C++ 에서의 대체 개념" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			std::cout << "throw(X, Y) 같은 동적 예외 명세는 구식 문법입니다." << std::endl;
+			std::cout << "현대 C++ 에서는 noexcept 사용이 일반적입니다." << std::endl;
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	void standard_exceptions()
 	{
 		/*
-			Standard exceptions
+			📚 표준 예외 (Standard Exceptions)
 
-			The C++ Standard library provides a base class specifically designed to declare objects to be thrown as exceptions.
-			It is called std::exception and is defined in the <exception> header.
-			This class has a virtual member function called what that returns a null-terminated character sequence (of type char *)
-			and that can be overwritten in derived classes to contain some sort of description of the exception.
+			C++ 표준 라이브러리는 예외 처리를 위한 기본 클래스와
+			여러 표준 예외 타입을 제공한다.
+
+			가장 기본이 되는 클래스는 다음이다.
+
+				std::exception
+
+			이 클래스는 가상 함수 what() 을 제공하며,
+			예외에 대한 설명 문자열을 반환할 수 있다.
+
+			즉, 사용자 정의 예외도 std::exception 을 상속받으면
+			일관된 방식으로 처리하기 쉬워진다.
+
+
+			=======================================================================================
+			1. std::exception
+			=======================================================================================
+
+			std::exception 은 표준 예외 계층의 기반 클래스이다.
+
+			대표 함수:
+				what()
+					예외 설명 문자열 반환
+
+			표준 라이브러리에서 던지는 많은 예외가
+			이 클래스를 기반으로 한다.
+
+
+			=======================================================================================
+			2. 대표 표준 예외
+			=======================================================================================
+
+				std::bad_alloc
+					new 메모리 할당 실패
+
+				std::bad_cast
+					dynamic_cast 실패
+
+				std::bad_typeid
+					typeid 관련 오류
+
+				std::bad_exception
+					예전 예외 명세 관련
+
+				std::bad_function_call
+					비어 있는 함수 객체 호출
+
+				std::bad_weak_ptr
+					잘못된 weak_ptr 사용
+
+			또한 논리 오류 / 런타임 오류 계열도 있다.
+
+				std::logic_error
+				std::runtime_error
+
+
+			=======================================================================================
+			3. 왜 참조로 catch 해야 하나?
+			=======================================================================================
+
+			예외 객체를 값(value)으로 받으면 slicing 문제가 생길 수 있다.
+			그래서 보통 다음처럼 참조로 받는다.
+
+				catch (const std::exception& e)
+
+			이렇게 하면 파생 예외도 올바르게 받을 수 있다.
+
+
+			=======================================================================================
+			4. 핵심 요약
+			=======================================================================================
+
+				- std::exception 은 표준 예외의 기반 클래스이다.
+				- what() 으로 설명 문자열을 얻을 수 있다.
+				- 사용자 정의 예외도 std::exception 을 상속하면 편리하다.
+				- 예외는 보통 const reference 로 catch 한다.
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] 사용자 정의 예외
+		//=========================================================================================
 		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] 사용자 정의 std::exception 예외" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
 			class myException : public std::exception
 			{
+			public:
 				virtual const char* what() const throw()
 				{
 					return "My exception happened";
 				}
-			} myEx;
+			};
 
-			try {
-				throw myEx;
+			try
+			{
+				throw myException();
 			}
-			catch (std::exception& e) {
-				std::cout << e.what() << '\n';
+			catch (const std::exception& e)
+			{
+				std::cout << e.what() << std::endl;
 			}
 
-			system("pause");
-
-			/*
-			output:
-				My exception happened.
-
-				예외 발생(0x000007FEFD63A06D, C++_d64.exe): Microsoft C++ 예외: `void __cdecl Exception::standard_exceptions(void)'::`3'::myException, 메모리 위치 0x00000000002DFBB0.
-			*/
+			std::cout << std::endl;
 		}
-		/*
-			We have placed a handler that catches exception objects by reference (notice the ampersand & after the type),
-			therefore this catches also classes derived from exception,
-			like our myex object of type myException.
 
-			All exceptions thrown by components of the C++ Standard library throw exceptions derived from this exception class.
-			These are:
 
-				exception			description
-				bad_alloc			thrown by new on allocation failure
-				bad_cast			thrown by dynamic_cast when it fails in a dynamic cast
-				bad_exception		thrown by certain dynamic exception specifiers
-				bad_typeid			thrown by typeid
-				bad_function_call	thrown by empty function objects
-				bad_weak_ptr		thrown by shared_ptr when passed a bad weak_ptr
-
-			Also deriving from exception, header <exception> defines two generic exception types
-			that can be inherited by custom exceptions to report errors:
-
-				exception			description
-				logic_error			error related to the internal logic of the program
-				runtime_error		error detected during runtime
-
-			A typical example where standard exceptions need to be checked for is on memory allocation:
-		*/
+		//=========================================================================================
+		// [테스트 예제 2] 표준 예외 예시 - bad_alloc 설명
+		//=========================================================================================
 		{
-			try {
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] std::bad_alloc 설명" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			try
+			{
 				int* myArray = new int[1000];
-				delete [] myArray;
+				delete[] myArray;
+
+				std::cout << "메모리 할당/해제 성공" << std::endl;
 			}
-			catch (std::exception& e) {
-				std::cout << "Standard exception: " << e.what() << std::endl;
+			catch (const std::exception& e)
+			{
+				std::cout << "표준 예외 발생 : " << e.what() << std::endl;
 			}
 
-			system("pause");
+			std::cout << std::endl;
 		}
-		/*
-			The exception that may be caught by the exception handler in this example is a bad_alloc.
-			Because bad_alloc is derived from the standard base class exception,
-			it can be caught (capturing by reference, captures all related classes).
-		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 3] logic_error / runtime_error 예시
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 3] logic_error / runtime_error 예시" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			try
+			{
+				throw std::runtime_error("runtime error example");
+			}
+			catch (const std::logic_error& e)
+			{
+				std::cout << "logic_error : " << e.what() << std::endl;
+			}
+			catch (const std::runtime_error& e)
+			{
+				std::cout << "runtime_error : " << e.what() << std::endl;
+			}
+			catch (const std::exception& e)
+			{
+				std::cout << "std::exception : " << e.what() << std::endl;
+			}
+
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
-	
+
+	//---------------------------------------------------------------------------------------------
 
 	void func1() { throw 0; }
 	void func2() { func1(); }
@@ -250,41 +554,107 @@ namespace Exception
 	void stack_unwinding()
 	{
 		/*
-			Stack Unwinding
+			📚 스택 언와인딩 (Stack Unwinding)
 
-			Stack unwinding is a phenomenon in which an exception continues to be passed through a called area.
+			예외가 발생하면 현재 함수에서 바로 끝나는 것이 아니라,
+			예외를 처리할 수 있는 catch를 찾을 때까지
+			호출 스택을 거슬러 올라간다.
 
-				stack push flow : func4() -> func3() -> func2() -> func1()
-				stack pop flow : func1() -> func2() -> func3() -> func4()
+			이 과정을 스택 언와인딩(stack unwinding)이라고 한다.
+
+			예를 들어:
+
+				func4() -> func3() -> func2() -> func1()
+
+			에서 func1()이 예외를 던지면,
+			catch가 나올 때까지 func2, func3, func4 쪽으로
+			제어가 되돌아간다.
+
+			즉:
+				호출(push) 순서
+					func4 -> func3 -> func2 -> func1
+
+				되돌아오는(pop/unwind) 순서
+					func1 -> func2 -> func3 -> func4
+
+			이 과정에서 각 함수의 지역 객체는 소멸된다.
+			즉, 소멸자 호출이 일어난다.
+			이것이 C++ 예외와 RAII가 잘 맞는 이유 중 하나이다.
+
+
+			=======================================================================================
+			핵심 요약
+			=======================================================================================
+
+				- 예외는 catch를 찾을 때까지 호출 스택을 따라 전달된다.
+				- 이 과정이 stack unwinding 이다.
+				- 언와인딩 중 지역 객체의 소멸자가 호출된다.
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] func1 -> func4 예외 전달
+		//=========================================================================================
 		{
-			try {
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] func1 -> func4 예외 전달" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			try
+			{
 				func4();
 			}
-			catch (int exception) {
-				std::cout << "Exception happened !!!, " << exception << " !" << std::endl;
+			catch (int exception)
+			{
+				std::cout << "예외 발생 !!!, 값 = " << exception << std::endl;
 			}
+
+			std::cout << std::endl;
+		}
+
+
+		//=========================================================================================
+		// [테스트 예제 2] 언와인딩 중 소멸자 호출 확인
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] 언와인딩 중 소멸자 호출 확인" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			class Local
+			{
+			public:
+				~Local()
+				{
+					std::cout << "Local 객체 소멸자 호출" << std::endl;
+				}
+			};
+
+			try
+			{
+				Local x;
+				throw 123;
+			}
+			catch (int n)
+			{
+				std::cout << "catch 에서 예외 처리 : " << n << std::endl;
+			}
+
+			std::cout << std::endl;
 		}
 
 		system("pause");
-
-		/*
-		output:
-			Exception happened !!!, 0 !
-
-			예외 발생(0x000007FEFD63A06D, C++_d64.exe): Microsoft C++ 예외: int, 메모리 위치 0x00000000002DFB10.
-		*/
 	}
 
+	//---------------------------------------------------------------------------------------------
 
-	// Type exceptions example
 	class A
 	{
 	public:
 		int value;
 		std::string strValue;
 
-		A() { value = 0; }
+		A() : value(0) {}
 		virtual ~A()
 		{
 			value = 0;
@@ -293,7 +663,8 @@ namespace Exception
 
 		void setValue(int value1, std::string value2)
 		{
-			value = value1; strValue = value2;
+			value = value1;
+			strValue = value2;
 		}
 	};
 
@@ -303,7 +674,7 @@ namespace Exception
 		short value;
 		std::string strValue;
 
-		B() { value = 0; }
+		B() : value(0) {}
 		~B()
 		{
 			value = 0;
@@ -312,40 +683,92 @@ namespace Exception
 
 		void setValue(short value1, std::string value2)
 		{
-			value = value1; strValue = value2;
+			value = value1;
+			strValue = value2;
 		}
 	};
 
 	void type_exceptions()
 	{
-		/* 
-			Type exceptions
-		*/
-		{
-			try {
-				A *pA = new A();
-				B *pB = new B();
+		/*
+			📚 잘못된 타입/메모리 조작 예제
 
+			이 예제는 "예외 처리 예제"라기보다
+			잘못된 메모리 조작으로 인해 정의되지 않은 동작(UB)이 발생하는 사례에 가깝다.
+
+			원래 코드:
+
+				A* pA = new A();
+				B* pB = new B();
 				memcpy(pA, pB, sizeof(B));
+				delete pA;
 
-				delete pA; // error !!! access violation, by virtual destructor
-				delete pB;
-			}
-			catch (std::exception& e) {
-				std::cout << "Standard exception: " << e.what() << std::endl;
-			}
+			이 코드는 매우 위험하다.
 
-			system("pause");
+			이유:
+				- A 객체 메모리에 B 객체의 바이트를 강제로 덮어씀
+				- A는 가상 소멸자를 가지므로 내부에 vptr 같은 구현 요소가 있음
+				- memcpy 로 객체 메모리를 덮어쓰면 객체 불변식이 깨짐
+				- delete pA 시 잘못된 가상 함수 테이블 접근 가능
+				- 결국 Access Violation 등 치명적 오류 발생 가능
 
-			/*
-			output:
+			즉, 이건 C++ 예외로 잡을 수 있는 정상적인 throw가 아니라
+			프로그램 메모리를 망가뜨려 발생하는 치명적 런타임 오류이다.
 
-				예외 발생(0x000000013F91FD9A, C++_d64.exe): 0xC0000005: 0xFFFFFFFFFFFFFFFF 위치를 읽는 동안 액세스 위반이 발생했습니다..
-				0x000000013F91FD9A에(C++_d64.exe의) 처리되지 않은 예외가 있습니다. 0xC0000005: 0xFFFFFFFFFFFFFFFF 위치를 읽는 동안 액세스 위반이 발생했습니다..	
-			*/
+			이런 종류는 보통:
+				- 예외 처리 대상으로 기대하면 안 되고
+				- 애초에 코드를 그렇게 작성하지 않아야 한다.
+
+
+			=======================================================================================
+			핵심 요약
+			=======================================================================================
+
+				- 객체 메모리에 다른 타입 객체를 memcpy 하면 안 된다.
+				- 이는 예외가 아니라 정의되지 않은 동작(UB)이다.
+				- virtual destructor 가 있는 객체는 특히 더 위험하다.
+		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] 위험한 코드 설명
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] 위험한 memcpy 기반 객체 덮어쓰기 설명" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			std::cout << "A 객체 메모리에 B 객체를 memcpy 하면 객체 구조가 깨질 수 있다." << std::endl;
+			std::cout << "이는 예외 처리 예제가 아니라 정의되지 않은 동작(UB) 예제이다." << std::endl;
+			std::cout << "실제로 실행하면 Access Violation 이 날 수 있으므로 권장하지 않는다." << std::endl;
+			std::cout << std::endl;
 		}
+
+
+		//=========================================================================================
+		// [테스트 예제 2] 안전한 대안 설명
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] 안전한 대안" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			A a;
+			B b;
+
+			a.setValue(10, "AAA");
+			b.setValue(20, "BBB");
+
+			std::cout << "A.value = " << a.value << ", A.strValue = " << a.strValue << std::endl;
+			std::cout << "B.value = " << b.value << ", B.strValue = " << b.strValue << std::endl;
+			std::cout << "객체 간 데이터 복사는 memcpy 가 아니라 멤버 단위 복사/변환 로직을 사용해야 한다." << std::endl;
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	class TestClass
 	{
@@ -358,14 +781,14 @@ namespace Exception
 
 	__declspec(noinline) void TestCPPEX()
 	{
-#ifdef CPPEX  
+#ifdef CPPEX
 		printf("Throwing C++ exception\r\n");
 		throw std::exception("");
-#else  
+#else
 		printf("Triggering SEH exception\r\n");
-		volatile int *pInt = 0x00000000;
-		*pInt = 20; // error !!! access violation
-#endif  
+		volatile int* pInt = 0;
+		*pInt = 20; // Access Violation
+#endif
 	}
 
 	__declspec(noinline) void TestExceptions()
@@ -376,107 +799,141 @@ namespace Exception
 
 	void windows_exception()
 	{
-		// Structured Exception Handling for MS Windows
+		/*
+			📚 Windows 구조적 예외 처리 (SEH, Structured Exception Handling)
+
+			Windows와 Visual C++는
+			C++ 표준 예외 처리와 별개로
+			구조적 예외 처리(SEH)를 지원한다.
+
+			대표 문법:
+
+				__try
+				__except
+
+			이것은 Microsoft 확장 문법이며,
+			표준 C++ 예외 처리와는 다른 계열의 기능이다.
+
+
+			=======================================================================================
+			1. SEH 란?
+			=======================================================================================
+
+			SEH는 Windows 수준의 예외 처리 방식이다.
+
+			예:
+				- Access Violation
+				- 0으로 나누기
+				- 잘못된 메모리 접근
+
+			같은 운영체제 수준 예외를 다룰 수 있다.
+
+			즉:
+				C++ throw/catch
+					언어 차원의 예외 처리
+
+				SEH (__try/__except)
+					Windows 시스템 차원의 예외 처리
+
+
+			=======================================================================================
+			2. 왜 구분해야 하는가?
+			=======================================================================================
+
+			SEH는 C++ 예외와 완전히 같은 것이 아니다.
+
+			특히:
+				- 소멸자 호출
+				- 언와인딩 방식
+				- /EH 컴파일 옵션
+				- 혼합 사용 시 동작
+
+			등이 기대와 다를 수 있다.
+
+			그래서 일반적인 C++ 프로그램에서는
+			가능하면 표준 C++ 예외를 우선 사용하는 것이 권장된다.
+
+
+			=======================================================================================
+			3. 이 예제의 의미
+			=======================================================================================
+
+			TestCPPEX() 는 두 모드로 동작한다.
+
+				CPPEX 정의 시
+					-> C++ 예외 throw
+
+				그 외
+					-> nullptr 쓰기 시도
+					-> Access Violation(SEH)
+
+			그리고 __try / __except 로
+			SEH 예외를 잡는 예제를 보여준다.
+
+
+			=======================================================================================
+			4. 핵심 요약
+			=======================================================================================
+
+				- SEH는 Windows 전용 예외 처리이다.
+				- C++ throw/catch 와는 별개이다.
+				- 일반적으로는 표준 C++ 예외를 우선 사용하는 것이 좋다.
+				- SEH는 Access Violation 같은 시스템 예외 처리에 쓰일 수 있다.
+		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] SEH 기본 구조 설명
+		//=========================================================================================
 		{
-			/*
-				Although Windows and Visual C++ support structured exception handling (SEH),
-				we recommend that you use ISO-standard C++ exception handling because it makes code more portable and flexible.
-				Nevertheless, in existing code or for particular kinds of programs,
-				you still might have to use SEH.
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] SEH 기본 구조 설명" << std::endl;
+			std::cout << "==================================================" << std::endl;
 
-				Grammar
-					try-except-statement :
-					__try compound-statement
-					__except ( expression ) compound-statement
-
-
-				Remark
-				With SEH, you can ensure that resources such as memory blocks and files are correctly if execution unexpectedly terminates.
-				You can also handle specific problems—for example, insufficient memory—by using concise structured code
-				that does not rely on goto statements or elaborate testing of return codes.
-				
-				The try-except and try-finally statements referred to in this article are Microsoft extensions to the C language.
-				They support SEH by enabling applications to gain control of a program after events that would otherwise terminate execution.
-				Although SEH works with C++ source files, it's not specifically designed for C++.
-				If you use SEH in a C++ program that you compile by using the /EH option—together with certain modifiers—destructors
-				for local objects are called but other execution behavior might not be what you expect.
-				(For an illustration, see the example later in this article.)
-				In most cases, instead of SEH we recommend that you use ISO-standard C++ exception handling, which Visual C++ also supports.
-				By using C++ exception handling, you can ensure that your code is more portable, and you can handle exceptions of any type.
-
-				If you have C modules that use SEH, you can mix them with C++ modules that use C++ exception handling.
-				For information, see Exception Handling Differences.
-				
-				There are two SEH mechanisms:
-				
-					* Exception handlers, which can respond to or dismiss the exception.
-					* Termination handlers, which are called when an exception causes termination in a block of code.
-				
-				These two kinds of handlers are distinct, but are closely related through a process known as "unwinding the stack."
-				When an exception occurs, Windows looks for the most recently installed exception handler that is currently active.
-				The handler can do one of three things:
-				
-					* Fail to recognize the exception and pass control to other handlers.
-					* Recognize the exception but dismiss it.
-					* Recognize the exception and handle it.
-				
-				The exception handler that recognizes the exception may not be in the function that was running when the exception occurred.
-				In some cases, it may be in a function much higher on the stack.
-				The currently running function and all other functions on the stack frame are terminated.
-				During this process, the stack is "unwound;" that is,
-				local variables of terminated functions—unless they are static—are cleared from the stack.
-
-				As it unwinds the stack, the operating system calls any termination handlers that you've written for each function.
-				By using a termination handler, you can clean up resources that otherwise would remain open because of an abnormal termination.
-				If you've entered a critical section, you can exit in the termination handler.
-				If the program is going to shut down, you can perform other housekeeping tasks such as closing and removing temporary files.
-				
-				For more information, see:
-					
-					* Writing an Exception Handler
-					* Writing a Termination Handler
-					* Using Structured Exception Handling with C++
-
-				Example
-				As stated earlier, destructors for local objects are called if you use SEH in a C++ program
-				and compile it by using the /EH option with certain modifiers—for example, /EHsc and /EHa.
-				However, the behavior during execution may not be what you expect if you are also using C++ exceptions.
-				The following example demonstrates these behavioral differences.
-			*/
-			{
-				__try {
-					TestExceptions();
-				}
-				__except (EXCEPTION_EXECUTE_HANDLER) {
-					std::cout << "Executing SEH __except block !!!" << std::endl;
-				}
-
-				system("pause");
-
-				/*
-				output:
-					Triggering SEH exception
-					Executing SEH __except block !!!
-
-					예외 발생(0x000000013F2FFE2E, C++_d64.exe): 0xC0000005: 0x0000000000000000 위치를 기록하는 동안 액세스 위반이 발생했습니다..
-				*/
-			}
+			std::cout << "__try / __except 는 Windows 전용 구조적 예외 처리 문법입니다." << std::endl;
+			std::cout << "표준 C++의 try / catch 와는 다른 계열입니다." << std::endl;
+			std::cout << std::endl;
 		}
+
+
+		//=========================================================================================
+		// [테스트 예제 2] SEH 예외 처리
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] SEH 예외 처리" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			__try
+			{
+				TestExceptions();
+			}
+			__except (EXCEPTION_EXECUTE_HANDLER)
+			{
+				std::cout << "SEH __except 블록 실행 !!!" << std::endl;
+			}
+
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
+
+	//---------------------------------------------------------------------------------------------
 
 	void Test()
 	{
-		//exceptions();
-
-		//exception_specification();
-
-		//standard_exceptions();
-
-		//stack_unwinding();
+		//windows_exception();
 
 		//type_exceptions();
 
-		//windows_exception();
+		//stack_unwinding();
+
+		//standard_exceptions();
+
+		//exception_specification();
+
+		//exceptions();
 	}
 
 }// end of Exceptions

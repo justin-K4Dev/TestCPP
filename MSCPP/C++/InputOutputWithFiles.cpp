@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 
 namespace InputOutputWithFiles
@@ -7,457 +7,1027 @@ namespace InputOutputWithFiles
 	void input_output_with_files()
 	{
 		/*
-			input / output with files
+			📚 파일을 이용한 입력 / 출력 (input / output with files)
 
-			C++ provides the following classes to perform output and input of characters to/from files: 
+			C++에서는 파일과의 입출력을 위해
+			스트림(stream) 기반 클래스를 제공한다.
 
-				* ofstream: Stream class to write on files
-				* ifstream: Stream class to read from files
-				* fstream: Stream class to both read and write from/to files.
+			대표적으로 다음 3가지 클래스가 있다.
 
-			These classes are derived directly or indirectly from the classes istream and ostream.
-			We have already used objects whose types were these classes:
-			cin is an object of class istream and cout is an object of class ostream.
-			Therefore, we have already been using classes that are related to our file streams.
-			And in fact, we can use our file streams the same way we are already used to use cin and cout,
-			with the only difference that we have to associate these streams with physical files.
-			Let's see an example:
+				- std::ofstream
+					파일에 쓰기(write) 위한 스트림
+
+				- std::ifstream
+					파일에서 읽기(read) 위한 스트림
+
+				- std::fstream
+					파일 읽기/쓰기를 모두 지원하는 스트림
+
+			이 클래스들은 cin, cout 과 같은 스트림 계열과 연결된 개념이다.
+
+			즉:
+				- cout 은 화면으로 출력하는 스트림
+				- ifstream / ofstream / fstream 은 파일로 입출력하는 스트림
+
+			이라고 이해하면 된다.
+
+			그래서 사용법도 cout / cin 과 매우 비슷하다.
+			차이는 "물리적인 파일과 연결해야 한다"는 점이다.
+
+
+			=======================================================================================
+			1. 기본 개념
+			=======================================================================================
+
+			파일 스트림 객체는
+			프로그램 안에서 파일을 다루는 통로 역할을 한다.
+
+			예:
+				std::ofstream myfile;
+				myfile.open("example.txt");
+				myfile << "Writing this to a file.\n";
+				myfile.close();
+
+			이 코드는 다음 과정을 수행한다.
+
+				1) 출력용 파일 스트림 객체 생성
+				2) example.txt 파일 열기
+				3) 문자열 출력
+				4) 파일 닫기
+
+			즉, cout 처럼 << 연산자를 쓰지만
+			대상은 화면이 아니라 파일이다.
+
+
+			=======================================================================================
+			2. 핵심 요약
+			=======================================================================================
+
+				- ofstream : 파일 쓰기
+				- ifstream : 파일 읽기
+				- fstream  : 파일 읽기 + 쓰기
+				- 사용 방식은 cin / cout 과 유사하다
+				- 실제 파일과 연결하려면 open() 이 필요하다
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] 파일에 한 줄 쓰기
+		//=========================================================================================
 		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] 파일에 한 줄 쓰기" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
 			std::ofstream myfile;
 			myfile.open("example.txt");
-			myfile << "Writing this to a file.\n";
-			myfile.close();
 
-			system("pause");
+			if (myfile.is_open())
+			{
+				myfile << "Writing this to a file.\n";
+				myfile.close();
+				std::cout << "example.txt 파일에 쓰기 완료" << std::endl;
+			}
+			else
+			{
+				std::cout << "파일 열기 실패" << std::endl;
+			}
+
+			std::cout << std::endl;
 
 			/*
-			output:
-				[file example.txt]
-				Writing this to a file.
+				생성 파일:
+					example.txt
+
+				예상 내용:
+					Writing this to a file.
 			*/
 		}
-		/*
-			This code creates a file called example.txt and inserts a sentence into it in the same way we are used to do with cout,
-			but using the file stream myfile instead.
-			But let's go step by step:
-		*/
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	void open_a_file()
 	{
 		/*
-			Open a file
+			📚 파일 열기 (Open a file)
 
-			The first operation generally performed on an object of one of these classes is to associate it to a real file.
-			This procedure is known as to open a file.
-			An open file is represented within a program by a stream
-			(i.e., an object of one of these classes; in the previous example, this was myfile) and any input
-			or output operation performed on this stream object will be applied to the physical file associated to it.
+			파일 스트림 객체를 실제 파일과 연결하는 작업을
+			파일 열기(open)라고 한다.
 
-			In order to open a file with a stream object we use its member function open:
+			기본 형태:
 
-				open (filename, mode);
+				open(filename, mode);
 
-			Where filename is a string representing the name of the file to be opened,
-			and mode is an optional parameter with a combination of the following flags:
+			여기서:
+				filename
+					열 파일 이름
 
-				ios::in			Open for input operations.
-				ios::out		Open for output operations.
-				ios::binary		Open in binary mode.
-				ios::ate		Set the initial position at the end of the file.
-								If this flag is not set, the initial position is the beginning of the file.
-				ios::app		All output operations are performed at the end of the file,
-								appending the content to the current content of the file.
-				ios::trunc		If the file is opened for output operations and it already existed,
-								its previous content is deleted and replaced by the new one.
+				mode
+					열기 모드(flag)
 
-			All these flags can be combined using the bitwise operator OR (|).
-			For example, if we want to open the file example.bin in binary mode to add data
-			we could do it by the following call to member function open:
+			모드는 다음과 같은 플래그를 조합할 수 있다.
 
-				ofstream myfile;
-				myfile.open ("example.bin", ios::out | ios::app | ios::binary); 
+				std::ios::in
+					읽기용
 
-			Each of the open member functions of classes ofstream,
-			ifstream and fstream has a default mode that is used if the file is opened without a second argument:
+				std::ios::out
+					쓰기용
 
-				class		default mode parameter
-				ofstream	ios::out
-				ifstream	ios::in
-				fstream		ios::in | ios::out
+				std::ios::binary
+					바이너리 모드
 
-			For ifstream and ofstream classes, ios::in and ios::out are automatically and respectively assumed,
-			even if a mode that does not include them is passed as second argument to the open member function (the flags are combined).
+				std::ios::ate
+					파일을 열자마자 위치를 끝으로 이동
 
-			For fstream, the default value is only applied if the function is called without specifying any value for the mode parameter.
-			If the function is called with any value in that parameter the default mode is overridden, not combined.
+				std::ios::app
+					항상 파일 끝에 추가 기록
 
-			File streams opened in binary mode perform input and output operations independently of any format considerations.
-			Non-binary files are known as text files,
-			and some translations may occur due to formatting of some special characters (like newline and carriage return characters).
+				std::ios::trunc
+					기존 파일 내용 삭제 후 새로 씀
 
-			Since the first task that is performed on a file stream is generally to open a file,
-			these three classes include a constructor that automatically calls the open member function
-			and has the exact same parameters as this member.
-				
-			Therefore, we could also have declared the previous myfile object
-			and conduct the same opening operation in our previous example by writing:
+			이 플래그들은 | (비트 OR) 로 조합할 수 있다.
 
-				ofstream myfile ("example.bin", ios::out | ios::app | ios::binary);
+			예:
+				std::ofstream myfile;
+				myfile.open("example.bin", std::ios::out | std::ios::app | std::ios::binary);
 
-			Combining object construction and stream opening in a single statement.
-			Both forms to open a file are valid and equivalent.
+			이는:
+				- 쓰기용
+				- 바이너리 모드
+				- 기존 파일 끝에 추가
 
-			To check if a file stream was successful opening a file, you can do it by calling to member is_open.
-			This member function returns a bool value of true in the case
-			that indeed the stream object is associated with an open file,
-			or false otherwise:
+			라는 의미이다.
 
-				if (myfile.is_open()) { ... ok, proceed with output ... }
+
+			=======================================================================================
+			1. 클래스별 기본 모드
+			=======================================================================================
+
+				std::ofstream
+					기본적으로 std::ios::out
+
+				std::ifstream
+					기본적으로 std::ios::in
+
+				std::fstream
+					기본적으로 std::ios::in | std::ios::out
+
+			즉, ofstream 은 보통 쓰기용,
+			ifstream 은 보통 읽기용으로 바로 이해하면 된다.
+
+
+			=======================================================================================
+			2. 생성자에서 바로 열 수도 있다
+			=======================================================================================
+
+			open() 을 따로 호출하지 않고
+			생성자에서 바로 파일을 열 수도 있다.
+
+			예:
+				std::ofstream myfile("example.bin", std::ios::out | std::ios::binary);
+
+			이 방식도 매우 흔하다.
+
+
+			=======================================================================================
+			3. 열기 성공 여부 확인
+			=======================================================================================
+
+			파일이 실제로 열렸는지는
+			is_open() 으로 확인할 수 있다.
+
+			예:
+				if (myfile.is_open()) { ... }
+
+			파일 경로 문제, 권한 문제 등으로 실패할 수 있으므로
+			확인하는 습관이 중요하다.
+
+
+			=======================================================================================
+			4. 핵심 요약
+			=======================================================================================
+
+				- open(filename, mode) 로 파일을 연다
+				- ios 플래그를 조합해 동작을 결정한다
+				- 생성자에서 바로 열 수도 있다
+				- is_open() 으로 성공 여부를 확인한다
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] open() 으로 파일 열기
+		//=========================================================================================
 		{
-			system("pause");
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] open() 으로 파일 열기" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			std::ofstream myfile;
+			myfile.open("open_test.txt", std::ios::out | std::ios::trunc);
+
+			if (myfile.is_open())
+			{
+				myfile << "open_test.txt created by open().\n";
+				std::cout << "파일 열기 성공" << std::endl;
+				myfile.close();
+			}
+			else
+			{
+				std::cout << "파일 열기 실패" << std::endl;
+			}
+
+			std::cout << std::endl;
 		}
+
+
+		//=========================================================================================
+		// [테스트 예제 2] 생성자에서 바로 파일 열기
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] 생성자에서 바로 파일 열기" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			std::ofstream myfile("open_ctor_test.txt", std::ios::out | std::ios::trunc);
+
+			if (myfile.is_open())
+			{
+				myfile << "This file was opened in constructor.\n";
+				std::cout << "생성자 방식 파일 열기 성공" << std::endl;
+				myfile.close();
+			}
+			else
+			{
+				std::cout << "생성자 방식 파일 열기 실패" << std::endl;
+			}
+
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	void closing_a_file()
 	{
 		/*
-			Closing a file
+			📚 파일 닫기 (Closing a file)
 
-			When we are finished with our input and output operations on a file we shall close it so
-			that the operating system is notified and its resources become available again.
-			For that, we call the stream's member function close.
-			This member function takes flushes the associated buffers and closes the file:
+			파일 사용이 끝나면 반드시 닫아 주는 것이 좋다.
+
+			파일을 닫으면:
+				- 버퍼 내용이 실제 파일에 반영되고
+				- 운영체제 자원이 해제되고
+				- 다른 프로세스/코드가 파일을 다시 사용하기 쉬워진다
+
+			파일 닫기 함수는 close() 이다.
 
 				myfile.close();
 
-			Once this member function is called, the stream object can be re-used to open another file,
-			and the file is available again to be opened by other processes.
+			close() 는 단순히 핸들만 닫는 것이 아니라,
+			대기 중인 출력 버퍼를 flush 한 뒤 파일을 닫는다.
 
-			In case that an object is destroyed while still associated with an open file,
-			the destructor automatically calls the member function close.
+
+			=======================================================================================
+			1. 객체가 파괴될 때 자동 close
+			=======================================================================================
+
+			C++ 파일 스트림 객체는
+			스코프를 벗어나 파괴될 때
+			열린 파일이 있으면 자동으로 닫는다.
+
+			즉, 소멸자가 close 처리를 해준다.
+
+			하지만 코드 의도를 분명히 하고
+			자원을 빨리 반환하기 위해
+			명시적으로 close() 를 호출하는 습관도 좋다.
+
+
+			=======================================================================================
+			2. 핵심 요약
+			=======================================================================================
+
+				- 파일 사용이 끝나면 close() 호출
+				- close() 는 버퍼 flush 후 파일 닫기
+				- 객체 소멸 시 자동으로 닫히기도 함
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] 명시적 close()
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] 명시적 close()" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			std::ofstream myfile("close_test.txt");
+
+			if (myfile.is_open())
+			{
+				myfile << "Closing file explicitly.\n";
+				myfile.close();
+				std::cout << "파일을 명시적으로 닫았습니다." << std::endl;
+			}
+			else
+			{
+				std::cout << "파일 열기 실패" << std::endl;
+			}
+
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	void text_files()
 	{
 		/*
-			Text files
+			📚 텍스트 파일 (Text files)
 
-			Text file streams are those where the ios::binary flag is not included in their opening mode.
-			These files are designed to store text and thus all values that are input
-			or output from/to them can suffer some formatting transformations,
-			which do not necessarily correspond to their literal binary value.
+			텍스트 파일은 std::ios::binary 플래그 없이 여는 파일이다.
 
-			Writing operations on text files are performed in the same way we operated with cout:
+			이런 파일은 사람이 읽을 수 있는 문자 기반 데이터 저장에 적합하다.
+
+			예:
+				- 로그 파일
+				- 설정 파일
+				- CSV 일부
+				- 일반 문서형 데이터
+
+			텍스트 파일에서는
+			출력 시 << 연산자,
+			입력 시 >>, getline() 등을
+			콘솔 스트림처럼 사용할 수 있다.
+
+
+			=======================================================================================
+			1. 텍스트 파일 쓰기
+			=======================================================================================
+
+			ofstream 에 << 연산자를 사용하면
+			cout 처럼 파일에 텍스트를 기록할 수 있다.
+
+
+			=======================================================================================
+			2. 텍스트 파일 읽기
+			=======================================================================================
+
+			ifstream 과 getline() 을 사용하면
+			파일 내용을 줄 단위로 읽을 수 있다.
+
+			예:
+				while (std::getline(myfile, line))
+				{
+					...
+				}
+
+			getline() 의 반환값은 스트림 참조이며,
+			while 조건식에서 성공 여부로 평가된다.
+
+			즉:
+				- 읽기 성공 -> true
+				- EOF 또는 오류 -> false
+
+
+			=======================================================================================
+			3. 핵심 요약
+			=======================================================================================
+
+				- 텍스트 파일은 문자 기반 파일
+				- 쓰기는 << 연산자 사용 가능
+				- 읽기는 getline() 과 함께 자주 사용
+				- 콘솔 입출력과 유사한 방식으로 다룰 수 있다
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] 텍스트 파일 쓰기
+		//=========================================================================================
 		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] 텍스트 파일 쓰기" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
 			std::ofstream myfile("example.txt");
+
 			if (myfile.is_open())
 			{
 				myfile << "This is a line.\n";
 				myfile << "This is another line.\n";
 				myfile.close();
+
+				std::cout << "example.txt 쓰기 완료" << std::endl;
 			}
-			else {
-				std::cout << "Unable to open file";
+			else
+			{
+				std::cout << "Unable to open file" << std::endl;
 			}
 
-			system("pause");
-
-			/*
-			output:
-				[file example.txt]
-				This is a line.
-				This is another line.
-			*/
+			std::cout << std::endl;
 		}
-		/*
-			Reading from a file can also be performed in the same way that we did with cin:
-		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 2] 텍스트 파일 읽기
+		//=========================================================================================
 		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] 텍스트 파일 읽기" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
 			std::string line;
 			std::ifstream myfile("example.txt");
 
-			if (myfile.is_open()) {
-				while (std::getline(myfile, line)) {
+			if (myfile.is_open())
+			{
+				while (std::getline(myfile, line))
+				{
 					std::cout << line << '\n';
 				}
 				myfile.close();
 			}
-			else {
-				std::cout << "Unable to open file";
+			else
+			{
+				std::cout << "Unable to open file" << std::endl;
 			}
 
-			system("pause");
-
-			/*
-			output:
-				This is a line.
-				This is another line.
-			*/
+			std::cout << std::endl;
 		}
-		/*
-			This last example reads a text file and prints out its content on the screen.
-			We have created a while loop that reads the file line by line, using getline.
-			The value returned by getline is a reference to the stream object itself,
-			which when evaluated as a boolean expression (as in this while-loop) is true if the stream is ready for more operations,
-			and false if either the end of the file has been reached or if some other error occurred.
-		*/
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	void checking_state_files()
 	{
 		/*
-			Checking state flags
+			📚 스트림 상태 플래그 확인 (Checking state flags)
 
-			The following member functions exist to check for specific states of a stream (all of them return a bool value): 
+			파일 스트림은 읽기/쓰기 도중
+			현재 상태를 나타내는 플래그를 내부적으로 가진다.
 
-			bad()
-				Returns true if a reading or writing operation fails. For example,
-				in the case that we try to write to a file that is not open for writing
-				or if the device where we try to write has no space left.
-				
-			fail()
-				Returns true in the same cases as bad(), but also in the case that a format error happens,
-				like when an alphabetical character is extracted when we are trying to read an integer number.
+			대표 상태 확인 함수는 다음과 같다.
 
-			eof()
-				Returns true if a file open for reading has reached the end.
-				
-			good()
-				It is the most generic state flag:
-				it returns false in the same cases in which calling any of the previous functions would return true.
-				Note that good and bad are not exact opposites (good checks more state flags at once).
+				bad()
+					심각한 읽기/쓰기 오류
 
-			The member function clear() can be used to reset the state flags.
+				fail()
+					형식 오류 포함 실패 상태
+
+				eof()
+					파일 끝(End Of File) 도달
+
+				good()
+					정상 상태인지 확인
+
+				clear()
+					오류 상태 플래그 초기화
+
+
+			=======================================================================================
+			1. bad()
+			=======================================================================================
+
+			파일 장치 자체 문제나
+			쓰기 불가 등의 심각한 오류를 나타낼 수 있다.
+
+
+			=======================================================================================
+			2. fail()
+			=======================================================================================
+
+			bad() 상황뿐 아니라
+			형식 오류도 포함한다.
+
+			예:
+				정수를 읽으려는데 문자가 나온 경우
+
+
+			=======================================================================================
+			3. eof()
+			=======================================================================================
+
+			읽기 스트림이 파일 끝에 도달했는지 확인한다.
+
+
+			=======================================================================================
+			4. good()
+			=======================================================================================
+
+			가장 일반적인 정상 상태 검사이다.
+
+			보통은 "문제가 없는 상태인가?"를 볼 때 쓴다.
+
+
+			=======================================================================================
+			5. clear()
+			=======================================================================================
+
+			오류 상태를 초기화해서
+			스트림을 다시 사용할 수 있게 한다.
+
+
+			=======================================================================================
+			6. 핵심 요약
+			=======================================================================================
+
+				- bad  : 심각한 오류
+				- fail : 형식 오류 포함 실패
+				- eof  : 파일 끝
+				- good : 정상 상태
+				- clear: 상태 초기화
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] eof / fail 확인
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] eof / fail 확인" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			std::ifstream file("example.txt");
+			std::string line;
+
+			if (file.is_open())
+			{
+				while (std::getline(file, line))
+				{
+					std::cout << line << std::endl;
+				}
+
+				std::cout << "good() = " << file.good() << std::endl;
+				std::cout << "eof()  = " << file.eof() << std::endl;
+				std::cout << "fail() = " << file.fail() << std::endl;
+				std::cout << "bad()  = " << file.bad() << std::endl;
+
+				file.close();
+			}
+			else
+			{
+				std::cout << "파일 열기 실패" << std::endl;
+			}
+
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
 
 
 	void get_n_put_stream_positioning()
 	{
 		/*
-			 get and put stream positioning
+			📚 get / put 위치 제어 (stream positioning)
 
-			All i/o streams objects keep internally -at least- one internal position:
+			파일 스트림은 내부적으로
+			현재 읽기 위치(get position)와
+			현재 쓰기 위치(put position)를 가진다.
 
-			ifstream, like istream, keeps an internal get position
-			with the location of the element to be read in the next input operation.
+			이 위치는 다음 읽기/쓰기 작업이
+			파일의 어디에서 일어날지를 의미한다.
 
-			ofstream, like ostream, keeps an internal put position with the location
-			where the next element has to be written.
+			스트림 종류별로 보면:
 
-			Finally, fstream, keeps both, the get and the put position, like iostream.
+				ifstream
+					get 위치만 가짐
 
-			These internal stream positions point to the locations within the stream where the next reading
-			or writing operation is performed.
-			These positions can be observed and modified using the following member functions: 
+				ofstream
+					put 위치만 가짐
 
-			tellg() and tellp()
-			These two member functions with no parameters return a value of the member type streampos,
-			which is a type representing the current get position (in the case of tellg)
-			or the put position (in the case of tellp).
+				fstream
+					get / put 둘 다 가짐
 
-			seekg() and seekp()
-			These functions allow to change the location of the get and put positions.
-			Both functions are overloaded with two different prototypes.
-			The first form is:
 
-				seekg ( position );
-				seekp ( position );
+			=======================================================================================
+			1. tellg / tellp
+			=======================================================================================
 
-			Using this prototype, the stream pointer is changed to the absolute position position (counting from the beginning of the file).
-			The type for this parameter is streampos,
-			which is the same type as returned by functions tellg and tellp.
+				tellg()
+					현재 읽기 위치 반환
 
-			The other form for these functions is:
+				tellp()
+					현재 쓰기 위치 반환
 
-				seekg ( offset, direction );
-				seekp ( offset, direction );
+			반환 타입은 보통 std::streampos 계열이다.
 
-			Using this prototype, the get or put position is set to an offset value relative to some specific point determined by the parameter direction.
-			offset is of type streamoff.
-			And direction is of type seekdir, which is an enumerated type that determines the point from where offset is counted from,
-			and that can take any of the following values:
 
-				ios::beg	offset counted from the beginning of the stream
-				ios::cur	offset counted from the current position
-				ios::end	offset counted from the end of the stream
+			=======================================================================================
+			2. seekg / seekp
+			=======================================================================================
 
-			The following example uses the member functions we have just seen to obtain the size of a file: 
+				seekg()
+					읽기 위치 이동
+
+				seekp()
+					쓰기 위치 이동
+
+			형태:
+				seekg(absolute_position)
+				seekg(offset, direction)
+
+			direction 은 다음 중 하나다.
+
+				std::ios::beg
+					파일 시작 기준
+
+				std::ios::cur
+					현재 위치 기준
+
+				std::ios::end
+					파일 끝 기준
+
+
+			=======================================================================================
+			3. 파일 크기 구하기
+			=======================================================================================
+
+			파일을 binary + ate 로 열면
+			처음 위치가 파일 끝에 놓인다.
+
+			그러면 tellg() 로 곧바로 파일 크기를 얻는 방식이 자주 사용된다.
+
+
+			=======================================================================================
+			4. 핵심 요약
+			=======================================================================================
+
+				- tellg / tellp : 현재 위치 조회
+				- seekg / seekp : 위치 이동
+				- ate + tellg 조합은 파일 크기 확인에 자주 사용
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] 파일 크기 구하기
+		//=========================================================================================
 		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] 파일 크기 구하기" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
 			std::streampos begin, end;
-
 			std::ifstream myfile("example.bin", std::ios::binary);
-				
-			begin = myfile.tellg();
-			myfile.seekg(0, std::ios::end);
-			end = myfile.tellg();
-				
-			myfile.close();
 
-			std::cout << "size is: " << (end - begin) << " bytes.\n";
+			if (myfile.is_open())
+			{
+				begin = myfile.tellg();
+				myfile.seekg(0, std::ios::end);
+				end = myfile.tellg();
 
-			system("pause");
+				myfile.close();
 
-			/*
-			output:
-				size is: 40 bytes.
-			*/
+				std::cout << "size is: " << (end - begin) << " bytes." << std::endl;
+			}
+			else
+			{
+				std::cout << "example.bin 열기 실패" << std::endl;
+			}
+
+			std::cout << std::endl;
 		}
-		/*
-			Notice the type we have used for variables begin and end:
-				
-				streampos size;
 
-			streampos is a specific type used for buffer and file positioning and is the type returned by file.tellg().
-			Values of this type can safely be subtracted from other values of the same type,
-			and can also be converted to an integer type large enough to contain the size of the file.
 
-			These stream positioning functions use two particular types: streampos and streamoff.
-			These types are also defined as member types of the stream class:
+		//=========================================================================================
+		// [테스트 예제 2] seekg 로 다시 앞으로 이동
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] seekg 로 위치 이동" << std::endl;
+			std::cout << "==================================================" << std::endl;
 
-				Type			Member type		Description
-				streampos		ios::pos_type	Defined as fpos<mbstate_t>.
-												It can be converted to/from streamoff and can be added
-												or subtracted values of these types.
-				streamoff		ios::off_type	It is an alias of one of the fundamental integral types (such as int or long long).
+			std::ifstream myfile("example.txt");
 
-			Each of the member types above is an alias of its non-member equivalent (they are the exact same type).
-			It does not matter which one is used. The member types are more generic,
-			because they are the same on all stream objects (even on streams using exotic types of characters),
-			but the non-member types are widely used in existing code for historical reasons.
-		*/
+			if (myfile.is_open())
+			{
+				std::cout << "처음 tellg(): " << myfile.tellg() << std::endl;
+
+				myfile.seekg(5, std::ios::beg);
+				std::cout << "seekg(5, beg) 후 tellg(): " << myfile.tellg() << std::endl;
+
+				myfile.close();
+			}
+			else
+			{
+				std::cout << "example.txt 열기 실패" << std::endl;
+			}
+
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	void binary_files()
 	{
 		/*
-			Binary files
+			📚 바이너리 파일 (Binary files)
 
-			For binary files, reading and writing data with the extraction and insertion operators (<< and >>)
-			and functions like getline is not efficient, since we do not need to format any data and data is likely not formatted in lines.
+			바이너리 파일은 데이터를 형식 변환 없이
+			그대로 바이트 단위로 다루는 파일이다.
 
-			File streams include two member functions specifically designed to read and write binary data sequentially: write and read.
-			The first one (write) is a member function of ostream (inherited by ofstream).
-			And read is a member function of istream (inherited by ifstream).
-			Objects of class fstream have both. Their prototypes are:
+			텍스트 파일과 달리,
+			줄 단위나 숫자 문자열 변환 같은 형식 처리가 중심이 아니다.
 
-			write ( memory_block, size );
-			read ( memory_block, size );
+			그래서 바이너리 파일에서는 보통
+			<<, >>, getline 보다는
+			read(), write() 를 사용한다.
 
-			Where memory_block is of type char* (pointer to char),
-			and represents the address of an array of bytes where the read data elements are stored
-			or from where the data elements to be written are taken.
-				
-			The size parameter is an integer value that specifies the number of characters to be read or written from/to the memory block.
+			기본 함수 형태:
+
+				write(memory_block, size);
+				read(memory_block, size);
+
+			여기서:
+				memory_block
+					바이트 데이터를 담을 메모리 시작 주소
+
+				size
+					읽거나 쓸 바이트 수
+
+
+			=======================================================================================
+			1. 언제 binary 모드를 쓰는가?
+			=======================================================================================
+
+				- 구조체 저장
+				- 이미지/오디오/압축 파일 일부 처리
+				- 네트워크 패킷 덤프
+				- raw byte 처리
+
+			즉, 사람이 읽기 위한 텍스트가 아니라
+			정확한 바이트 보존이 중요한 경우에 사용한다.
+
+
+			=======================================================================================
+			2. 파일 전체를 메모리에 읽는 방식
+			=======================================================================================
+
+			자주 쓰는 패턴:
+
+				1) 파일 끝으로 가서 크기 확인
+				2) 버퍼 할당
+				3) 파일 시작으로 이동
+				4) 전체 read()
+
+			이렇게 하면 파일 전체를 메모리로 읽어올 수 있다.
+
+
+			=======================================================================================
+			3. 핵심 요약
+			=======================================================================================
+
+				- 바이너리 파일은 바이트 그대로 다룸
+				- read / write 사용
+				- ios::binary 모드 사용
+				- 전체 파일 읽기 패턴은 크기 확인 후 read
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] example.bin 전체 읽기
+		//=========================================================================================
 		{
-			std::streampos size;
-			char * memblock;
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] example.bin 전체 읽기" << std::endl;
+			std::cout << "==================================================" << std::endl;
 
 			std::ifstream file("example.bin", std::ios::in | std::ios::binary | std::ios::ate);
+
 			if (file.is_open())
 			{
-				size = file.tellg();
-				memblock = new char[size];
-				file.seekg(0, std::ios::beg);
-				file.read(memblock, size);
+				std::streampos endPos = file.tellg();
+
+				if (endPos >= 0)
+				{
+					std::size_t size = static_cast<std::size_t>(endPos);
+					char* memblock = new char[size];
+
+					file.seekg(0, std::ios::beg);
+					file.read(memblock, static_cast<std::streamsize>(size));
+
+					if (file)
+						std::cout << "the entire file content is in memory" << std::endl;
+					else
+						std::cout << "파일 읽기 실패" << std::endl;
+
+					delete[] memblock;
+				}
+				else
+				{
+					std::cout << "파일 크기 확인 실패" << std::endl;
+				}
+
 				file.close();
-
-				std::cout << "the entire file content is in memory";
-
-				delete[] memblock;
 			}
-			else {
-				std::cout << "Unable to open file";
+			else
+			{
+				std::cout << "Unable to open file" << std::endl;
 			}
 
-			system("pause");
-
-			/*
-			output:
-				the entire file content is in memory
-			*/
+			std::cout << std::endl;
 		}
-		/*
-			In this example, the entire file is read and stored in a memory block.
-			Let's examine how this is done:
 
-			First, the file is open with the ios::ate flag, which means that the get pointer will be positioned at the end of the file.
-			This way, when we call to member tellg(), we will directly obtain the size of the file.
 
-			Once we have obtained the size of the file,
-			we request the allocation of a memory block large enough to hold the entire file:
+		//=========================================================================================
+		// [테스트 예제 2] 바이너리 파일 생성 후 다시 읽기
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] 바이너리 파일 생성 후 다시 읽기" << std::endl;
+			std::cout << "==================================================" << std::endl;
 
-				memblock = new char[size];
+			const char data[] = { 'A', 'B', 'C', 'D', 'E' };
 
-			Right after that, we proceed to set the get position at the beginning of the file (remember that we opened the file with this pointer at the end),
-			then we read the entire file, and finally close it:
+			{
+				std::ofstream out("binary_test.bin", std::ios::out | std::ios::binary | std::ios::trunc);
+				if (out.is_open())
+				{
+					out.write(data, sizeof(data));
+					out.close();
+				}
+			}
 
-				file.seekg (0, ios::beg);
-				file.read (memblock, size);
-				file.close();
+			{
+				char buffer[5] = {};
+				std::ifstream in("binary_test.bin", std::ios::in | std::ios::binary);
 
-			At this point we could operate with the data obtained from the file.
-			But our program simply announces that the content of the file is in memory and then finishes.
-		*/
+				if (in.is_open())
+				{
+					in.read(buffer, sizeof(buffer));
+					in.close();
+
+					std::cout << "읽은 데이터: ";
+					for (int i = 0; i < 5; ++i)
+						std::cout << buffer[i] << ' ';
+					std::cout << std::endl;
+				}
+				else
+				{
+					std::cout << "binary_test.bin 열기 실패" << std::endl;
+				}
+			}
+
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	void buffers_n_synchronization()
 	{
 		/*
-			Buffers and Synchronization
+			📚 버퍼와 동기화 (Buffers and Synchronization)
 
-			When we operate with file streams, these are associated to an internal buffer object of type streambuf.
-			This buffer object may represent a memory block that acts as an intermediary between the stream and the physical file.
-				
-			For example, with an ofstream, each time the member function put (which writes a single character) is called,
-			the character may be inserted in this intermediate buffer instead of being written directly to the physical file
-			with which the stream is associated.
-			The operating system may also define other layers of buffering for reading and writing to files.
+			파일 스트림은 보통 내부 버퍼(buffer)를 사용한다.
 
-			When the buffer is flushed, all the data contained in it is written to the physical medium (if it is an output stream).
-			This process is called synchronization and takes place under any of the following circumstances: 
+			즉, 출력할 때마다 바로 디스크에 쓰는 것이 아니라,
+			일단 메모리 버퍼에 모아 두었다가
+			적절한 시점에 한꺼번에 반영할 수 있다.
 
-				* When the file is closed: before closing a file, all buffers that have not yet been flushed are synchronized
-					and all pending data is written or read to the physical medium.
-				* When the buffer is full: Buffers have a certain size. When the buffer is full it is automatically synchronized.
-				* Explicitly, with manipulators: When certain manipulators are used on streams, an explicit synchronization takes place.
-					These manipulators are: flush and endl.
-				* Explicitly, with member function sync(): Calling the stream's member function sync() causes an immediate synchronization.
-				    This function returns an int value equal to -1 if the stream has no associated buffer or in case of failure.
-				    Otherwise (if the stream buffer was successfully synchronized) it returns 0.
+			이 방식은 성능에 유리하다.
+
+			예를 들어 ofstream 에 문자 하나를 쓸 때마다
+			매번 실제 디스크에 바로 접근하면 매우 비효율적일 수 있다.
+
+			그래서 버퍼가 중간 완충 역할을 한다.
+
+
+			=======================================================================================
+			1. 동기화(synchronization)란?
+			=======================================================================================
+
+			버퍼에 쌓인 내용을
+			실제 파일(물리 매체)로 반영하는 것을
+			동기화 또는 flush 라고 볼 수 있다.
+
+			이 동기화는 다음 상황에서 일어날 수 있다.
+
+				1) 파일을 닫을 때
+				2) 버퍼가 가득 찼을 때
+				3) flush / endl 사용 시
+				4) sync() 호출 시
+
+
+			=======================================================================================
+			2. endl 과 flush
+			=======================================================================================
+
+				std::endl
+					줄바꿈 + flush
+
+				std::flush
+					flush만 수행
+
+			즉, endl은 단순한 '\n' 과 다르게
+			버퍼 비우기까지 동반할 수 있다.
+
+			그래서 너무 자주 std::endl 을 쓰면
+			성능상 불리할 수도 있다.
+
+
+			=======================================================================================
+			3. sync()
+			=======================================================================================
+
+			sync() 는 스트림 버퍼를 즉시 동기화하려는 함수이다.
+
+			반환값:
+				- 성공 시 0
+				- 실패 또는 버퍼 없음 시 -1
+
+			다만 실무에서는 보통
+			close(), flush(), endl 로 충분한 경우가 많다.
+
+
+			=======================================================================================
+			4. 핵심 요약
+			=======================================================================================
+
+				- 파일 스트림은 내부 버퍼를 가질 수 있다
+				- 버퍼는 성능을 위해 쓰인다
+				- flush / endl / close 시 실제 반영이 일어날 수 있다
+				- sync() 로 명시 동기화를 요청할 수 있다
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] flush 사용
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] flush 사용" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			std::ofstream file("buffer_test.txt");
+
+			if (file.is_open())
+			{
+				file << "first line";
+				file.flush(); // 버퍼를 즉시 비움
+				file << "\nsecond line";
+				file.close();
+
+				std::cout << "buffer_test.txt 기록 후 flush 수행" << std::endl;
+			}
+			else
+			{
+				std::cout << "파일 열기 실패" << std::endl;
+			}
+
+			std::cout << std::endl;
+		}
+
+
+		//=========================================================================================
+		// [테스트 예제 2] endl 은 줄바꿈 + flush 효과
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] endl 과 '\\n' 차이 설명" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			std::cout << "std::endl 은 줄바꿈뿐 아니라 flush 를 동반할 수 있다." << std::endl;
+			std::cout << "'\\n' 은 단순 줄바꿈 문자이다." << std::endl;
+			std::cout << "성능이 중요하면 무조건 endl 을 남발하지 않는 편이 좋다." << std::endl;
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
+
+	//---------------------------------------------------------------------------------------------
 	
 	void Test()
 	{
-		//input_output_with_files();
-
-		//open_a_file();
-
-		//closing_a_file();
-
-		//text_files();
-
-		//checking_state_files();
-
-		//get_n_put_stream_positioning();
+		//buffers_n_synchronization();
 
 		//binary_files();
 
-		//buffers_n_synchronization();
+		//get_n_put_stream_positioning();
+
+		//checking_state_files();
+
+		//text_files();
+
+		//closing_a_file();
+
+		//open_a_file();
+
+		//input_output_with_files();
 	}
 
 }// end of inputOutputWithFiles

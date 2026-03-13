@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 
 namespace TypeConversions
@@ -6,668 +6,1344 @@ namespace TypeConversions
 	void implicit_conversion()
 	{
 		/*
-			Implicit conversion
+			📚 암시적 변환 (Implicit Conversion)
 
-			Implicit conversions are automatically performed when a value is copied to a compatible type.
-			For example:
+			암시적 변환은 값이 호환 가능한 다른 타입으로 복사되거나 전달될 때
+			컴파일러가 자동으로 수행하는 변환이다.
 
+			예:
 				short a = 2000;
 				int b;
 				b = a;
 
-			Here, the value of a is promoted from short to int without the need of any explicit operator.
-			This is known as a standard conversion.
-			Standard conversions affect fundamental data types,
-			and allow the conversions between numerical types (short to int, int to float, double to int...),
-			to or from bool, and some pointer conversions.
+			이 경우 short 값이 int 로 자동 변환된다.
 
-			Converting to int from some smaller integer type, or to double from float is known as promotion,
-			and is guaranteed to produce the exact same value in the destination type.
-			Other conversions between arithmetic types may not always be able to represent the same value exactly:
+			이처럼 사용자가 직접 cast를 쓰지 않아도
+			컴파일러가 자동으로 변환해 주는 것을 암시적 변환이라고 한다.
 
-				* If a negative integer value is converted to an unsigned type,
-				    the resulting value corresponds to its 2's complement bitwise representation
-					(i.e., -1 becomes the largest value representable by the type, -2 the second largest, ...).
-				* The conversions from/to bool consider false equivalent to zero (for numeric types)
-				    and to null pointer (for pointer types); true is equivalent to all other values and is converted to the equivalent of 1.
-				* If the conversion is from a floating-point type to an integer type, the value is truncated (the decimal part is removed).
-					If the result lies outside the range of representable values by the type, the conversion causes undefined behavior.
-				* Otherwise, if the conversion is between numeric types of the same kind (integer-to-integer or floating-to-floating),
-					the conversion is valid, but the value is implementation-specific (and may not be portable).
 
-			Some of these conversions may imply a loss of precision, which the compiler can signal with a warning.
-			This warning can be avoided with an explicit conversion.
+			=======================================================================================
+			1. 표준 변환(Standard Conversion)
+			=======================================================================================
 
-			For non-fundamental types, arrays and functions implicitly convert to pointers,
-			and pointers in general allow the following conversions:
-				* Null pointers can be converted to pointers of any type
-				* Pointers to any type can be converted to void pointers.
-				* Pointer upcast: pointers to a derived class can be converted to a pointer of an accessible and unambiguous base class,
-					without modifying its const or volatile qualification.
+			기본 자료형 사이의 암시적 변환은 표준 변환에 해당한다.
+
+			예:
+				- short -> int
+				- int -> float
+				- float -> double
+				- int -> bool
+				- nullptr -> 임의의 포인터 타입
+
+			이 중 일부는 값이 정확히 유지되지만,
+			일부는 정밀도 손실이나 의미 변화가 생길 수 있다.
+
+
+			=======================================================================================
+			2. Promotion 과 일반 변환
+			=======================================================================================
+
+			다음과 같은 경우는 promotion(승격)이라고 부른다.
+
+				- 작은 정수형 -> int
+				- float -> double
+
+			이 경우는 일반적으로 값을 정확히 유지한다.
+
+			하지만 다음은 주의가 필요하다.
+
+				- double -> int
+				- 음수 int -> unsigned
+				- 큰 int -> short
+
+			이 경우 값 손실이나 의미 변화가 생길 수 있다.
+
+
+			=======================================================================================
+			3. 대표 주의사항
+			=======================================================================================
+
+			(1) 음수 -> unsigned
+				음수 정수를 unsigned 로 바꾸면
+				비트 표현 기준으로 매우 큰 양수가 될 수 있다.
+
+			(2) float/double -> int
+				소수 부분은 버려진다(truncate).
+				예:
+					3.9 -> 3
+
+			(3) 범위를 벗어난 변환
+				표현 가능한 범위를 벗어나면
+				정의되지 않거나 구현 의존적일 수 있다.
+
+			(4) bool 변환
+				0 / null pointer -> false
+				그 외 -> true
+
+
+			=======================================================================================
+			4. 포인터 관련 암시적 변환
+			=======================================================================================
+
+			포인터는 다음과 같은 암시적 변환이 가능하다.
+
+				- null pointer -> 임의의 포인터 타입
+				- T* -> void*
+				- 파생 클래스 포인터 -> 기반 클래스 포인터 (업캐스트)
+
+			단, 기반 -> 파생 방향은 자동으로 되지 않는다.
+
+
+			=======================================================================================
+			5. 핵심 요약
+			=======================================================================================
+
+				- 암시적 변환은 컴파일러가 자동으로 수행한다.
+				- promotion 은 대개 값 손실이 없다.
+				- 다른 수치형 변환은 값 손실 가능성이 있다.
+				- bool, unsigned, 포인터 변환은 의미 변화를 잘 이해해야 한다.
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] short -> int 승격
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] short -> int 승격" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			short a = 2000;
+			int b = a;
+
+			std::cout << "short a = " << a << std::endl;
+			std::cout << "int b = a -> " << b << std::endl;
+			std::cout << std::endl;
+		}
+
+
+		//=========================================================================================
+		// [테스트 예제 2] double -> int 변환
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] double -> int 변환" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			double x = 10.9;
+			int y = x; // 소수 부분 버림
+
+			std::cout << "double x = " << x << std::endl;
+			std::cout << "int y = x -> " << y << std::endl;
+			std::cout << std::endl;
+		}
+
+
+		//=========================================================================================
+		// [테스트 예제 3] 음수 -> unsigned
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 3] 음수 -> unsigned" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			int n = -1;
+			unsigned int u = n;
+
+			std::cout << "int n = " << n << std::endl;
+			std::cout << "unsigned int u = n -> " << u << std::endl;
+			std::cout << std::endl;
+		}
+
+
+		//=========================================================================================
+		// [테스트 예제 4] 숫자 -> bool
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 4] 숫자 -> bool" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			bool b1 = 0;
+			bool b2 = 10;
+			bool b3 = -3;
+
+			std::cout << "bool b1 = 0  -> " << b1 << std::endl;
+			std::cout << "bool b2 = 10 -> " << b2 << std::endl;
+			std::cout << "bool b3 = -3 -> " << b3 << std::endl;
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	void implicit_conversions_with_classes()
 	{
 		/*
-			Implicit conversions with classes
+			📚 클래스에서의 암시적 변환
 
-			In the world of classes, implicit conversions can be controlled by means of three member functions:
-				* Single-argument constructors: allow implicit conversion from a particular type to initialize an object.
-				* Assignment operator: allow implicit conversion from a particular type on assignments.
-				* Type-cast operator: allow implicit conversion to a particular type.
-			For example:
-		*/
-		{
-			class A {};
+			클래스 타입에서는 암시적 변환을
+			멤버 함수들을 통해 제어할 수 있다.
 
-			class B {
-			public:
-				// conversion from A (constructor):
+			대표적으로 다음 세 가지가 있다.
+
+				1) 단일 인자 생성자
+					특정 타입 -> 클래스 객체 변환
+
+				2) 대입 연산자(operator=)
+					특정 타입 값을 클래스 객체에 대입
+
+				3) 변환 연산자(operator Type())
+					클래스 객체 -> 특정 타입 변환
+
+			즉, 클래스는 "어떤 타입에서 들어올 수 있는지",
+			"어떤 타입으로 나갈 수 있는지"를 직접 정의할 수 있다.
+
+
+			=======================================================================================
+			1. 단일 인자 생성자
+			=======================================================================================
+
+			예:
 				B(const A& x) {}
-				// conversion from A (assignment):
-				B& operator= (const A& x) { return *this; }
-				// conversion to A (type-cast operator)
+
+			이 생성자가 있으면
+			A 객체를 이용해 B 객체를 만들 수 있다.
+
+			예:
+				A foo;
+				B bar = foo;
+
+			이 경우 A -> B 변환 생성자가 호출된다.
+
+
+			=======================================================================================
+			2. 대입 연산자
+			=======================================================================================
+
+			예:
+				B& operator=(const A& x)
+
+			이렇게 정의하면
+			B 객체에 A 값을 직접 대입할 수 있다.
+
+			예:
+				bar = foo;
+
+
+			=======================================================================================
+			3. 변환 연산자
+			=======================================================================================
+
+			예:
 				operator A() { return A(); }
+
+			이 연산자는 현재 객체를 A 타입으로 변환할 수 있음을 의미한다.
+
+			예:
+				foo = bar;
+
+			이 경우 B -> A 변환 연산자가 호출된다.
+
+
+			=======================================================================================
+			4. 핵심 요약
+			=======================================================================================
+
+				- 단일 인자 생성자는 다른 타입에서 객체로 들어오는 변환이다.
+				- operator= 는 대입 시 변환이다.
+				- operator Type() 은 객체가 다른 타입으로 나가는 변환이다.
+		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] 생성자 / 대입 / 변환 연산자
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] 생성자 / 대입 / 변환 연산자" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			class A
+			{
+			};
+
+			class B
+			{
+			public:
+				B(const A&)
+				{
+					std::cout << "A -> B 변환 생성자 호출" << std::endl;
+				}
+
+				B& operator=(const A&)
+				{
+					std::cout << "A -> B 대입 연산자 호출" << std::endl;
+					return *this;
+				}
+
+				operator A()
+				{
+					std::cout << "B -> A 변환 연산자 호출" << std::endl;
+					return A();
+				}
 			};
 
 			A foo;
-			B bar = foo;    // calls constructor
-			bar = foo;      // calls assignment
-			foo = bar;      // calls type-cast operator
+			B bar = foo;   // 생성자
+			bar = foo;     // 대입 연산자
+			foo = bar;     // 변환 연산자
 
-			system("pause");
+			std::cout << std::endl;
 		}
-		/*
-			The type-cast operator uses a particular syntax: it uses the operator keyword followed by the destination type
-			and an empty set of parentheses.
-			Notice that the return type is the destination type and thus is not specified before the operator keyword.
-		*/
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	void keyword_explicit()
 	{
 		/*
-			Keyword explicit
+			📚 explicit 키워드
 
-			On a function call, C++ allows one implicit conversion to happen for each argument.
-			This may be somewhat problematic for classes, because it is not always what is intended.
-			For example, if we add the following function to the last example:
+			C++은 함수 호출이나 초기화에서
+			각 인자마다 한 번의 암시적 변환을 허용한다.
 
-				void fn (B arg) {}
+			이것은 편리할 수 있지만,
+			클래스에서는 원치 않는 자동 변환을 허용할 수도 있다.
 
-			This function takes an argument of type B, but it could as well be called with an object of type A as argument:
+			예:
+				B(const A&)
 
-				fn (foo);
+			가 존재하면
+				A 객체를 B로 자동 변환할 수 있다.
 
-			This may or may not be what was intended. But, in any case,
-			it can be prevented by marking the affected constructor with the explicit keyword:
-		*/
-		{
-			class A {};
+			즉:
+				fn(B arg);
+				A foo;
+				fn(foo);
 
-			class B {
-			public:
+			도 허용될 수 있다.
+
+			하지만 이것이 항상 의도한 동작은 아니다.
+			이럴 때 explicit 를 사용해 암시적 변환을 막는다.
+
+
+			=======================================================================================
+			1. explicit 생성자
+			=======================================================================================
+
+			예:
 				explicit B(const A& x) {}
-				B& operator= (const A& x) { return *this; }
-				operator A() { return A(); }
+
+			이렇게 하면
+				B bar = foo;
+			같은 암시적 초기화는 금지되고,
+
+				B bar(foo);
+
+			같은 명시적 생성만 허용된다.
+
+
+			=======================================================================================
+			2. 왜 필요한가?
+			=======================================================================================
+
+			explicit 는
+			"이 변환은 자동으로 일어나면 안 된다"
+			는 의도를 코드에 명확히 나타낸다.
+
+			즉, 실수로 함수 호출에서 변환이 일어나거나
+			예상치 못한 임시 객체 생성이 일어나는 것을 막을 수 있다.
+
+
+			=======================================================================================
+			3. 핵심 요약
+			=======================================================================================
+
+				- explicit 는 암시적 변환을 막는다.
+				- 단일 인자 생성자에 특히 중요하다.
+				- 원치 않는 자동 변환을 줄여준다.
+		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] explicit 생성자
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] explicit 생성자" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			class A
+			{
 			};
 
-			class C {
+			class B
+			{
 			public:
-				static void fn(B x) { return; };
+				explicit B(const A&)
+				{
+					std::cout << "explicit A -> B 생성자 호출" << std::endl;
+				}
+
+				B& operator=(const A&)
+				{
+					std::cout << "A -> B 대입 연산자 호출" << std::endl;
+					return *this;
+				}
+
+				operator A()
+				{
+					std::cout << "B -> A 변환 연산자 호출" << std::endl;
+					return A();
+				}
+			};
+
+			class C
+			{
+			public:
+				static void fn(B)
+				{
+					std::cout << "C::fn(B) 호출" << std::endl;
+				}
 			};
 
 			A foo;
-			B bar(foo);
-			bar = foo;
-			foo = bar;
+			B bar(foo);   // 명시적 생성 허용
+			bar = foo;    // 대입 허용
+			foo = bar;    // 변환 연산자 허용
 
-			// C::fn(foo);  // not allowed for explicit ctor.
+			// C::fn(foo); // explicit 때문에 암시적 변환 금지
 			C::fn(bar);
 
-			system("pause");
+			std::cout << std::endl;
 		}
-		/*
-			Additionally, constructors marked with explicit cannot be called with the assignment-like syntax;
-			In the above example, bar could not have been constructed with:
 
-				B bar = foo;
-
-			Type-cast member functions (those described in the previous section) can also be specified as explicit.
-			This prevents implicit conversions in the same way as explicit-specified constructors do for the destination type.
-		*/
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 	
 	void type_casting()
 	{
 		/*
-			Type casting
+			📚 타입 캐스팅 (Type Casting)
 
-			C++ is a strong-typed language. Many conversions, specially those that imply a different interpretation of the value,
-			require an explicit conversion, known in C++ as type-casting.
-			There exist two main syntaxes for generic type-casting: functional and c-like:
+			C++은 강한 타입(Strongly Typed) 언어이다.
+			그래서 값의 해석 방식이 달라질 수 있는 변환은
+			사용자가 명시적으로 cast 해주어야 하는 경우가 많다.
 
-				double x = 10.3;
-				int y;
-				y = int (x);    // functional notation
-				y = (int) x;    // c-like cast notation 
+			전통적인 캐스팅 문법은 두 가지가 있다.
 
-			The functionality of these generic forms of type-casting is enough for most needs with fundamental data types.
-			However, these operators can be applied indiscriminately on classes and pointers to classes,
-			which can lead to code that -while being syntactically correct- can cause runtime errors.
-			For example, the following code compiles without errors: 
+				기능형(functional)
+					int(x)
+
+				C 스타일(c-like)
+					(int)x
+
+			기본 자료형에서는 이 문법으로도 충분한 경우가 많다.
+
+			하지만 클래스와 포인터에 대해 무분별하게 사용하면
+			컴파일은 되더라도 런타임 오류나 이상 동작이 생길 수 있다.
+
+
+			=======================================================================================
+			1. 왜 C 스타일 cast가 위험한가?
+			=======================================================================================
+
+			C 스타일 cast는 매우 강력해서
+			의도와 상관없이 여러 종류의 변환을 한꺼번에 허용한다.
+
+			즉:
+				- const 제거
+				- 정적 변환
+				- 재해석 변환
+				- 다운캐스트 유사 동작
+
+			이런 것들이 한꺼번에 섞여 동작할 수 있다.
+
+			그래서 코드의 의도가 잘 드러나지 않고,
+			위험한 변환을 숨기기 쉽다.
+
+
+			=======================================================================================
+			2. 현대 C++의 4가지 캐스트
+			=======================================================================================
+
+				dynamic_cast
+					런타임 타입 검사 기반
+					주로 다형성 클래스 다운캐스트
+
+				static_cast
+					컴파일타임 기반의 명시적 변환
+					관련 타입 간 변환
+
+				reinterpret_cast
+					비트/주소 수준 재해석
+					매우 위험
+
+				const_cast
+					const / volatile 한정자 제거 또는 추가
+
+			이 캐스트들은 각자의 의도가 명확하므로
+			코드 가독성과 안전성이 좋아진다.
+
+
+			=======================================================================================
+			3. 핵심 요약
+			=======================================================================================
+
+				- C 스타일 cast는 강력하지만 위험하다.
+				- 현대 C++에서는 4가지 캐스트 연산자를 구분해서 쓴다.
+				- 어떤 종류의 변환인지 코드에 드러나는 것이 중요하다.
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] 위험한 C 스타일 포인터 캐스팅 설명
+		//=========================================================================================
 		{
-			class Dummy {
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] 위험한 C 스타일 포인터 캐스팅 설명" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			class Dummy
+			{
 				double i, j;
 			};
 
-			class Addition {
+			class Addition
+			{
 				int x, y;
 			public:
-				Addition(int a, int b) { x = a; y = b; }
+				Addition(int a, int b) : x(a), y(b) {}
 				int result() { return x + y; }
 			};
 
 			Dummy d;
-			Addition * padd;
-			padd = (Addition*)&d;
-				
-			std::cout << padd->result() << std::endl;
+			Addition* padd = (Addition*)&d;
 
-			system("pause");
+			std::cout << "Dummy 객체 주소를 Addition* 로 강제 변환했습니다." << std::endl;
+			std::cout << "이 상태에서 padd->result() 를 호출하는 것은 정의되지 않은 동작입니다." << std::endl;
+			std::cout << "실행 결과가 이상하거나 런타임 오류가 날 수 있습니다." << std::endl;
+			std::cout << std::endl;
 
-			/*
-			output:
-				1
-			*/
+			// 원문 의도 설명용: 실제 위험 실행은 권장하지 않음
+			// std::cout << padd->result() << std::endl;
 		}
-		/*
-			The program declares a pointer to Addition,
-			but then it assigns to it a reference to an object of another unrelated type using explicit type-casting:
 
-				padd = (Addition*) &d;
-
-			Unrestricted explicit type-casting allows to convert any pointer into any other pointer type,
-			independently of the types they point to.
-			The subsequent call to member result will produce either a run-time error or some other unexpected results.
-
-			In order to control these types of conversions between classes,
-			we have four specific casting operators: dynamic_cast, reinterpret_cast, static_cast and const_cast.
-			Their format is to follow the new type enclosed between angle-brackets (<>) and immediately after,
-			the expression to be converted between parentheses.
-
-				dynamic_cast <new_type> (expression)
-				reinterpret_cast <new_type> (expression)
-				static_cast <new_type> (expression)
-				const_cast <new_type> (expression)
-
-			The traditional type-casting equivalents to these expressions would be:
-
-				(new_type) expression
-				new_type (expression)
-
-			but each one with its own special characteristics:
-		*/
+		system("pause");
 	}
+
+	//---------------------------------------------------------------------------------------------
 
 	void dynamic_cast_converter()
 	{
 		/*
-			dynamic_cast
+			📚 dynamic_cast
 
-			dynamic_cast can only be used with pointers and references to classes (or with void*).
-			Its purpose is to ensure that the result of the type conversion points to a valid complete object of the destination pointer type.
+			dynamic_cast는 클래스 포인터/참조 사이의 변환에서
+			런타임 타입 검사를 수행하는 캐스트이다.
 
-			This naturally includes pointer upcast (converting from pointer-to-derived to pointer-to-base),
-			in the same way as allowed as an implicit conversion.
+			주요 용도:
+				- 다형성(polymorphic) 클래스에서 안전한 다운캐스트
+				- 실제 객체가 목표 타입인지 런타임에 확인
 
-			But dynamic_cast can also downcast (convert from pointer-to-base to pointer-to-derived) polymorphic classes (those with virtual members)
-			if -and only if- the pointed object is a valid complete object of the target type.
-			For example:
+			즉:
+				Base* -> Derived*
+
+			와 같은 다운캐스트를 할 때
+			실제 객체가 Derived인지 확인하고 싶다면 dynamic_cast를 사용한다.
+
+
+			=======================================================================================
+			1. 조건
+			=======================================================================================
+
+			dynamic_cast로 다운캐스트하려면
+			기반 클래스가 다형성 클래스여야 한다.
+
+			즉, 보통 하나 이상의 virtual 함수가 있어야 한다.
+
+			예:
+				class Base { virtual void dummy() {} };
+
+
+			=======================================================================================
+			2. 실패 시 동작
+			=======================================================================================
+
+			포인터 변환 실패:
+				null pointer 반환
+
+			참조 변환 실패:
+				std::bad_cast 예외 발생
+
+			즉, 포인터와 참조의 실패 방식이 다르다.
+
+
+			=======================================================================================
+			3. 핵심 요약
+			=======================================================================================
+
+				- dynamic_cast는 안전한 다운캐스트용이다.
+				- RTTI 기반 런타임 타입 검사를 수행한다.
+				- 포인터 실패 시 null 반환
+				- 참조 실패 시 bad_cast 예외
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] 포인터 다운캐스트
+		//=========================================================================================
 		{
-			class Base { virtual void dummy() {} };
-			class Derived : public Base { int a; };
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] dynamic_cast 포인터 다운캐스트" << std::endl;
+			std::cout << "==================================================" << std::endl;
 
-			try {
-				Base * pba = new Derived;
-				Base * pbb = new Base;
-				Derived * pd;
+			class Base
+			{
+			public:
+				virtual void dummy() {}
+			};
 
-				pd = dynamic_cast<Derived*>(pba);
-				if (pd == 0)
-					std::cout << "Null pointer on first type-cast.\n";
+			class Derived : public Base
+			{
+				int a;
+			};
 
-				pd = dynamic_cast<Derived*>(pbb);
-				if (pd == 0)
-					std::cout << "Null pointer on second type-cast.\n";
+			Base* pba = new Derived;
+			Base* pbb = new Base;
 
-				delete pba;
-				delete pbb;
-			}
-			catch (std::exception& e) { 
-				std::cout << "Exception: " << e.what(); 
-			}
+			Derived* pd = dynamic_cast<Derived*>(pba);
+			if (pd == 0)
+				std::cout << "첫 번째 캐스팅 실패" << std::endl;
+			else
+				std::cout << "첫 번째 캐스팅 성공" << std::endl;
 
-			system("pause");
+			pd = dynamic_cast<Derived*>(pbb);
+			if (pd == 0)
+				std::cout << "두 번째 캐스팅 실패(null 반환)" << std::endl;
 
-			/*
-			output:
-				Null pointer on second type-cast.
-			*/
+			delete pba;
+			delete pbb;
+
+			std::cout << std::endl;
 		}
-		/*
-			Compatibility note: This type of dynamic_cast requires Run-Time Type Information (RTTI) to keep track of dynamic types.
-			Some compilers support this feature as an option which is disabled by default.
-			This needs to be enabled for runtime type checking using dynamic_cast to work properly with these types.
 
-			The code above tries to perform two dynamic casts from pointer objects of type Base* (pba and pbb) to a pointer object of type Derived*,
-			but only the first one is successful.
-			Notice their respective initializations:
 
-				Base * pba = new Derived;
-				Base * pbb = new Base;
+		//=========================================================================================
+		// [테스트 예제 2] 참조 다운캐스트 실패
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] dynamic_cast 참조 실패" << std::endl;
+			std::cout << "==================================================" << std::endl;
 
-			Even though both are pointers of type Base*, pba actually points to an object of type Derived,
-			while pbb points to an object of type Base.
-			Therefore, when their respective type-casts are performed using dynamic_cast,
-			pba is pointing to a full object of class Derived, whereas pbb is pointing to an object of class Base,
-			which is an incomplete object of class Derived.
+			class Base
+			{
+			public:
+				virtual void dummy() {}
+			};
 
-			When dynamic_cast cannot cast a pointer because it is not a complete object of the required class -as in the second conversion in the previous example-
-			it returns a null pointer to indicate the failure.
-			If dynamic_cast is used to convert to a reference type and the conversion is not possible,
-			an exception of type bad_cast is thrown instead.
+			class Derived : public Base
+			{
+			};
 
-			dynamic_cast can also perform the other implicit casts allowed on pointers:
-			casting null pointers between pointers types (even between unrelated classes),
-			and casting any pointer of any type to a void* pointer.
-		*/
+			try
+			{
+				Base b;
+				Base& rb = b;
+				Derived& rd = dynamic_cast<Derived&>(rb);
+				(void)rd;
+			}
+			catch (const std::bad_cast& e)
+			{
+				std::cout << "bad_cast 예외 발생 : " << e.what() << std::endl;
+			}
+
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	void static_cast_converter()
 	{
 		/*
-			static_cast
+			📚 static_cast
 
-			static_cast can perform conversions between pointers to related classes, not only upcasts (from pointer-to-derived to pointer-to-base),
-			but also downcasts (from pointer-to-base to pointer-to-derived).
-			No checks are performed during runtime to guarantee that the object being converted is in fact a full object of the destination type.
-			Therefore, it is up to the programmer to ensure that the conversion is safe.
-			On the other side, it does not incur the overhead of the type-safety checks of dynamic_cast.
+			static_cast는 컴파일타임에 가능한 명시적 변환을 수행하는 캐스트이다.
+
+			주로 다음에 사용한다.
+
+				- 수치형 변환
+				- 관련 클래스 포인터 변환
+				- void* 와 특정 포인터 간 변환
+				- 명시적 생성자/변환 연산자 호출
+
+			dynamic_cast와 달리
+			런타임 타입 검사는 수행하지 않는다.
+
+			즉:
+				Base* -> Derived*
+
+			같은 다운캐스트도 문법상 가능할 수 있지만,
+			실제 객체가 Derived가 아니라면 위험하다.
+
+
+			=======================================================================================
+			1. 장점
+			=======================================================================================
+
+				- 빠름
+				- 의도가 명확함
+				- 수치형 변환에서 자주 유용함
+
+
+			=======================================================================================
+			2. 단점
+			=======================================================================================
+
+				- 런타임 검사가 없음
+				- 잘못된 다운캐스트는 위험
+				- 프로그래머가 안전성을 직접 보장해야 함
+
+
+			=======================================================================================
+			3. 핵심 요약
+			=======================================================================================
+
+				- static_cast는 컴파일타임 명시적 변환이다.
+				- 안전성이 보장된 관련 타입 변환에 적합하다.
+				- 다운캐스트는 가능하지만 검사가 없으므로 주의해야 한다.
 		*/
-		{
-			class Base {};
-			class Driven : public Base {};
 
-			Base * a = new Base;
-			Driven * b = static_cast<Driven*>(a);
+
+		//=========================================================================================
+		// [테스트 예제 1] 수치형 static_cast
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] 수치형 static_cast" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			double x = 10.8;
+			int y = static_cast<int>(x);
+
+			std::cout << "double x = " << x << std::endl;
+			std::cout << "int y = static_cast<int>(x) -> " << y << std::endl;
+			std::cout << std::endl;
+		}
+
+
+		//=========================================================================================
+		// [테스트 예제 2] 위험한 다운캐스트 설명
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] static_cast 다운캐스트 주의" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			class Base
+			{
+			};
+
+			class Driven : public Base
+			{
+			};
+
+			Base* a = new Base;
+			Driven* b = static_cast<Driven*>(a);
+
+			std::cout << "Base* 를 Driven* 로 static_cast 했습니다." << std::endl;
+			std::cout << "하지만 실제 객체는 Base 이므로 dereference 하면 위험합니다." << std::endl;
+			std::cout << "즉, 문법상 가능해도 안전한 것은 아닙니다." << std::endl;
 
 			delete a;
+			(void)b;
 
-			system("pause");
+			std::cout << std::endl;
 		}
-		/*
-			This would be valid code, although b would point to an incomplete object of the class and could lead to runtime errors if dereferenced.
 
-			Therefore, static_cast is able to perform with pointers to classes not only the conversions allowed implicitly,
-			but also their opposite conversions.
-
-			static_cast is also able to perform all conversions allowed implicitly (not only those with pointers to classes),
-			and is also able to perform the opposite of these. 
-			It can:
-				* Convert from void* to any pointer type.
-					In this case, it guarantees that if the void* value was obtained by converting from that same pointer type,
-				    the resulting pointer value is the same.
-				* Convert integers, floating-point values and enum types to enum types.
-
-			Additionally, static_cast can also perform the following:
-				* Explicitly call a single-argument constructor or a conversion operator.
-				* Convert to rvalue references.
-				* Convert enum class values into integers or floating-point values.
-				* Convert any type to void, evaluating and discarding the value.
-		*/
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	void reinterpret_cast_converter()
 	{
 		/*
-			reinterpret_cast
+			📚 reinterpret_cast
 
-			reinterpret_cast converts any pointer type to any other pointer type, even of unrelated classes.
-			The operation result is a simple binary copy of the value from one pointer to the other.
-			All pointer conversions are allowed: neither the content pointed nor the pointer type itself is checked.
+			reinterpret_cast는 메모리의 비트 패턴 또는 주소를
+			다른 타입으로 "재해석"하는 매우 저수준 캐스트이다.
 
-			It can also cast pointers to or from integer types. The format in which this integer value represents a pointer is platform-specific.
-			The only guarantee is that a pointer cast to an integer type large enough to fully contain it (such as intptr_t),
-			is guaranteed to be able to be cast back to a valid pointer.
+			즉, 타입 안전성을 거의 보장하지 않는다.
 
-			The conversions that can be performed by reinterpret_cast
-			but not by static_cast are low-level operations based on reinterpreting the binary representations of the types,
-			which on most cases results in code which is system-specific, and thus non-portable.
-			For example:
+			예:
+				A* -> B*
+				void* -> 정수
+				정수 -> 포인터
+
+			같은 변환을 강제로 수행할 수 있다.
+
+			이 캐스트는 보통
+				- 시스템 프로그래밍
+				- 직렬화/바이너리 처리
+				- 아주 저수준 코드
+			에서만 제한적으로 사용해야 한다.
+
+
+			=======================================================================================
+			1. 왜 위험한가?
+			=======================================================================================
+
+			reinterpret_cast는
+			"이 포인터가 실제로 그 타입의 객체를 가리키는가?"를 검사하지 않는다.
+
+			즉:
+				A 객체를 B* 로 바꿔도
+				컴파일은 될 수 있다.
+
+			하지만 그 포인터를 역참조하면
+			정의되지 않은 동작 가능성이 크다.
+
+
+			=======================================================================================
+			2. 핵심 요약
+			=======================================================================================
+
+				- reinterpret_cast는 매우 저수준 캐스트이다.
+				- 타입 안전성을 거의 보장하지 않는다.
+				- 일반 애플리케이션 코드에서는 매우 신중하게 써야 한다.
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] 서로 무관한 포인터 타입 변환
+		//=========================================================================================
 		{
-			class A { /* ... */ };
-			class B { /* ... */ };
-			A * a = new A;
-			B * b = reinterpret_cast<B*>(a);
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] 무관한 포인터 타입 변환" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			class A {};
+			class B {};
+
+			A* a = new A;
+			B* b = reinterpret_cast<B*>(a);
+
+			std::cout << "A* 주소 = " << a << std::endl;
+			std::cout << "reinterpret_cast<B*>(a) 주소 = " << b << std::endl;
+			std::cout << "주소 값은 복사되지만, B 객체가 된 것은 아닙니다." << std::endl;
+			std::cout << "b를 역참조하는 것은 위험합니다." << std::endl;
 
 			delete a;
-
-			system("pause");
+			std::cout << std::endl;
 		}
-		/*
-			This code compiles, although it does not make much sense,
-			since now b points to an object of a totally unrelated and likely incompatible class.
-			Dereferencing b is unsafe.
-		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 2] 포인터 <-> 정수 설명
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] 포인터 <-> 정수 설명" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			int value = 123;
+			int* p = &value;
+
+			std::intptr_t raw = reinterpret_cast<std::intptr_t>(p);
+			int* restored = reinterpret_cast<int*>(raw);
+
+			std::cout << "원래 포인터   : " << p << std::endl;
+			std::cout << "정수 변환값   : " << raw << std::endl;
+			std::cout << "복원 포인터   : " << restored << std::endl;
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	void const_cast_converter()
 	{
 		/*
-			const_cast
+			📚 const_cast
 
-			This type of casting manipulates the constness of the object pointed by a pointer, either to be set or to be removed.
-			For example, in order to pass a const pointer to a function that expects a non-const argument:
+			const_cast는 객체의 const / volatile 한정자를
+			제거하거나 추가하는 캐스트이다.
+
+			대표적으로:
+				const T* -> T*
+				T* -> const T*
+
+			같은 변환에 사용된다.
+
+			즉, "타입 자체를 바꾸는 것"이 아니라
+			"constness(상수성)"만 바꾸는 캐스트이다.
+
+
+			=======================================================================================
+			1. 왜 필요한가?
+			=======================================================================================
+
+			어떤 API가 non-const 포인터를 요구하지만,
+			실제로는 값을 수정하지 않는 경우가 있다.
+
+			그런 경우 const_cast로 전달할 수 있다.
+
+			단, 정말 수정하지 않는다는 보장이 있어야 한다.
+
+
+			=======================================================================================
+			2. 가장 중요한 주의사항
+			=======================================================================================
+
+			const_cast로 const를 제거했다고 해서
+			원래 const 객체를 안전하게 수정할 수 있는 것은 아니다.
+
+			원래 const 객체를 수정하면
+			정의되지 않은 동작이 된다.
+
+			즉:
+				const char* c = "sample";
+				char* p = const_cast<char*>(c);
+
+			이 상태에서 p[0] = 'X'; 같은 코드는 매우 위험하다.
+
+
+			=======================================================================================
+			3. 핵심 요약
+			=======================================================================================
+
+				- const_cast는 const/volatile 한정자만 바꾼다.
+				- 원래 const 객체를 실제 수정하면 UB이다.
+				- 수정하지 않는다는 것이 확실할 때만 제한적으로 사용해야 한다.
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] const char* 전달
+		//=========================================================================================
 		{
-			class Output {
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] const_cast 기본 사용" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			class Output
+			{
 			public:
-				static void print(char * str) {
-					std::cout << str << '\n';
+				static void print(char* str)
+				{
+					std::cout << str << std::endl;
 				}
 			};
 
 			const char* c = "sample text";
-			Output::print(const_cast<char*> (c));
+			Output::print(const_cast<char*>(c));
 
-			system("pause");
-
-			/*
-			output:
-				sample text
-			*/
+			std::cout << "이 예제는 print가 문자열을 수정하지 않기 때문에 동작합니다." << std::endl;
+			std::cout << std::endl;
 		}
-		/*
-			The example above is guaranteed to work because function print does not write to the pointed object.
-			Note though, that removing the constness of a pointed object to actually write to it causes undefined behavior.
-		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 2] 수정은 위험하다는 점 설명
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] const 제거 후 수정은 위험" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			std::cout << "const_cast로 const를 제거해도 원래 const 객체를 수정하면 UB입니다." << std::endl;
+			std::cout << "문자열 리터럴은 특히 수정하면 매우 위험합니다." << std::endl;
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	void typeid_operator()
 	{
 		/*
-			typeid
+			📚 typeid 연산자
 
-			typeid allows to check the type of an expression: 
+			typeid는 표현식의 타입 정보를 조사할 수 있는 연산자이다.
 
-				typeid (expression)
+			형식:
+				typeid(expression)
 
-			This operator returns a reference to a constant object of type type_info that is defined in the standard header <typeinfo>.
-			A value returned by typeid can be compared with another value returned by typeid using operators == and !=
-			or can serve to obtain a null-terminated character sequence representing the data type
-			or class name by using its name() member.
+			이 연산자는 std::type_info 객체에 대한 참조를 반환한다.
+
+			이 정보를 이용해:
+				- 타입 비교
+				- 타입 이름 문자열 조회(name())
+			를 할 수 있다.
+
+			즉, 런타임 타입 정보(RTTI)를 확인할 때 유용하다.
+
+
+			=======================================================================================
+			1. 기본 타입 확인
+			=======================================================================================
+
+			예:
+				typeid(a)
+				typeid(b)
+
+			를 비교하면
+			두 표현식의 타입이 같은지 다른지 알 수 있다.
+
+
+			=======================================================================================
+			2. 다형성 클래스와 RTTI
+			=======================================================================================
+
+			typeid를 다형성 클래스 객체에 적용하면
+			실제 동적 타입(dynamic type)을 얻을 수 있다.
+
+			예:
+				Base* b = new Derived;
+
+				typeid(b)
+					-> Base* 타입
+
+				typeid(*b)
+					-> 실제 객체 타입인 Derived
+
+			즉, 포인터 자체와
+			포인터가 가리키는 실제 객체 타입은 다를 수 있다.
+
+
+			=======================================================================================
+			3. null 포인터 역참조 typeid
+			=======================================================================================
+
+			다형성 타입 포인터를 역참조한 표현식에 typeid를 적용할 때,
+			그 포인터가 null이면 bad_typeid 예외가 발생할 수 있다.
+
+
+			=======================================================================================
+			4. 핵심 요약
+			=======================================================================================
+
+				- typeid는 타입 정보를 조회한다.
+				- type_info::name()으로 이름 문자열을 얻을 수 있다.
+				- 다형성 객체에 대해 typeid(*ptr)는 동적 타입을 반영한다.
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] 기본 타입 비교
+		//=========================================================================================
 		{
-			int * a, b;
-			a = 0; b = 0;
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] 기본 타입 비교" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			int* a = 0;
+			int b = 0;
+
 			if (typeid(a) != typeid(b))
 			{
-				std::cout << "a and b are of different types:\n";
-				std::cout << "a is: " << typeid(a).name() << '\n';
-				std::cout << "b is: " << typeid(b).name() << '\n';
+				std::cout << "a 와 b 는 서로 다른 타입입니다." << std::endl;
+				std::cout << "a type : " << typeid(a).name() << std::endl;
+				std::cout << "b type : " << typeid(b).name() << std::endl;
 			}
 
-			system("pause");
-
-			/*
-			output:
-				a and b are of different types:
-				a is: int * __ptr64
-				b is: int
-			*/
+			std::cout << std::endl;
 		}
-		/*
-			When typeid is applied to classes, typeid uses the RTTI to keep track of the type of dynamic objects.
-			When typeid is applied to an expression whose type is a polymorphic class,
-			the result is the type of the most derived complete object:
-		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 2] 포인터 타입과 동적 객체 타입 비교
+		//=========================================================================================
 		{
-			class Base { virtual void f() {} };
-			class Driven : public Base {};
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] 포인터 타입과 동적 객체 타입" << std::endl;
+			std::cout << "==================================================" << std::endl;
 
-			try {
-				Base* a = new Base;
-				Base* b = new Driven;
-
-				std::cout << "a is: " << typeid(a).name() << '\n';
-				std::cout << "b is: " << typeid(b).name() << '\n';
-				std::cout << "*a is: " << typeid(*a).name() << '\n';
-				std::cout << "*b is: " << typeid(*b).name() << '\n';
-
-				delete a;
-				delete b;
-			}
-			catch (std::exception& e)
-			{ 
-				std::cout << "Exception: " << e.what() << '\n';
-			}
-
-			system("pause");
-
-			/*
-			output:
-				a is: class 'void __cdecl TypeConversions::typeid_operator(void)'::'7'::Base * __ptr64
-				b is: class 'void __cdecl TypeConversions::typeid_operator(void)'::'7'::Base * __ptr64
-				*a is: class 'void __cdecl TypeConversions::typeid_operator(void)'::'7'::Base
-				*b is: class 'void __cdecl TypeConversions::typeid_operator(void)'::'8'::Driven
-			*/
-
-			try {
-				Base* a = new Base;
-				Base* b = new Driven;
-
-				if (typeid(Driven) == typeid(*b)) {
-					std::cout << "Same object Type : Driven == b*:" << typeid(*b).name() << '\n';
-				}
-
-				delete a;
-				delete b;
-			}
-			catch (std::exception& e)
+			class Base
 			{
-				std::cout << "Exception: " << e.what() << '\n';
+			public:
+				virtual void f() {}
+			};
+
+			class Driven : public Base
+			{
+			};
+
+			Base* a = new Base;
+			Base* b = new Driven;
+
+			std::cout << "a type   : " << typeid(a).name() << std::endl;
+			std::cout << "b type   : " << typeid(b).name() << std::endl;
+			std::cout << "*a type  : " << typeid(*a).name() << std::endl;
+			std::cout << "*b type  : " << typeid(*b).name() << std::endl;
+
+			delete a;
+			delete b;
+
+			std::cout << std::endl;
+		}
+
+
+		//=========================================================================================
+		// [테스트 예제 3] 특정 타입과 비교
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 3] 특정 타입과 비교" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			class Base
+			{
+			public:
+				virtual void f() {}
+			};
+
+			class Driven : public Base
+			{
+			};
+
+			Base* b = new Driven;
+
+			if (typeid(Driven) == typeid(*b))
+			{
+				std::cout << "Driven == *b 의 실제 타입" << std::endl;
+				std::cout << "type name : " << typeid(*b).name() << std::endl;
 			}
 
-			system("pause");
-
-			/*
-			output:
-				Same object Type : Driven == b*:class 'void __cdecl TypeConversions::typeid_operator(void)'::'8'::Driven
-			*/
+			delete b;
+			std::cout << std::endl;
 		}
-		/*
-			Note: The string returned by member name of type_info depends on the specific implementation of your compiler and library.
-			It is not necessarily a simple string with its typical type name, like in the compiler used to produce this output. 
 
-			Notice how the type that typeid considers for pointers is the pointer type itself (both a and b are of type class Base *).
-			However, when typeid is applied to objects (like *a and *b) typeid yields their dynamic type
-			(i.e. the type of their most derived complete object).
-
-			If the type typeid evaluates is a pointer preceded by the dereference operator (*),
-			and this pointer has a null value, typeid throws a bad_typeid exception.
-		*/
+		system("pause");
 	}
 
-	// for user-defined conversion by Template
-	struct A {
+	//---------------------------------------------------------------------------------------------
+
+	struct A
+	{
 		template<typename T>
-		operator T*(); // conversion to pointer to any type
+		operator T* (); // 임의의 포인터 타입으로 변환
 	};
 
-	// out-of-class definition
 	template<typename T>
-	A::operator T*() { return nullptr; }
+	A::operator T* ()
+	{
+		return nullptr;
+	}
 
-	// explicit specialization for char*
 	template<>
-	A::operator char*() { return nullptr; }
-
-	// explicit instantiation
-	//template A::operator void*();
+	A::operator char* ()
+	{
+		return nullptr;
+	}
 
 	void user_defined_conversion()
 	{
 		/*
-			user-defined conversion
+			📚 사용자 정의 변환 (User-defined Conversion)
 
-			Enables implicit conversion or explicit conversion from a class type to another type.
+			클래스는 변환 연산자(conversion operator)를 정의해서
+			자기 자신을 다른 타입으로 변환하는 방법을 제공할 수 있다.
 
-				Syntax
+			형식:
 
-				Conversion function is declared like a non-static member function or
-				member function template with no explicit return type and with the name of the form:
+				operator 변환대상타입()
 
-					operator conversion-type-id	(1)
+			예:
+				operator int() const
+				operator int*() const
 
-				1) Declares a user-defined conversion function that participates in all implicit and explicit conversions
+			이 함수는 "이 객체를 int 또는 int* 로 바꾸는 방법"을 정의한다.
+
+			즉, 클래스가 자기 자신을
+			다른 타입으로 자동 또는 명시적으로 변환하게 만들 수 있다.
+
+
+			=======================================================================================
+			1. 기본 예
+			=======================================================================================
+
+			예:
+				struct X
+				{
+					operator int() const { return 7; }
+				};
+
+			그러면
+				X x;
+				int n = x;
+
+			처럼 암시적 변환이 가능해질 수 있다.
+
+
+			=======================================================================================
+			2. 생성자와 변환 연산자의 경쟁
+			=======================================================================================
+
+			어떤 타입으로 가는 방법이
+				- 변환 생성자
+				- 변환 연산자
+
+			둘 다 존재하면,
+			초기화 방식(copy-initialization / direct-initialization)에 따라
+			어느 쪽이 선택될지 달라질 수 있다.
+			때로는 ambiguous(모호함) 오류가 날 수도 있다.
+
+			즉, 변환 경로를 너무 많이 열어두면
+			오히려 사용성이 나빠질 수 있다.
+
+
+			=======================================================================================
+			3. 템플릿 변환 연산자
+			=======================================================================================
+
+			변환 연산자도 템플릿으로 만들 수 있다.
+
+			예:
+				template<typename T>
+				operator T*();
+
+			이렇게 하면 다양한 포인터 타입으로 변환 가능하다.
+
+			하지만 너무 강력하므로
+			실무에서는 매우 신중하게 써야 한다.
+
+
+			=======================================================================================
+			4. 핵심 요약
+			=======================================================================================
+
+				- operator Type() 으로 사용자 정의 변환을 제공할 수 있다.
+				- 암시적 변환과 명시적 변환 모두에 관여할 수 있다.
+				- 변환 경로가 많아지면 모호성 문제가 생길 수 있다.
+				- 템플릿 변환 연산자는 강력하지만 위험하다.
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] 기본 사용자 정의 변환
+		//=========================================================================================
 		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] 기본 사용자 정의 변환" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
 			struct X
 			{
-				// implicit conversion
 				operator int() const { return 7; }
-				operator int*() const { return nullptr; }
+				operator int* () const { return nullptr; }
 			};
 
 			X x;
 
-			int n = static_cast<int>(x);   // OK: sets n to 7
-			int m = x;                     // OK: sets m to 7
+			int n = static_cast<int>(x);
+			int m = x;
+			int* p = static_cast<int*>(x);
 
-			int* p = static_cast<int*>(x);  // OK: sets p to null
-											// int* q = x; // Error: no implicit conversion
-			system("pause");
+			std::cout << "n = " << n << std::endl;
+			std::cout << "m = " << m << std::endl;
+			std::cout << "p = " << p << std::endl;
+			std::cout << std::endl;
 		}
-		/*
-			Explanation
 
-			User-defined conversion function is invoked on the second stage of the implicit conversion,
-			which consists of zero or one converting constructor or zero or one user-defined conversion function.
-			If both conversion functions and converting constructors can be used to perform some user-defined conversion,
-			the conversion functions and constructors are both considered by overload resolution in copy-initialization and
-			reference-initialization contexts, but only the constructors are considered in direct-initialization contexts.
-		*/
+
+		//=========================================================================================
+		// [테스트 예제 2] 변환 생성자와 변환 연산자
+		//=========================================================================================
 		{
-			struct To {
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] 변환 생성자와 변환 연산자" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			struct To
+			{
 				To() {}
-				To(const struct From&) {} // converting constructor
+				To(const struct From&)
+				{
+					std::cout << "From -> To 변환 생성자 호출" << std::endl;
+				}
 			};
 
-			struct From {
-				operator To() const { return To(); } // conversion function
+			struct From
+			{
+				operator To() const
+				{
+					std::cout << "From::operator To() 호출" << std::endl;
+					return To();
+				}
 			};
 
 			From f;
-			To t1(f);	// direct-initialization: calls the constructor
-						// (note, if converting constructor is not available, implicit copy constructor
-						// will be selected, and conversion function will be called to prepare its argument)
-			To t2 = f;	// copy-initialization: ambiguous
-						// (note, if conversion function is from a non-const type, e.g.
-						// From::operator To();, it will be selected instead of the ctor in this case)
-			To t3 = static_cast<To>(f); // direct-initialization: calls the constructor
-			const To& r = f; // reference-initialization: ambiguous
+			To t1(f); // direct-initialization
+			To t3 = static_cast<To>(f);
 
-			system("pause");
+			(void)t1;
+			(void)t3;
+
+			std::cout << "copy-initialization(예: To t2 = f)는 경우에 따라 모호할 수 있다." << std::endl;
+			std::cout << std::endl;
 		}
 
-		/*
-			Conversion function to its own (possibly cv-qualified) class (or to a reference to it),
-			to the base of its own class (or to a reference to it), and to the type void can be defined,
-			but can not be executed as part of the conversion sequence,
-			except, in some cases, through virtual dispatch:		
-		*/
+
+		//=========================================================================================
+		// [테스트 예제 3] 템플릿 변환 연산자
+		//=========================================================================================
 		{
-			struct D;
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 3] 템플릿 변환 연산자" << std::endl;
+			std::cout << "==================================================" << std::endl;
 
-			struct B {
-				virtual operator D() = 0;
-			};
-
-			struct D : B
-			{
-				operator D() override { return D(); }
-			};
-
-			D obj;
-			D obj2 = obj; // does not call D::operator D()
-			B& br = obj;
-			D obj3 = br; // calls D::operator D() through virtual dispatch
-
-			system("pause");
-		}
-
-		/*
-			It can also be called using member function call syntax:
-		*/
-		{
-			struct B {};
-				
-			struct X : B {
-				operator B&() { return *this; };
-			};
-
-			X x;
-			B& b1 = x;                  // does not call X::operatorB&()
-			B& b2 = static_cast<B&>(x); // does not call X::operatorB&
-			B& b3 = x.operator B&();    // calls X::operator&
-
-			system("pause");
-		}
-
-		/*
-			Conversion function templates
-		*/
-		{
 			A a;
-			int* ip = a.operator int*(); // explicit call to A::operator int*()
+			int* ip = a.operator int* ();
+			char* cp = a.operator char* ();
 
-			system("pause");
+			std::cout << "int* 변환 결과  : " << ip << std::endl;
+			std::cout << "char* 변환 결과 : " << (void*)cp << std::endl;
+			std::cout << std::endl;
 		}
+
+		system("pause");
 	}
+
+	//---------------------------------------------------------------------------------------------
 
 	void Test()
 	{
-		//implicit_conversion();
-
-		//implicit_conversions_with_classes();
-
-		//keyword_explicit();
-
-		//type_casting();
-
-		//dynamic_cast_converter();
-
-		//static_cast_converter();
-
-		//reinterpret_cast_converter();
-
-		//const_cast_converter();
+		//user_defined_conversion();
 
 		//typeid_operator();
 
-		//user_defined_conversion();
+		//const_cast_converter();
+
+		//reinterpret_cast_converter();
+
+		//static_cast_converter();
+
+		//dynamic_cast_converter();
+
+		//type_casting();
+
+		//keyword_explicit();
+
+		//implicit_conversions_with_classes();
+
+		//implicit_conversion();
 	}
 
 }// end of TypeConversions

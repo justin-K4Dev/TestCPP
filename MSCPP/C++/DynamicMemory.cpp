@@ -5,70 +5,71 @@
 
 namespace DynamicMemory
 {
-	const int constval = 30;    // 상수
+	const int constval = 30;      // 상수
+	int uninitial;                // 초기화되지 않은 전역 변수 (BSS)
+	int initial = 30;             // 초기화된 전역 변수 (Data)
+	static int staticval = 70;    // 정적 전역 변수 (Data)
 
-	int uninitial;  // 초기화되지 않은 전역변수
-	int initial = 30;   // 초기화된 전역변수
-	static int staticval = 70;  // 정적변수
-
-	int function() {    // 함수
+	int function()
+	{
 		return 20;
 	}
 
 	void memory_structure()
 	{
 		/*
-			Low address
+			📚 메모리 구조 (Memory Structure)
 
-			[Text]
+			프로그램이 실행될 때 메모리는 대략 다음과 같은 영역으로 나뉜다.
 
-			텍스트 영역은 아주 쉽게 말하면 코드를 실행하기 위해 저장되어있는 영역입니다.
-			흔히 코드 영역이라고도 하는데, 프로그램을 실행시키기 위해 구성되는 것들이 저장되는 영역입니다.
-			한마디로 명령문들이 저장되는 것인데, 제어문, 함수, 상수들이 이 영역에 저장됩니다.
-
-
-			[Data]
-
-			데이터 영역은 우리가 작성한 코드에서 전역변수, 정적변수 등이 저장되는 공간입니다.
-			이들의 특징을 보면 보통 메인(main)함수 전(프로그램 실행 전)에 선언되어 프로그램이 끝날 때 까지 메모리에 남아있는 변수들이라는 특징이 있습니다.
-			좀 더 구체적으로 말하자면 Data영역도 크게 두 가지로 나뉩니다.
-			초기화 된 변수 영역(initialized data segment)과 초기화되지 않은 변수 영역(uninitialized data segment)으로 나뉘죠.
-			그리고 그 중 초기화되지 않은 변수 영역은 BSS(Block Started by Symbol) 이라고도 합니다.
-
-
+			낮은 주소
+			-----------------------------------
+			[Text / Code]
+			[Data / BSS]
 			[Heap]
-
-			힙 영역은 쉽게 말해서 '사용자에 의해 관리되는 영역'입니다. 흔히 동적으로 할당 할 변수들이 여기에 저장된다고 보시면 됩니다.
-			또한 Java나 C++에서 new 연산자로 생성하는 경우 또는 class, 참조 변수들도 Heap영역에 차지하게 됩니다.
-			다만, 이는 언어마다 조금씩 상이하니 일단은 '동적 할당 영역'이라고 알아두시면 될 것 같습니다.
-			그리고 Heap 영역은 대개 '낮은 주소에서 높은 주소로 할당(적재)됩니다'
-
-
+				  ...
 			[Stack]
+			-----------------------------------
+			높은 주소
 
-			스택 영역은 함수를 호출 할 때 지역변수, 매개변수들이 저장되는 공간입니다.
-			메인(main) 함수안에서의 변수들도 당연 이에 포함되죠.
-			그리고 함수가 종료되면 해당 함수에 할당된 변수들을 메모리에서 해제시킵니다.
-			한마디로 Stack 자료구조의 pop과 같은 기능이죠.
+			1) Text(Code) 영역
+			   - 실행할 기계어 코드
+			   - 함수 코드
+			   - 읽기 전용 상수 일부
+			   - 프로그램 명령문
 
-			여러분이 함수를 '재귀' 호출 할 때, 재귀가 깊어져 Stack Overflow 를 경험해보셨을 겁니다.
-			이 이유가 재귀를 반복적으로 호출하면서 Stack 메모리 영역에 해당 함수의 지역변수, 매개변수들이 계속 할당되다가
-			OS에서 할당해준 Stack영역의 메모리 영역을 넘어버리면 발생하는 오류입니다.
-			Stack영역은 Heap영역과 반대로 높은주소에서 낮은주소로 메모리에 할당됩니다.
+			2) Data 영역
+			   - 초기화된 전역 변수
+			   - 초기화된 static 변수
 
+			3) BSS 영역
+			   - 초기화되지 않은 전역 변수
+			   - 초기화되지 않은 static 변수
 
-			High address
+			4) Heap 영역
+			   - 사용자가 동적으로 할당하는 메모리
+			   - new / malloc 등으로 확보
+			   - 보통 낮은 주소 -> 높은 주소 방향으로 확장
+
+			5) Stack 영역
+			   - 지역 변수
+			   - 함수 매개변수
+			   - 함수 호출 정보
+			   - 보통 높은 주소 -> 낮은 주소 방향으로 확장
+
+			중요:
+			운영체제 / 컴파일러 / 빌드 옵션에 따라 실제 배치는 달라질 수 있다.
+			아래 주소 출력은 "개념 이해용"이다.
 		*/
 
-		int localval1 = 30;   // 지역변수 1
-		int localval2;      // 지역변수 2
+		int localval1 = 30;   // 지역 변수
+		int localval2 = 0;    // 지역 변수
 
 		printf("숫자 입력 : ");
 		scanf("%d", &localval2);
 
-		char *arr = (char*)malloc(sizeof(char) * 10);  // 동적 할당 변수
+		char* arr = (char*)malloc(sizeof(char) * 10);  // 힙 영역 동적 할당
 
-		/* 포인터 출력 영역 */
 		printf("상수 Memory Address : \t\t %p \n", &constval);
 		printf("비초기화 변수 Memory Address :\t %p \n", &uninitial);
 		printf("초기화 변수 Memory Address : \t %p \n", &initial);
@@ -78,127 +79,208 @@ namespace DynamicMemory
 		printf("지역변수2 Memory Address : \t %p \n", &localval2);
 		printf("동적할당변수 Memory Address : \t %p \n\n", arr);
 
+		free(arr);
+		arr = nullptr;
+
+		/*
+			설명:
+			- constval, initial, staticval 은 전역/정적 성격이라 Data 계열 영역에 놓일 가능성이 크다
+			- uninitial 은 BSS 계열에 놓일 가능성이 크다
+			- function 은 코드(Text) 영역 주소를 가진다
+			- localval1, localval2 는 Stack 영역
+			- arr 이 가리키는 실제 메모리는 Heap 영역
+
+			또한 보통:
+			- Heap 은 아래에서 위로 커지고
+			- Stack 은 위에서 아래로 커진다
+		*/
+
 		system("pause");
 	}
 
 	void dynamic_memory()
 	{
 		/*
-			In the programs seen in previous chapters,
-			all memory needs were determined before program execution by defining the variables needed.
-			But there may be cases where the memory needs of a program can only be determined during runtime.
-			For example, when the memory needed depends on user input.
-			On these cases, programs need to dynamically allocate memory,
-			for which the C++ language integrates the operators new and delete.
+			📚 동적 메모리 (Dynamic memory)
+
+			이전 예제들에서는 필요한 메모리 크기가
+			대부분 프로그램 작성 시점에 이미 결정되어 있었다.
+
+			예:
+				int arr[10];
+
+			하지만 어떤 경우에는
+			실행 중(runtime)에야 필요한 메모리 크기를 알 수 있다.
+
+			예:
+			- 사용자 입력에 따라 배열 크기가 달라지는 경우
+			- 파일 크기에 따라 버퍼 크기가 달라지는 경우
+			- 객체 수가 실행 도중 결정되는 경우
+
+			이럴 때 사용하는 것이 동적 메모리 할당이다.
+
+			C++에서는 이를 위해
+				new / delete
+			연산자를 제공한다.
 		*/
+
+		{
+			std::cout << "동적 메모리는 실행 중 필요한 크기를 결정할 수 있다." << std::endl;
+			std::cout << "대표적으로 new / delete 를 사용한다." << std::endl;
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
 
 	void operators_new_and_new_array()
 	{
 		/*
-			Dynamic memory is allocated using operator new. new is followed by a data type specifier and,
-			if a sequence of more than one element is required, the number of these within brackets [].
-			It returns a pointer to the beginning of the new block of memory allocated.
-			Its syntax is: 
+			📚 new 와 new[] 연산자
 
-				pointer = new type
-				pointer = new type [number_of_elements]
+			C++에서 동적 메모리는 new 로 할당한다.
 
-			The first expression is used to allocate memory to contain one single element of type type.
-			The second one is used to allocate a block (an array) of elements of type type,
-			where number_of_elements is an integer value representing the amount of these.
-			For example:
+			문법:
+				포인터 = new 타입;
+				포인터 = new 타입[개수];
 
-				int * foo;
-				foo = new int [5];
+			예:
+				int* p1 = new int;
+				int* p2 = new int[5];
 
-			In this case, the system dynamically allocates space for five elements of type int
-			and returns a pointer to the first element of the sequence, which is assigned to foo (a pointer).
-			Therefore, foo now points to a valid block of memory with space for five elements of type int.
+			의미:
+			- new int       -> int 1개를 힙에 할당
+			- new int[5]    -> int 5개 배열을 힙에 할당
 
-				foo [int][  ][  ][  ][  ]
-
-			Here, foo is a pointer, and thus, the first element pointed to by foo can be accessed either
-			with the expression foo[0] or the expression *foo (both are equivalent).
-			The second element can be accessed either with foo[1] or *(foo+1), and so on...
-
-			There is a substantial difference between declaring a normal array
-			and allocating dynamic memory for a block of memory using new.
-			The most important difference is that the size of a regular array needs to be a constant expression,
-			and thus its size has to be determined at the moment of designing the program,
-			before it is run, whereas the dynamic memory allocation performed by new allows to assign memory
-			during runtime using any variable value as size.
-
-			The dynamic memory requested by our program is allocated by the system from the memory heap.
-			However, computer memory is a limited resource, and it can be exhausted.
-			Therefore, there are no guarantees that all requests to allocate memory
-			using operator new are going to be granted by the system.
-
-			C++ provides two standard mechanisms to check if the allocation was successful:
-
-			One is by handling exceptions. Using this method,
-			an exception of type bad_alloc is thrown when the allocation fails.
-			Exceptions are a powerful C++ feature explained later in these tutorials.
-			But for now, you should know that if this exception is thrown
-			and it is not handled by a specific handler, the program execution is terminated.
-
-			This exception method is the method used by default by new, and is the one used in a declaration like:
-
-				foo = new int [5];  // if allocation fails, an exception is thrown
-
-			The other method is known as nothrow, and what happens when it is used is
-			that when a memory allocation fails, instead of throwing a bad_alloc exception
-			or terminating the program, the pointer returned by new is a null pointer,
-			and the program continues its execution normally.
-
-			This method can be specified by using a special object called nothrow, declared in header <new>,
-			as argument for new:
-
-				foo = new (nothrow) int [5];
-
-			In this case, if the allocation of this block of memory fails,
-			the failure can be detected by checking if foo is a null pointer:
-
-				int * foo;
-				foo = new (nothrow) int [5];
-				if (foo == nullptr) {
-					// error assigning memory. Take measures.
-				}
-
-			This nothrow method is likely to produce less efficient code than exceptions,
-			since it implies explicitly checking the pointer value returned after each and every allocation.
-			Therefore, the exception mechanism is generally preferred, at least for critical allocations.
-			Still, most of the coming examples will use the nothrow mechanism due to its simplicity.
+			반환값:
+			- 새로 할당된 메모리의 시작 주소
+			- 즉 포인터
 		*/
+
+		{
+			int* p1 = new int;
+			*p1 = 123;
+
+			std::cout << "*p1 = " << *p1 << std::endl;
+			std::cout << "p1  = " << p1 << std::endl;
+
+			delete p1;
+			p1 = nullptr;
+
+			std::cout << std::endl;
+
+			/*
+				설명:
+				new int 는 int 하나를 힙에 만들고
+				그 주소를 p1 에 저장한다.
+			*/
+		}
+
+		{
+			int* foo = new int[5];
+
+			for (int i = 0; i < 5; ++i)
+			{
+				foo[i] = (i + 1) * 10;
+			}
+
+			for (int i = 0; i < 5; ++i)
+			{
+				std::cout << "foo[" << i << "] = " << foo[i] << std::endl;
+			}
+
+			delete[] foo;
+			foo = nullptr;
+
+			std::cout << std::endl;
+
+			/*
+				설명:
+				new int[5] 는 int 배열 5개를 동적 할당한다.
+				배열 형태로 할당했으므로 해제도 delete[] 를 써야 한다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 3] new 와 일반 배열의 차이" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int size;
+			std::cout << "원하는 배열 크기 입력: ";
+			std::cin >> size;
+
+			int* dynamicArr = new int[size];
+
+			for (int i = 0; i < size; ++i)
+			{
+				dynamicArr[i] = i + 1;
+			}
+
+			for (int i = 0; i < size; ++i)
+			{
+				std::cout << dynamicArr[i] << ' ';
+			}
+			std::cout << std::endl << std::endl;
+
+			delete[] dynamicArr;
+			dynamicArr = nullptr;
+
+			/*
+				설명:
+				일반 배열은 크기가 보통 컴파일 시점에 정해져야 하지만,
+				new 를 사용하면 실행 중 입력값으로 크기를 정할 수 있다.
+			*/
+		}
+
+		/*
+			추가 설명:
+			new 는 메모리 할당 실패 시 기본적으로 예외를 던질 수 있다.
+			또는 nothrow 버전을 쓰면 nullptr 반환으로 확인할 수도 있다.
+
+				int* p = new (std::nothrow) int[5];
+				if (p == nullptr)
+				{
+					// 실패 처리
+				}
+		*/
+
+		system("pause");
 	}
 
 	void operators_delete_and_delete_array()
 	{
 		/*
-			In most cases, memory allocated dynamically is only needed during specific periods of time within a program;
-			once it is no longer needed, it can be freed so that the memory becomes available again for other requests of dynamic memory.
-			This is the purpose of operator delete, whose syntax is:
+			📚 delete 와 delete[] 연산자
 
-				delete pointer;
-				delete[] pointer;
+			new 로 할당한 메모리는
+			더 이상 필요 없을 때 반드시 해제해야 한다.
 
-			The first statement releases the memory of a single element allocated using new,
-			and the second one releases the memory allocated for arrays of elements using new
-			and a size in brackets ([]).
+			문법:
+				delete 포인터;
+				delete[] 포인터;
 
-			The value passed as argument to delete shall be either a pointer to a memory block previously allocated
-			with new, or a null pointer (in the case of a null pointer, delete produces no effect).
+			규칙:
+			- new 로 할당한 단일 객체      -> delete
+			- new[] 로 할당한 배열        -> delete[]
+
+			이 규칙을 맞추지 않으면
+			정의되지 않은 동작(Undefined Behavior)이 발생할 수 있다.
 		*/
+
 		{
 			int i, n;
-			int * p;
+			int* p;
 
 			std::cout << "How many numbers would you like to type? ";
 			std::cin >> i;
 
 			p = new int[i];
+
 			if (p == nullptr)
+			{
 				std::cout << "Error: memory could not be allocated";
+			}
 			else
 			{
 				for (n = 0; n < i; n++)
@@ -206,111 +288,235 @@ namespace DynamicMemory
 					std::cout << "Enter number: ";
 					std::cin >> p[n];
 				}
+
 				std::cout << "You have entered: ";
 				for (n = 0; n < i; n++)
+				{
 					std::cout << p[n] << ", ";
+				}
+				std::cout << std::endl;
 
 				delete[] p;
+				p = nullptr;
 			}
 
-			system("pause");
+			std::cout << std::endl;
 
 			/*
-			output:
-				How many numbers would you like to type? 5
-				Enter number : 75
-				Enter number : 436
-				Enter number : 1067
-				Enter number : 8
-				Enter number : 32
-				You have entered: 75, 436, 1067, 8, 32,
+				설명:
+				p = new int[i];
+				로 배열 할당했으므로
+				delete[] p;
+				로 해제해야 한다.
 			*/
 		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] delete 후 nullptr 대입" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int* p = new int;
+			*p = 999;
+
+			std::cout << "*p = " << *p << std::endl;
+
+			delete p;
+			p = nullptr;
+
+			std::cout << "delete 후 p = " << p << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				delete 후 포인터에 nullptr 을 넣어두면
+				해제된 주소를 실수로 다시 사용하는 위험을 줄일 수 있다.
+			*/
+		}
+
 		/*
-			Notice how the value within brackets in the new statement is a variable value entered by the user (i),
-			not a constant expression:
+			핵심:
+			- new  -> delete
+			- new[] -> delete[]
 
-				p = new (nothrow) int[i];
-
-			There always exists the possibility that the user introduces a value for i so big
-			that the system cannot allocate enough memory for it.
-			For example, when I tried to give a value of 1 billion to the "How many numbers" question,
-			my system could not allocate that much memory for the program,
-			and I got the text message we prepared for this case (Error: memory could not be allocated).
-
-			It is considered good practice for programs to always be able to handle failures to allocate memory,
-			either by checking the pointer value (if nothrow) or by catching the proper exception.
+			반드시 짝을 맞춰야 한다.
 		*/
+
+		system("pause");
 	}
 
 	void dynamic_memory_in_c()
 	{
 		/*
-			C++ integrates the operators new and delete for allocating dynamic memory.
-			But these were not available in the C language; instead, it used a library solution,
-			with the functions malloc, calloc, realloc and free, defined in the header <cstdlib> (known as <stdlib.h> in C).
-			
-			The functions are also available in C++ and can also be used to allocate and deallocate dynamic memory.
+			📚 C 방식 동적 메모리 (malloc / calloc / realloc / free)
 
-			Note, though, that the memory blocks allocated by these functions are not necessarily compatible with those returned by new,
-			so they should not be mixed; each one should be handled with its own set of functions or operators.
+			C++에는 new / delete 가 있지만,
+			C 언어에서는 주로 다음 함수들을 사용했다.
+
+				malloc
+				calloc
+				realloc
+				free
+
+			이 함수들은 <cstdlib> 에 정의되어 있다.
+
+			중요:
+			C++에서도 사용할 수는 있지만,
+			new / delete 와 섞어 쓰면 안 된다.
+
+			즉:
+			- malloc 으로 할당 -> free 로 해제
+			- new 로 할당     -> delete 로 해제
+
+			서로 혼용하면 안 된다.
 		*/
+
 		{
-			system("pause");
+			int count = 5;
+
+			int* arr = (int*)malloc(sizeof(int) * count);
+			if (arr == nullptr)
+			{
+				std::cout << "malloc failed" << std::endl;
+			}
+			else
+			{
+				for (int i = 0; i < count; ++i)
+				{
+					arr[i] = (i + 1) * 100;
+				}
+
+				for (int i = 0; i < count; ++i)
+				{
+					std::cout << arr[i] << ' ';
+				}
+				std::cout << std::endl;
+
+				free(arr);
+				arr = nullptr;
+			}
+
+			std::cout << std::endl;
+
+			/*
+				설명:
+				malloc 은 메모리만 할당하고,
+				생성자 같은 C++ 객체 초기화는 하지 않는다.
+
+				기본형(int 등)에는 쓸 수 있지만,
+				C++ 객체에는 일반적으로 new 가 더 적절하다.
+			*/
 		}
+
+		{
+			int count = 5;
+
+			int* arr = (int*)calloc(count, sizeof(int));
+			if (arr != nullptr)
+			{
+				std::cout << "calloc result: ";
+				for (int i = 0; i < count; ++i)
+				{
+					std::cout << arr[i] << ' ';
+				}
+				std::cout << std::endl;
+
+				free(arr);
+				arr = nullptr;
+			}
+
+			std::cout << std::endl;
+
+			/*
+				설명:
+				calloc 은 할당과 동시에 0으로 초기화한다.
+			*/
+		}
+
+		system("pause");
 	}
 
 	void allocates_size_bytes_from_the_program_stack()
 	{
 		/*
-			_alloca allocates size bytes from the program stack.
-			The allocated space is automatically freed when the calling function exits
-			(not when the allocation merely passes out of scope).
-			Therefore, do not pass the pointer value returned by _alloca as an argument to free.
+			📚 _alloca : 스택에서 동적 크기 메모리 확보
+
+			_alloca 는 힙(heap)이 아니라 스택(stack)에서 메모리를 확보한다.
+
+			특징:
+			1) 함수가 끝나면 자동으로 해제된다
+			2) free 로 해제하면 안 된다
+			3) 너무 크게 할당하면 stack overflow 위험이 있다
+
+			즉 매우 빠를 수는 있지만,
+			사용 범위가 제한적이고 주의가 많이 필요하다.
+
+			중요:
+			_alloca 로 확보한 메모리는
+			"함수 종료 시" 자동 해제된다.
+			블록 scope 가 끝난다고 바로 해제되는 것은 아니다.
 		*/
+
 		{
-			int     size = 1000;
-			int     errcode = 0;
-			void    *pData = NULL;
+			int size = 1000;
+			int errcode = 0;
+			void* pData = NULL;
 
-			// Note: Do not use try/catch for _alloca,  
-			// use __try/__except, since _alloca throws  
-			// Structured Exceptions, not C++ exceptions.  
+			// _alloca 는 C++ 예외가 아니라 Structured Exception 을 사용할 수 있으므로
+			// __try / __except 예제가 자주 같이 등장한다.
 
-			__try {
-				// An unbounded _alloca can easily result in a   
-				// stack overflow.  
-				// Checking for a size < 1024 bytes is recommended.  
-				if (size > 0 && size < 1024) {
+			__try
+			{
+				// 너무 큰 _alloca 는 stack overflow 위험이 매우 큼
+				if (size > 0 && size < 1024)
+				{
 					pData = _alloca(size);
-					printf_s("Allocated %d bytes of stack at 0x%p", size, pData);
+					printf_s("Allocated %d bytes of stack at 0x%p\n", size, pData);
 				}
-				else {
+				else
+				{
 					printf_s("Tried to allocate too many bytes.\n");
 				}
 			}
-
-			// If an exception occured with the _alloca function  
-			__except (GetExceptionCode() == STATUS_STACK_OVERFLOW) {
+			__except (GetExceptionCode() == STATUS_STACK_OVERFLOW)
+			{
 				printf_s("_alloca failed!\n");
 
-				// If the stack overflows, use this function to restore.  
 				errcode = _resetstkoflw();
-				if (errcode) {
+				if (errcode == 0)
+				{
 					printf_s("Could not reset the stack!\n");
 					_exit(1);
 				}
-			};
-
-			system("pause");
+			}
 
 			/*
-			output:
-				Allocated %d bytes of stack at 0x000000000020F4A0
+				설명:
+				이 예제는 Windows/MSVC 전용에 가까운 코드이다.
+
+				_alloca 는 편리하지만:
+				- 너무 큰 크기 금지
+				- 반환 포인터를 함수 밖으로 넘기면 안 됨
+				- free 사용 금지
+				같은 제약이 있다.
 			*/
 		}
-	}
 
+		{
+			std::cout << std::endl;
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] _alloca 핵심 주의점" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << "1. 힙이 아니라 스택에서 할당" << std::endl;
+			std::cout << "2. 함수 종료 시 자동 해제" << std::endl;
+			std::cout << "3. free 사용 금지" << std::endl;
+			std::cout << "4. 큰 크기는 stack overflow 위험" << std::endl;
+			std::cout << std::endl;
+		}
+
+		system("pause");
+	}
 
 	void Test()
 	{

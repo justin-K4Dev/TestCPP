@@ -1,23 +1,23 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 namespace NameVisibility
 {
 	// Scopes example
 	int some_function()
 	{
-		int bar;	// local variable
+		int bar;    // 지역 변수(local variable)
 		bar = 0;
-		//double bar;   // wrong: name already used in this scope
+		// double bar;   // 오류: 같은 범위(scope) 안에서 같은 이름 재사용 불가
 
 		return bar;
 	}
 
-	int foo;	// global variable
+	int foo;   // 전역 변수(global variable)
 
 	int other_function()
 	{
-		foo = 1;	// ok: foo is a global variable
-					//bar = 2;	// wrong: bar is not visible from this function
+		foo = 1;  // 가능: foo는 전역 변수
+		// bar = 2; // 오류: bar는 some_function 내부 지역 변수라 여기서 보이지 않음
 
 		return foo;
 	}
@@ -25,89 +25,154 @@ namespace NameVisibility
 	void scopes()
 	{
 		/*
-			Scopes
+			📚 범위 (Scope)
 
-			Named entities, such as variables, functions, and compound types need to be declared before being used in C++. The point in the program where this declaration happens influences its visibility:
+			C++에서 변수, 함수, 타입 같은 이름 있는 요소(named entity)는
+			사용되기 전에 선언되어야 한다.
 
-			An entity declared outside any block has global scope, meaning that its name is valid anywhere in the code. 
-			While an entity declared within a block, such as a function or a selective statement,
-			has block scope, and is only visible within the specific block in which it is declared,
-			but not outside it.
+			그리고 "어디서 선언되었는가"에 따라
+			그 이름이 보이는 범위(visibility)가 달라진다.
 
-			Variables with block scope are known as local variables.
+			이 보이는 영역을 범위(scope)라고 한다.
 
-			For example, a variable declared in the body of a function is a local variable that extends until the end of the the function (i.e.,
-			until the brace } that closes the function definition),
-			but not outside it:
 
-				int foo;        // global variable
+			=======================================================================================
+			1. 전역 범위(Global Scope)
+			=======================================================================================
 
-				int some_function ()
+			어떤 이름이 함수나 블록 바깥에서 선언되면
+			그 이름은 전역 범위를 가진다.
+
+			예:
+				int foo;
+
+			이 경우 foo는 프로그램의 넓은 영역에서 사용할 수 있다.
+
+			즉, 여러 함수에서 접근 가능하다.
+
+
+			=======================================================================================
+			2. 블록 범위(Block Scope)
+			=======================================================================================
+
+			중괄호 { } 안에서 선언된 이름은
+			그 블록 안에서만 보인다.
+
+			예:
+				int some_function()
 				{
-					int bar;      // local variable
-					bar = 0;
+					int bar;
 				}
 
-				int other_function ()
+			여기서 bar는 some_function 내부에서만 보이는 지역 변수(local variable)이다.
+
+			즉:
+				- some_function 안에서는 사용 가능
+				- other_function 에서는 사용 불가
+
+
+			=======================================================================================
+			3. 같은 범위에서는 같은 이름을 두 번 쓸 수 없다
+			=======================================================================================
+
+			같은 scope 안에서는
+			같은 이름이 하나의 엔티티만 가리켜야 한다.
+
+			즉:
+
+				int x;
+				double x;  // 오류
+
+			이건 불가능하다.
+
+
+			=======================================================================================
+			4. 안쪽 블록은 바깥 이름을 가릴 수 있다 (shadowing)
+			=======================================================================================
+
+			안쪽 블록은 바깥쪽에 있던 이름과 같은 이름을 새로 선언할 수 있다.
+
+			예:
+				int x = 10;
 				{
-					foo = 1;  // ok: foo is a global variable
-					bar = 2;  // wrong: bar is not visible from this function
+					int x = 50;
 				}
 
-			In each scope, a name can only represent one entity.
-				
-			For example, there cannot be two variables with the same name in the same scope:
+			이 경우 안쪽 블록 안에서는
+			새로운 x가 바깥 x를 가린다(shadowing).
 
-				int some_function ()
-				{
-					int x;
-					x = 0;
-					double x;   // wrong: name already used in this scope
-					x = 0.0;
-				}
+			즉:
+				- 안쪽 블록 안의 x -> 새 x
+				- 바깥 블록의 x -> 원래 x
 
-			The visibility of an entity with block scope extends until the end of the block,
-			including inner blocks. Nevertheless, an inner block, because it is a different block,
-			can re-utilize a name existing in an outer scope to refer to a different entity;
-			in this case, the name will refer to a different entity only within the inner block,
-			hiding the entity it names outside. While outside it, it will still refer to the original entity.
-			For example:
+
+			=======================================================================================
+			5. 핵심 요약
+			=======================================================================================
+
+				- 함수/블록 밖 선언 -> 전역 범위
+				- 블록 안 선언 -> 블록 범위(지역 변수)
+				- 같은 범위에서는 같은 이름 재사용 불가
+				- 안쪽 블록은 바깥 이름을 가릴 수 있다(shadowing)
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] 전역 변수와 지역 변수
+		//=========================================================================================
 		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] 전역 변수와 지역 변수" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			std::cout << "some_function() return = " << some_function() << std::endl;
+			std::cout << "other_function() return = " << other_function() << std::endl;
+			std::cout << "global foo = " << foo << std::endl;
+			std::cout << std::endl;
+		}
+
+
+		//=========================================================================================
+		// [테스트 예제 2] 안쪽 블록이 바깥 이름 가리기(shadowing)
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] 안쪽 블록이 바깥 이름 가리기" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
 			int x = 10;
 			int y = 20;
+
 			{
-				int x;   // ok, inner scope.
-				x = 50;  // sets value to inner x
-				y = 50;  // sets value to (outer) y
-				std::cout << "inner block:\n";
+				int x;   // 안쪽 블록의 x (바깥 x를 가림)
+				x = 50;  // 안쪽 x 수정
+				y = 50;  // 바깥 y 수정
+
+				std::cout << "inner block:" << std::endl;
 				std::cout << "x: " << x << '\n';
 				std::cout << "y: " << y << '\n';
 			}
-			std::cout << "outer block:\n";
+
+			std::cout << "outer block:" << std::endl;
 			std::cout << "x: " << x << '\n';
 			std::cout << "y: " << y << '\n';
-
-			system("pause");
+			std::cout << std::endl;
 
 			/*
-			output:
-				inner block:
-				x: 50
-				y: 50
-				outer block:
-				x: 10
-				y: 50
+				예상 출력:
+					inner block:
+					x: 50
+					y: 50
+					outer block:
+					x: 10
+					y: 50
 			*/
 		}
-		/*
-			Note that y is not hidden in the inner block, and thus accessing y still accesses the outer variable.
-			Variables declared in declarations that introduce a block,
-			such as function parameters and variables declared in loops
-			and conditions (such as those declared on a for or an if) are local to the block they introduce.
-		*/
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	// Namespaces example
 	namespace A
@@ -124,86 +189,151 @@ namespace NameVisibility
 	void namespaces_keyword()
 	{
 		/*
-			Namespaces
+			📚 네임스페이스 (Namespaces)
 
-			Only one entity can exist with a particular name in a particular scope.
-			This is seldom a problem for local names, since blocks tend to be relatively short,
-			and names have particular purposes within them, such as naming a counter variable,
-			an argument, etc...
+			같은 범위(scope) 안에는
+			같은 이름의 엔티티가 하나만 존재할 수 있다.
 
-			But non-local names bring more possibilities for name collision,
-			especially considering that libraries may declare many functions, types, and variables,
-			neither of them local in nature, and some of them very generic.
+			하지만 프로그램이 커지고,
+			라이브러리까지 섞이기 시작하면
+			이름 충돌(name collision)이 쉽게 발생한다.
 
-			Namespaces allow us to group named entities that otherwise would have global scope into narrower scopes,
-			giving them namespace scope.
-			This allows organizing the elements of programs into different logical scopes referred to by names.
+			예:
+				value()
+				data
+				log
+				size
 
-			The syntax to declare a namespaces is:
+			이런 흔한 이름은 서로 다른 라이브러리에서
+			얼마든지 중복될 수 있다.
 
-				namespace identifier
+			이 문제를 해결하기 위한 대표적인 도구가
+			네임스페이스(namespace)이다.
+
+			네임스페이스는 원래 전역에 놓일 이름들을
+			별도의 논리적 범위 안에 묶어주는 기능이다.
+
+
+			=======================================================================================
+			1. 기본 문법
+			=======================================================================================
+
+				namespace 이름
 				{
-					named_entities
+					선언들...
 				}
 
-			Where identifier is any valid identifier and named_entities is the set of variables,
-			types and functions that are included within the namespace.
-			For example:
-
-				namespace myNamespace
+			예:
+				namespace A
 				{
-					int a, b;
+					int value() { return 5; }
 				}
 
-			In this case, the variables a and b are normal variables declared within a namespace called myNamespace.
+				namespace B
+				{
+					double value() { return 2 * pi; }
+				}
 
-			These variables can be accessed from within their namespace normally,
-			with their identifier (either a or b),
-			but if accessed from outside the myNamespace namespace they have to be properly qualified
-			with the scope operator ::.
-			For example, to access the previous variables from outside myNamespace they should be qualified like:
+			이렇게 하면 A::value 와 B::value 는
+			서로 다른 이름으로 구분된다.
 
-				myNamespace::a
-				myNamespace::b 
 
-			Namespaces are particularly useful to avoid name collisions.
-			For example:		
-		*/
-		{
-			NameVisibility::foo = 10;
+			=======================================================================================
+			2. 네임스페이스 밖에서 접근하는 방법
+			=======================================================================================
 
-			std::cout << A::value() << '\n';
-			std::cout << B::value() << '\n';
-			std::cout << B::pi << '\n';
+			네임스페이스 바깥에서는
+			범위 지정 연산자(::)를 써서 접근한다.
 
-			system("pause");
+			예:
+				A::value()
+				B::value()
+				B::pi
 
-			/*
-			output:
-				5
-				6.2832
-				3.1416
-			*/
-		}
-		/*
-			In this case, there are two functions with the same name: value. One is defined within the namespace foo,
-			and the other one in bar.
-			No redefinition errors happen thanks to namespaces.
-			Notice also how pi is accessed in an unqualified manner from within namespace bar (just as pi),
-			while it is again accessed in main, but here it needs to be qualified as bar::pi.
+			즉:
+				"어느 네임스페이스의 이름인지"
+			를 명확하게 적어 줘야 한다.
 
-			Namespaces can be split: Two segments of a code can be declared in the same namespace:
 
+			=======================================================================================
+			3. 왜 중요한가?
+			=======================================================================================
+
+			네임스페이스는 다음 문제를 줄여 준다.
+
+				- 이름 충돌 방지
+				- 라이브러리 간 구분
+				- 코드 구조화
+				- 논리적 그룹화
+
+			즉, 프로젝트가 커질수록 매우 중요하다.
+
+
+			=======================================================================================
+			4. 네임스페이스는 나누어 작성 가능
+			=======================================================================================
+
+			같은 네임스페이스는 여러 위치에 나누어 선언할 수 있다.
+
+			예:
 				namespace foo { int a; }
-				namespace bar { int b; }
 				namespace foo { int c; }
 
+			그러면 a와 c는 모두 foo 안에 들어간다.
 
-			This declares three variables: a and c are in namespace foo, while b is in namespace bar.
-			Namespaces can even extend across different translation units (i.e., across different files of source code).
+			즉, 네임스페이스는 여러 파일에 걸쳐 확장될 수도 있다.
+
+
+			=======================================================================================
+			5. 핵심 요약
+			=======================================================================================
+
+				- 네임스페이스는 이름 충돌을 막기 위한 범위 도구이다.
+				- namespace A { ... } 형태로 선언한다.
+				- 바깥에서는 A::name 형식으로 접근한다.
+				- 같은 이름도 서로 다른 네임스페이스 안에서는 공존 가능하다.
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] 서로 다른 namespace의 같은 이름 함수
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] 서로 다른 namespace의 같은 이름 함수" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			std::cout << "A::value() = " << A::value() << '\n';
+			std::cout << "B::value() = " << B::value() << '\n';
+			std::cout << "B::pi      = " << B::pi << '\n';
+			std::cout << std::endl;
+
+			/*
+				예상 출력:
+					A::value() = 5
+					B::value() = 6.2832
+					B::pi      = 3.1416
+			*/
+		}
+
+
+		//=========================================================================================
+		// [테스트 예제 2] 네임스페이스의 의미 설명
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] namespace의 의미 설명" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			std::cout << "A::value 와 B::value 는 이름은 같지만 서로 다른 namespace에 있으므로 충돌하지 않는다." << std::endl;
+			std::cout << "즉, namespace는 전역 이름들을 더 작은 논리적 범위로 나누는 역할을 한다." << std::endl;
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	// Using example
 	namespace first
@@ -221,65 +351,139 @@ namespace NameVisibility
 	void using_keyword()
 	{
 		/*
-			Using
+			📚 using 키워드
 
-			The keyword using introduces a name into the current declarative region (such as a block),
-			thus avoiding the need to qualify the name.
-			For example:
+			using은 어떤 이름을 현재 범위로 가져와서
+			매번 namespace::name 형태로 쓰지 않아도 되게 해주는 기능이다.
+
+			형태는 크게 두 가지가 있다.
+
+				1) using 선언
+					using first::x;
+
+				2) using namespace 지시문
+					using namespace first;
+
+
+			=======================================================================================
+			1. using 선언
+			=======================================================================================
+
+			특정 이름 하나만 현재 범위로 가져온다.
+
+			예:
+				using first::x;
+				using second::y;
+
+			그러면 현재 블록 안에서는
+				x -> first::x
+				y -> second::y
+			처럼 쓸 수 있다.
+
+
+			=======================================================================================
+			2. using namespace
+			=======================================================================================
+
+			네임스페이스 전체를 현재 범위에서 검색 가능하게 만든다.
+
+			예:
+				using namespace first;
+
+			그러면 현재 블록 안에서는
+			first 안의 이름들을 qualification 없이 바로 사용할 수 있다.
+
+
+			=======================================================================================
+			3. 주의사항
+			=======================================================================================
+
+			using namespace를 너무 넓은 범위에서 쓰면
+			이름 충돌이 커질 수 있다.
+
+			특히 헤더 파일이나 큰 프로젝트 전역에서는
+			조심해서 써야 한다.
+
+			그래서 실무에서는 종종
+
+				using std::cout;
+				using std::string;
+
+			처럼 필요한 이름만 가져오거나,
+			그냥 std::cout 처럼 명시적으로 쓰는 스타일을 선호한다.
+
+
+			=======================================================================================
+			4. 핵심 요약
+			=======================================================================================
+
+				- using name은 특정 이름 하나를 현재 범위에 도입한다.
+				- using namespace는 네임스페이스 전체를 현재 범위에 도입한다.
+				- 편리하지만 이름 충돌을 조심해야 한다.
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] using 선언
+		//=========================================================================================
 		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] using 선언" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
 			using first::x;
 			using second::y;
+
 			std::cout << x << '\n';
 			std::cout << y << '\n';
 			std::cout << first::y << '\n';
 			std::cout << second::x << '\n';
-
-			system("pause");
+			std::cout << std::endl;
 
 			/*
-			output:
-				5
-				2.7183
-				10
-				3.1416
+				예상 출력:
+					5
+					2.7183
+					10
+					3.1416
 			*/
 		}
-		/*
-			Notice how in main, the variable x (without any name qualifier) refers to first::x, whereas y refers to second::y,
-			just as specified by the using declarations.
-			The variables first::y and second::x can still be accessed,
-			but require fully qualified names.
-			The keyword using can also be used as a directive to introduce an entire namespace:
-		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 2] using namespace
+		//=========================================================================================
 		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] using namespace" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
 			using namespace first;
+
 			std::cout << x << '\n';
 			std::cout << y << '\n';
 			std::cout << second::x << '\n';
 			std::cout << second::y << '\n';
-
-			system("pause");
+			std::cout << std::endl;
 
 			/*
-			output:
-				5
-				10
-				3.1416
-				2.7183
+				예상 출력:
+					5
+					10
+					3.1416
+					2.7183
 			*/
 		}
-		/*
-			In this case, by declaring that we were using namespace first,
-			all direct uses of x and y without name qualifiers were also looked up in namespace first.
 
-			using and using namespace have validity only in the same block in which they are stated
-			or in the entire source code file if they are used directly in the global scope.
-				
-			For example, it would be possible to first use the objects of one namespace
-			and then those of another one by splitting the code in different blocks:
-		*/
+
+		//=========================================================================================
+		// [테스트 예제 3] 블록마다 using 범위가 다름
+		//=========================================================================================
 		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 3] 블록마다 using 범위가 다름" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
 			{
 				using namespace first;
 				std::cout << x << '\n';
@@ -289,94 +493,271 @@ namespace NameVisibility
 				std::cout << x << '\n';
 			}
 
-			system("pause");
+			std::cout << std::endl;
 
 			/*
-			output:
-				5
-				3.1416
+				예상 출력:
+					5
+					3.1416
 			*/
 		}
 
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	void namespace_aliasing()
 	{
 		/*
-			Namespace aliasing
+			📚 네임스페이스 별칭 (Namespace aliasing)
 
-			Existing namespaces can be aliased with new names,
-			with the following syntax:
-			
-			namespace new_name = current_name;
+			이미 존재하는 네임스페이스에
+			더 짧거나 편한 다른 이름을 붙일 수 있다.
+
+			문법:
+
+				namespace 새이름 = 기존이름;
+
+			예:
+				namespace F = first;
+				namespace S = second;
+
+			그러면:
+				F::x
+				S::y
+
+			처럼 짧게 접근할 수 있다.
+
+			긴 네임스페이스 이름이 있거나
+			중첩 네임스페이스가 깊을 때 특히 유용하다.
+
+
+			=======================================================================================
+			1. 핵심 요약
+			=======================================================================================
+
+				- namespace 새이름 = 기존이름;
+				- 긴 namespace 이름을 짧게 줄이는 데 유용하다.
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] namespace alias 사용
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] namespace alias 사용" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			namespace F = first;
+			namespace S = second;
+
+			std::cout << "F::x = " << F::x << std::endl;
+			std::cout << "F::y = " << F::y << std::endl;
+			std::cout << "S::x = " << S::x << std::endl;
+			std::cout << "S::y = " << S::y << std::endl;
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	void the_std_namespace()
 	{
 		/*
-			The std namespace
+			📚 std 네임스페이스
 
-			All the entities (variables, types, constants, and functions) of the standard C++ library are declared within the std namespace.
-			Most examples in these tutorials, in fact, include the following line:
+			C++ 표준 라이브러리의 거의 모든 이름은
+			std 네임스페이스 안에 선언되어 있다.
+
+			예:
+				std::cout
+				std::cin
+				std::string
+				std::vector
+				std::endl
+
+			즉, 표준 라이브러리 요소를 쓸 때는 보통
+			std:: 를 붙여야 한다.
+
+
+			=======================================================================================
+			1. using namespace std;
+			=======================================================================================
+
+			많은 입문 예제에서 다음을 자주 본다.
 
 				using namespace std;
 
-			This introduces direct visibility of all the names of the std namespace into the code.
-			This is done in these tutorials to facilitate comprehension and shorten the length of the examples,
-			but many programmers prefer to qualify each of the elements of the standard library used in their programs. For example, instead of:
+			이렇게 하면 std 안의 이름들을
+			qualification 없이 바로 쓸 수 있다.
+
+			예:
+				cout << "Hello";
+
+			하지만 실무에서는 이름 충돌을 줄이기 위해
+			명시적으로 std::cout 처럼 쓰는 스타일도 매우 흔하다.
+
+
+			=======================================================================================
+			2. 스타일 차이
+			=======================================================================================
+
+			다음 두 코드는 기능적으로 같다.
 
 				cout << "Hello world!";
-
-			It is common to instead see:
-
 				std::cout << "Hello world!";
 
-			Whether the elements in the std namespace are introduced with using declarations
-			or are fully qualified on every use does not change the behavior or efficiency of the resulting program in any way.
-			It is mostly a matter of style preference, although for projects mixing libraries,
-			explicit qualification tends to be preferred.
+			차이는 스타일과 가독성, 충돌 방지 정도에 있다.
+
+			작은 예제에서는 using namespace std; 가 편할 수 있지만,
+			큰 프로젝트에서는 std::를 명시하는 편이 더 선호되기도 한다.
+
+
+			=======================================================================================
+			3. 핵심 요약
+			=======================================================================================
+
+				- 표준 라이브러리 이름은 보통 std 안에 있다.
+				- std::cout 처럼 접근할 수 있다.
+				- using namespace std; 는 편리하지만 프로젝트 규모가 커지면 주의가 필요하다.
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] using namespace std
+		//=========================================================================================
 		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] using namespace std" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
 			using namespace std;
 
 			cout << "Hello world!";
-			std::cout << " Hello world!";
+			std::cout << " Hello world!" << std::endl;
+			std::cout << std::endl;
 
-			system("pause");
+			/*
+				예상 출력:
+					Hello world! Hello world!
+			*/
 		}
-		/*
-		output:
-			Hello world! Hello world!
-		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 2] std:: 명시 접근 권장 스타일
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] std:: 명시 접근" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			std::string text = "std namespace example";
+			std::cout << text << std::endl;
+			std::cout << "큰 프로젝트에서는 std::cout 처럼 명시적으로 쓰는 스타일이 자주 선호된다." << std::endl;
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	void storage_classes()
 	{
 		/*
-			Storage classes
+			📚 저장 기간과 저장 영역 (Storage classes / storage duration)
 
-			The storage for variables with global or namespace scope is allocated for the entire duration of the program.
-			This is known as static storage,
-			and it contrasts with the storage for local variables (those declared within a block).
-			These use what is known as automatic storage.
-			The storage for local variables is only available during the block in which they are declared;
-			after that, that same storage may be used for a local variable of some other function,
-			or used otherwise.
+			변수는 선언된 위치에 따라
+			메모리가 확보되고 유지되는 방식이 다르다.
 
-			But there is another substantial difference between variables with static storage
-			and variables with automatic storage:
-			- Variables with static storage (such as global variables)
-				that are not explicitly initialized are automatically initialized to zeroes.
-			- Variables with automatic storage (such as local variables)
-				that are not explicitly initialized are left uninitialized, and thus have an undetermined value.
+			대표적으로 여기서는 다음 두 가지를 비교한다.
 
-			For example:
+				1) 정적 저장 기간(static storage)
+				2) 자동 저장 기간(automatic storage)
+
+			전역 변수나 namespace 범위 변수는
+			프로그램 전체 실행 동안 살아 있는 정적 저장 기간을 가진다.
+
+			반면 함수나 블록 안의 지역 변수는
+			그 블록이 실행되는 동안만 존재하는 자동 저장 기간을 가진다.
+
+
+			=======================================================================================
+			1. 정적 저장 기간 (static storage)
+			=======================================================================================
+
+			예:
+				int foo;   // 전역 변수
+
+			이런 변수는 프로그램 시작 시점부터 끝날 때까지 존재한다.
+
+			특징:
+				- 프로그램 전체 수명 동안 유지
+				- 명시적으로 초기화하지 않으면 0으로 자동 초기화됨
+
+
+			=======================================================================================
+			2. 자동 저장 기간 (automatic storage)
+			=======================================================================================
+
+			예:
+				void func()
+				{
+					int x;
+				}
+
+			이런 지역 변수는
+			블록에 들어올 때 생성되고,
+			블록을 벗어나면 사라진다.
+
+			특징:
+				- 블록 실행 중에만 존재
+				- 명시적으로 초기화하지 않으면 값이 불확정(indeterminate)일 수 있음
+
+
+			=======================================================================================
+			3. 초기화 차이
+			=======================================================================================
+
+			매우 중요한 차이:
+
+				정적 저장 변수
+					초기화 안 하면 0으로 자동 초기화
+
+				자동 저장 변수
+					초기화 안 하면 쓰레기 값일 수 있음
+
+			즉:
+				int globalVar;   // 0 보장
+				int localVar;    // 보장 안 됨
+
+			이 차이는 초보자가 매우 자주 헷갈리는 부분이다.
+
+
+			=======================================================================================
+			4. 핵심 요약
+			=======================================================================================
+
+				- 전역/namespace 변수는 정적 저장 기간
+				- 지역 변수는 자동 저장 기간
+				- 정적 저장 변수는 기본 0 초기화
+				- 자동 저장 변수는 초기화하지 않으면 값이 불확정일 수 있다
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] 명시적 초기화된 지역 변수
+		//=========================================================================================
 		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] 명시적 초기화된 지역 변수" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
 			int x(0);
 			{
 				int y(1000);
@@ -384,33 +765,61 @@ namespace NameVisibility
 				std::cout << y << '\n';
 			}
 
-			system("pause");
+			std::cout << std::endl;
 
 			/*
-			output:
-				0
-				1000
+				예상 출력:
+					0
+					1000
 			*/
 		}
-		/*
-			The actual output may vary, but only the value of x is guaranteed to be zero.
-			y can actually contain just about any value (including zero).
-		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 2] 정적 저장 변수의 기본 초기화 설명
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] 정적 저장 변수의 기본 초기화 설명" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			std::cout << "전역 변수 foo 는 정적 저장 기간을 가지며, 명시 초기화가 없으면 0으로 초기화된다." << std::endl;
+			std::cout << "현재 foo = " << foo << std::endl;
+			std::cout << std::endl;
+		}
+
+
+		//=========================================================================================
+		// [테스트 예제 3] 초기화되지 않은 지역 변수 주의 설명
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 3] 초기화되지 않은 지역 변수 주의" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			std::cout << "지역 변수는 초기화하지 않으면 값이 불확정일 수 있다." << std::endl;
+			std::cout << "따라서 지역 변수는 사용 전에 명시적으로 초기화하는 습관이 중요하다." << std::endl;
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
+
+	//---------------------------------------------------------------------------------------------
 
 	void Test()
 	{
-		//scopes();
-
-		//namespaces_keyword();
-
-		//using_keyword();
+		//storage_classes();
+		
+		//the_std_namespace();
 
 		//namespace_aliasing();
 
-		//the_std_namespace();
+		//using_keyword();
 
-		//storage_classes();
+		//namespaces_keyword();
+
+		//scopes();
 	}
 
 }// end of NameVisibility

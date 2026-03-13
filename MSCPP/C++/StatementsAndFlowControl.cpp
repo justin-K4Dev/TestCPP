@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 
 
@@ -8,313 +8,515 @@ namespace StatementsAndFlowControl
 	void statements_n_flow_control()
 	{
 		/*
-			Statements and flow control
+			📚 문장과 흐름 제어 (Statements and flow control)
 
-			A simple C++ statement is each of the individual instructions of a program,
-			like the variable declarations and expressions seen in previous sections.
-			They always end with a semicolon (;),
-			and are executed in the same order in which they appear in a program.
+			C++ 프로그램은 여러 개의 문장(statement)으로 구성된다.
 
-			But programs are not limited to a linear sequence of statements.
-			During its process, a program may repeat segments of code, or take decisions and bifurcate.
-			For that purpose, C++ provides flow control statements that serve to specify what has to be done by our program,
-			when, and under which circumstances.
+			예:
+				int x = 10;
+				x = x + 1;
+				std::cout << x;
 
-			Many of the flow control statements explained in this section require a generic (sub)statement as part of its syntax.
-			This statement may either be a simple C++ statement, -such as a single instruction, terminated with a semicolon (;) - or a compound statement.
-			A compound statement is a group of statements (each of them terminated by its own semicolon),
-			but all grouped together in a block, enclosed in curly braces: {}:
+			이 각각이 하나의 문장이다.
 
-				{ statement1; statement2; statement3; }
+			단순 문장(simple statement)은 보통 세미콜론(;)으로 끝난다.
+			그리고 기본적으로 프로그램은
+			위에서 아래로, 앞에서 뒤로
+			문장을 순서대로 실행한다.
 
-			The entire block is considered a single statement (composed itself of multiple substatements).
-			Whenever a generic statement is part of the syntax of a flow control statement,
-			this can either be a simple statement or a compound statement.
+			즉, 특별한 제어가 없다면
+			프로그램은 선형(linear)으로 흘러간다.
+
+
+			=======================================================================================
+			1. 그런데 프로그램은 항상 직선처럼만 흐르지 않는다
+			=======================================================================================
+
+			실제 프로그램은 다음이 필요하다.
+
+				- 조건에 따라 다른 코드를 실행
+				- 같은 코드를 여러 번 반복
+				- 중간에 반복을 멈춤
+				- 특정 위치로 흐름을 바꿈
+
+			이런 동작을 위해 C++은
+			흐름 제어문(flow control statements)을 제공한다.
+
+
+			=======================================================================================
+			2. 대표적인 흐름 제어문
+			=======================================================================================
+
+				선택문(selection)
+					if, else, switch
+
+				반복문(iteration)
+					while, do-while, for
+
+				점프문(jump)
+					break, continue, goto, return
+
+			즉, 흐름 제어문은
+			"언제 무엇을 실행할 것인가"
+			를 결정하는 문법이다.
+
+
+			=======================================================================================
+			3. 단일 문장과 복합 문장
+			=======================================================================================
+
+			흐름 제어문 문법에서 statement 자리에 들어가는 것은
+			단일 문장일 수도 있고,
+			복합 문장(compound statement)일 수도 있다.
+
+			복합 문장은 중괄호로 묶인 문장 블록이다.
+
+			예:
+				{
+					statement1;
+					statement2;
+					statement3;
+				}
+
+			이 블록 전체가 하나의 문장처럼 취급된다.
+
+			그래서 if, while, for 등의 본문에
+			여러 문장을 넣고 싶다면
+			중괄호를 사용해야 한다.
+
+
+			=======================================================================================
+			4. 핵심 요약
+			=======================================================================================
+
+				- C++ 프로그램은 문장들의 집합이다.
+				- 기본 실행 흐름은 위에서 아래로이다.
+				- 흐름 제어문은 조건/반복/점프를 가능하게 한다.
+				- 여러 문장을 하나처럼 다루려면 복합 문장 { } 를 쓴다.
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] 단순 문장과 복합 문장 설명
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] 단순 문장과 복합 문장 설명" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			int x = 1; // 단순 문장
+			x = x + 1; // 단순 문장
+
+			{
+				int y = 10;
+				int z = 20;
+				std::cout << "복합 문장 내부: y=" << y << ", z=" << z << std::endl;
+			}
+
+			std::cout << "x=" << x << std::endl;
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
 
+	//------------------------------------------------------------------------------------------------
 
 	void selection_statements()
 	{
 		/*
-			Selection statements: if and else
+			📚 선택문: if 와 else
 
-			The if keyword is used to execute a statement or block, if, and only if, a condition is fulfilled.
-			Its syntax is:
+			if 문은 조건이 참일 때만
+			특정 문장 또는 블록을 실행하는 선택문이다.
 
-				if (condition) statement 
+			기본 형태:
 
-			Here, condition is the expression that is being evaluated.
-			If this condition is true, statement is executed.
-			If it is false, statement is not executed (it is simply ignored),
-			and the program continues right after the entire selection statement.
-			For example, the following code fragment prints the message (x is 100),
-			only if the value stored in the x variable is indeed 100:
+				if (condition)
+					statement;
 
+			여기서 condition 이 true 이면 statement 실행,
+			false 이면 무시하고 다음으로 넘어간다.
+
+
+			=======================================================================================
+			1. if 문
+			=======================================================================================
+
+			예:
 				if (x == 100)
-					cout << "x is 100";
+					std::cout << "x is 100";
 
-			If x is not exactly 100, this statement is ignored, and nothing is printed.
+			이 경우 x가 100일 때만 출력한다.
 
-			If you want to include more than a single statement to be executed when the condition is fulfilled,
-			these statements shall be enclosed in braces ({}), forming a block:
+			조건이 거짓이면 아무 일도 하지 않는다.
 
+
+			=======================================================================================
+			2. 여러 문장을 실행하려면 { } 필요
+			=======================================================================================
+
+			if 본문에 여러 문장을 넣고 싶다면
+			중괄호로 묶어야 한다.
+
+			예:
 				if (x == 100)
 				{
-					cout << "x is ";
-					cout << x;
+					std::cout << "x is ";
+					std::cout << x;
 				}
 
-			As usual, indentation and line breaks in the code have no effect, so the above code is equivalent to:
+			중괄호가 없으면 첫 문장만 if에 포함된다.
 
-				if (x == 100) { cout << "x is "; cout << x; }
 
-			Selection statements with if can also specify what happens when the condition is not fulfilled,
-			by using the else keyword to introduce an alternative statement.
-			Its syntax is:
+			=======================================================================================
+			3. else
+			=======================================================================================
 
-				if (condition) statement1 else statement2
+			조건이 거짓일 때 실행할 대체 경로를 만들려면 else를 쓴다.
 
-			where statement1 is executed in case condition is true, and in case it is not, statement2 is executed.
-			For example:
-
+			예:
 				if (x == 100)
-					cout << "x is 100";
+					std::cout << "x is 100";
 				else
-					cout << "x is not 100";
+					std::cout << "x is not 100";
 
-			This prints x is 100, if indeed x has a value of 100,
-			but if it does not, and only if it does not, it prints x is not 100 instead.
-			Several if + else structures can be concatenated with the intention of checking a range of values.
-			For example:
 
+			=======================================================================================
+			4. else if
+			=======================================================================================
+
+			여러 조건을 순차적으로 검사하려면 else if를 이어 붙인다.
+
+			예:
 				if (x > 0)
-					cout << "x is positive";
+					...
 				else if (x < 0)
-					cout << "x is negative";
+					...
 				else
-					cout << "x is 0";
+					...
 
-			This prints whether x is positive, negative, or zero by concatenating two if-else structures.
-			Again, it would have also been possible to execute more than a single statement per case by grouping
-			them into blocks enclosed in braces: {}.
+			이렇게 하면
+				양수 / 음수 / 0
+			처럼 여러 경우를 나눌 수 있다.
+
+
+			=======================================================================================
+			5. 핵심 요약
+			=======================================================================================
+
+				- if 는 조건이 참일 때만 실행
+				- else 는 조건이 거짓일 때 실행
+				- else if 는 여러 조건 분기
+				- 여러 문장은 { } 로 묶는 것이 안전하다
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] 기본 if
+		//=========================================================================================
 		{
-			system("pause");
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] 기본 if" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			int x = 100;
+
+			if (x == 100)
+				std::cout << "x is 100" << std::endl;
+
+			std::cout << std::endl;
 		}
+
+
+		//=========================================================================================
+		// [테스트 예제 2] if-else
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] if-else" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			int x = 50;
+
+			if (x == 100)
+				std::cout << "x is 100" << std::endl;
+			else
+				std::cout << "x is not 100" << std::endl;
+
+			std::cout << std::endl;
+		}
+
+
+		//=========================================================================================
+		// [테스트 예제 3] else if 체인
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 3] else if 체인" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			int x = -10;
+
+			if (x > 0)
+				std::cout << "x is positive" << std::endl;
+			else if (x < 0)
+				std::cout << "x is negative" << std::endl;
+			else
+				std::cout << "x is 0" << std::endl;
+
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	void iteration_statements()
 	{
 		/*
-			Iteration statements (loops)
+			📚 반복문 (Iteration statements)
 
-			Loops repeat a statement a certain number of times, or while a condition is fulfilled.
-			They are introduced by the keywords while, do, and for.
+			반복문은 어떤 문장이나 블록을
+			여러 번 반복 실행하는 제어문이다.
+
+			C++의 대표 반복문은 다음 3가지이다.
+
+				- while
+				- do-while
+				- for
+
+			각 반복문은 비슷한 목적을 가지지만
+			조건 검사 시점과 사용 목적이 조금씩 다르다.
+
+
+			=======================================================================================
+			1. while 문
+			=======================================================================================
+
+			형태:
+				while (condition)
+					statement;
+
+			의미:
+				- 먼저 조건 검사
+				- 참이면 실행
+				- 다시 조건 검사
+				- 거짓이면 종료
+
+			즉, 조건이 처음부터 거짓이면 한 번도 실행되지 않을 수 있다.
+
+
+			=======================================================================================
+			2. do-while 문
+			=======================================================================================
+
+			형태:
+				do
+					statement;
+				while (condition);
+
+			의미:
+				- 먼저 본문 실행
+				- 그 다음 조건 검사
+				- 참이면 반복
+
+			즉, 조건과 관계없이 최소 1번은 실행된다.
+
+
+			=======================================================================================
+			3. for 문
+			=======================================================================================
+
+			형태:
+				for (initialization; condition; increase)
+					statement;
+
+			의미:
+				1) 초기화
+				2) 조건 검사
+				3) 본문 실행
+				4) 증가식 실행
+				5) 다시 조건 검사
+
+			카운터 기반 반복에 특히 적합하다.
+
+
+			=======================================================================================
+			4. 핵심 요약
+			=======================================================================================
+
+				- while     : 조건 먼저 검사
+				- do-while  : 본문 먼저 실행, 최소 1회 실행
+				- for       : 초기화/조건/증가를 한 줄에 표현
 		*/
-			
-		/*
-			The while loop
 
-			The simplest kind of loop is the while-loop. Its syntax is:
 
-				while (expression) statement
-
-			The while-loop simply repeats statement while expression is true.
-			If, after any execution of statement, expression is no longer true, the loop ends,
-			and the program continues right after the loop. For example, let's have a look at a countdown
-			using a while-loop:
-		*/
+		//=========================================================================================
+		// [테스트 예제 1] while 카운트다운
+		//=========================================================================================
 		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] while 카운트다운" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
 			int n = 10;
 
-			while (n>0) {
+			while (n > 0)
+			{
 				std::cout << n << ", ";
 				--n;
 			}
 
-			std::cout << "liftoff!\n";
-
-			system("pause");
-
-			/*
-			output:
-				10, 9, 8, 7, 6, 5, 4, 3, 2, 1, liftoff!
-			*/
+			std::cout << "liftoff!" << std::endl;
+			std::cout << std::endl;
 		}
-		/*
-			The first statement in main sets n to a value of 10. This is the first number in the countdown.
-			Then the while-loop begins: if this value fulfills the condition n>0 (that n is greater than zero),
-			then the block that follows the condition is executed,
-			and repeated for as long as the condition (n>0) remains being true.
 
-			The whole process of the previous program can be interpreted according to the following script (beginning in main):
 
-				1. n is assigned a value
-				2. The while condition is checked (n>0). At this point there are two possibilities:
-					* condition is true: the statement is executed (to step 3)
-					* condition is false: ignore statement and continue after it (to step 5)
-				3. Execute statement:
-					cout << n << ", ";
-					--n;
-					(prints the value of n and decreases n by 1)
-				4. End of block. Return automatically to step 2.
-				5. Continue the program right after the block:
-					print liftoff! and end the program.
-
-			A thing to consider with while-loops is that the loop should end at some point,
-			and thus the statement shall alter values checked in the condition in some way,
-			so as to force it to become false at some point.
-				
-			Otherwise, the loop will continue looping forever.
-			In this case, the loop includes --n, that decreases the value of the variable
-			that is being evaluated in the condition (n) by one - this will eventually make the condition (n>0) false after a certain number of loop iterations.
-			To be more specific, after 10 iterations, n becomes 0, making the condition no longer true,
-			and ending the while-loop.
-
-			Note that the complexity of this loop is trivial for a computer,
-			and so the whole countdown is performed instantly, without any practical delay
-			between elements of the count (if interested, see sleep_for for a countdown example with delays).
-		*/
-
-		/*
-			The do-while loop
-
-			A very similar loop is the do-while loop, whose syntax is:
-
-				do statement while (condition);
-
-			It behaves like a while-loop, except that condition is evaluated after the execution of statement instead of before,
-			guaranteeing at least one execution of statement, even if condition is never fulfilled.
-			For example, the following example program echoes any text the user introduces until the user enters goodbye:
-		*/
+		//=========================================================================================
+		// [테스트 예제 2] do-while 최소 1회 실행
+		//=========================================================================================
 		{
-			std::string str;
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] do-while 최소 1회 실행" << std::endl;
+			std::cout << "==================================================" << std::endl;
 
-			do {
-				std::cout << "Enter text: ";
-				std::getline(std::cin, str);
-				std::cout << "You entered: " << str << '\n';
-			} while (str != "goodbye");
+			int n = 0;
 
-			system("pause");
+			do
+			{
+				std::cout << "이 문장은 조건이 거짓이어도 한 번은 실행된다. n=" << n << std::endl;
+			} while (n > 0);
 
-			/*
-			output:
-				Enter text: hello
-				You entered: hello
-				Enter text: who's there?
-				You entered: who's there?
-				Enter text: goodbye
-				You entered: goodbye
-			*/
+			std::cout << std::endl;
 		}
-		/*
-			The do-while loop is usually preferred over a while-loop when the statement needs to be executed at least once,
-			such as when the condition that is checked to end of the loop is determined within the loop statement itself.
-			In the previous example, the user input within the block is what will determine if the loop ends.
-			And thus, even if the user wants to end the loop as soon as possible by entering goodbye,
-			the block in the loop needs to be executed at least once to prompt for input, and the condition can,
-			in fact, only be determined after it is executed.
-		*/
 
-		/*
-			The for loop
 
-			The for loop is designed to iterate a number of times. Its syntax is:
-
-				for (initialization; condition; increase) statement;
-
-			Like the while-loop, this loop repeats statement while condition is true.
-			But, in addition, the for loop provides specific locations to contain an initialization
-			and an increase expression, executed before the loop begins the first time,
-			and after each iteration, respectively.
-			Therefore, it is especially useful to use counter variables as condition.
-
-			It works in the following way:
-
-				1. initialization is executed. Generally, this declares a counter variable,
-					and sets it to some initial value. This is executed a single time, at the beginning of the loop.
-				2. condition is checked. If it is true, the loop continues;
-					otherwise, the loop ends, and statement is skipped, going directly to step 5.
-				3. statement is executed. As usual, it can be either a single statement
-					or a block enclosed in curly braces { }.
-				4. increase is executed, and the loop gets back to step 2.
-				5. the loop ends: execution continues by the next statement after it.
-
-			Here is the countdown example using a for loop:
-		*/
+		//=========================================================================================
+		// [테스트 예제 3] for 카운트다운
+		//=========================================================================================
 		{
-			for (int n = 10; n > 0; n--) {
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 3] for 카운트다운" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			for (int n = 10; n > 0; --n)
+			{
 				std::cout << n << ", ";
 			}
-			std::cout << "liftoff!\n";
 
-			system("pause");
-
-			/*
-			output:
-				10, 9, 8, 7, 6, 5, 4, 3, 2, 1, liftoff!
-			*/
+			std::cout << "liftoff!" << std::endl;
+			std::cout << std::endl;
 		}
-		/*
-			The three fields in a for-loop are optional.
-			They can be left empty, but in all cases the semicolon signs between them are required.
-			For example, for (;n<10;) is a loop without initialization or increase (equivalent to a while-loop);
-			and for (;n<10;++n) is a loop with increase,
-			but no initialization (maybe because the variable was already initialized before the loop).
-				
-			A loop with no condition is equivalent to a loop with true as condition (i.e., an infinite loop).
 
-			Because each of the fields is executed in a particular time in the life cycle of a loop,
-			it may be useful to execute more than a single expression as any of initialization, condition, or statement.
-				
-			Unfortunately, these are not statements, but rather, simple expressions,
-			and thus cannot be replaced by a block.
-				
-			As expressions, they can, however, make use of the comma operator (,):
-			This operator is an expression separator, and can separate multiple expressions where only one is generally expected.
-				
-			For example, using it, it would be possible for a for loop to handle two counter variables,
-			initializing and increasing both:
 
-				for ( n=0, i=100 ; n!=i ; ++n, --i )
-				{
-					// whatever here...
-				}
+		//=========================================================================================
+		// [테스트 예제 4] for 에서 여러 표현식
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 4] for 에서 여러 표현식" << std::endl;
+			std::cout << "==================================================" << std::endl;
 
-			This loop will execute 50 times if neither n or i are modified within the loop:
+			for (int n = 0, i = 10; n <= i; ++n, --i)
+			{
+				std::cout << "n=" << n << ", i=" << i << std::endl;
+			}
 
-				for ( intialization ; condition ; increase )
+			std::cout << std::endl;
+		}
 
-			n starts with a value of 0, and i with 100, the condition is n!=i (i.e., that n is not equal to i).
-			Because n is increased by one, and i decreased by one on each iteration,
-			the loop's condition will become false after the 50th iteration,
-			when both n and i are equal to 50.
-		*/
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	void jump_statements()
 	{
 		/*
-			Jump statements
+			📚 점프문 (Jump statements)
 
-			Jump statements allow altering the flow of a program by performing jumps to specific locations.
+			점프문은 프로그램의 현재 실행 흐름을
+			다른 위치로 이동시키는 문장이다.
+
+			대표적으로:
+				- break
+				- continue
+				- goto
+
+			가 있다.
+
+			이들은 반복문이나 switch 안에서
+			흐름을 빠르게 바꾸는 데 사용된다.
+
+
+			=======================================================================================
+			1. break
+			=======================================================================================
+
+			break 는 가장 가까운 반복문 또는 switch 문을 즉시 종료한다.
+
+			즉, 조건이 아직 남아 있어도
+			강제로 빠져나온다.
+
+
+			=======================================================================================
+			2. continue
+			=======================================================================================
+
+			continue 는 현재 반복의 남은 부분을 건너뛰고
+			다음 반복으로 넘어간다.
+
+			즉, 반복문 전체를 끝내는 것이 아니라
+			이번 회차만 스킵한다.
+
+
+			=======================================================================================
+			3. goto
+			=======================================================================================
+
+			goto 는 레이블(label)로 무조건 점프한다.
+
+			예:
+				goto mylabel;
+				...
+				mylabel:
+
+			문법적으로 가능하지만
+			현대 C++에서는 보통 피하는 편이다.
+
+			왜냐하면:
+				- 흐름 추적이 어려워지고
+				- 가독성이 나빠지고
+				- 유지보수가 힘들어지기 때문이다
+
+			따라서 특별한 이유가 없다면
+			break, continue, return, 함수 분리 등으로 대체하는 편이 좋다.
+
+
+			=======================================================================================
+			4. 핵심 요약
+			=======================================================================================
+
+				- break    : 반복문/switch 즉시 종료
+				- continue : 현재 반복만 건너뛰고 다음 반복
+				- goto     : 레이블로 무조건 점프, 일반적으로 지양
 		*/
 
-		/*
-			The break statement
 
-			break leaves a loop, even if the condition for its end is not fulfilled.
-			It can be used to end an infinite loop, or to force it to end before its natural end.
-			For example, let's stop the countdown before its natural end:
-		*/
+		//=========================================================================================
+		// [테스트 예제 1] break
+		//=========================================================================================
 		{
-			for (int n = 10; n > 0; n--)
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] break" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			for (int n = 10; n > 0; --n)
 			{
 				std::cout << n << ", ";
+
 				if (n == 3)
 				{
 					std::cout << "countdown aborted!";
@@ -322,264 +524,427 @@ namespace StatementsAndFlowControl
 				}
 			}
 
-			system("pause");
-			/*
-			output:
-				10, 9, 8, 7, 6, 5, 4, 3, countdown aborted!
-			*/
+			std::cout << std::endl << std::endl;
 		}
 
-		/*
-			The continue statement
 
-			The continue statement causes the program to skip the rest of the loop in the current iteration,
-			as if the end of the statement block had been reached,
-			causing it to jump to the start of the following iteration.
-			For example, let's skip number 5 in our countdown:
-		*/
+		//=========================================================================================
+		// [테스트 예제 2] continue
+		//=========================================================================================
 		{
-			for (int n = 10; n > 0; n--) {
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] continue" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			for (int n = 10; n > 0; --n)
+			{
 				if (n == 5)
 					continue;
+
 				std::cout << n << ", ";
 			}
-			std::cout << "liftoff!\n";
 
-			system("pause");
-			/*
-			output:
-				10, 9, 8, 7, 6, 4, 3, 2, 1, liftoff!
-			*/
+			std::cout << "liftoff!" << std::endl;
+			std::cout << std::endl;
 		}
 
-		/*
-			The goto statement
 
-			goto allows to make an absolute jump to another point in the program.
-			This unconditional jump ignores nesting levels, and does not cause any automatic stack unwinding.
-			Therefore, it is a feature to use with care, and preferably within the same block of statements,
-			especially in the presence of local variables.
-
-			The destination point is identified by a label, which is then used as an argument for the goto statement.
-			A label is made of a valid identifier followed by a colon (:).
-
-			goto is generally deemed a low-level feature,
-			with no particular use cases in modern higher-level programming paradigms generally used with C++.
-			But, just as an example, here is a version of our countdown loop using goto:
-		*/
+		//=========================================================================================
+		// [테스트 예제 3] goto
+		//=========================================================================================
 		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 3] goto" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
 			int n = 10;
 
 		mylabel:
 			std::cout << n << ", ";
-			n--;
+			--n;
 
 			if (n > 0)
 				goto mylabel;
 
-			std::cout << "liftoff!\n";
-
-			system("pause");
-
-			/*
-			output:
-				10, 9, 8, 7, 6, 5, 4, 3, 2, 1, liftoff!
-			*/
+			std::cout << "liftoff!" << std::endl;
+			std::cout << std::endl;
 		}
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	void another_selection_statement()
 	{
 		/*
-			Another selection statement: switch
+			📚 또 다른 선택문: switch
 
-			The syntax of the switch statement is a bit peculiar.
-			Its purpose is to check for a value among a number of possible constant expressions.
-			It is something similar to concatenating if-else statements,
-			but limited to constant expressions.
-			Its most typical syntax is:
+			switch 문은 하나의 표현식 값을
+			여러 개의 상수 값과 비교해서
+			분기하는 선택문이다.
+
+			형태:
 
 				switch (expression)
 				{
 					case constant1:
-						group-of-statements-1;
+						...
 						break;
-
 					case constant2:
-						group-of-statements-2;
+						...
 						break;
-					.
-					.
-					.
 					default:
-						default-group-of-statements
+						...
 				}
 
-			It works in the following way:
-			switch evaluates expression and checks if it is equivalent to constant1;
-			if it is, it executes group-of-statements-1 until it finds the break statement.
-				
-			When it finds this break statement,
-			the program jumps to the end of the entire switch statement (the closing brace).
+			즉, if-else if-else 와 비슷하지만
+			"상수 값 비교"에 특화된 문장이다.
 
-			If expression was not equal to constant1, it is then checked against constant2.
-			If it is equal to this, it executes group-of-statements-2 until a break is found,
-			when it jumps to the end of the switch.
 
-			Finally, if the value of expression did not match any of the previously specified constants (there may be any number of these),
-			the program executes the statements included after the default: label, if it exists (since it is optional).
+			=======================================================================================
+			1. 동작 방식
+			=======================================================================================
 
-			Both of the following code fragments have the same behavior,
-			demonstrating the if-else equivalent of a switch statement:
+			switch 는 expression 값을 계산한 뒤,
+			각 case 라벨의 상수와 비교한다.
 
-				switch example								if-else equivalent
-				switch (x) {								if (x == 1) {
-					case 1:										cout << "x is 1";
-						cout << "x is 1";					}
-						break;								else if (x == 2) {
-					case 2:										cout << "x is 2";
-						cout << "x is 2";					}
-						break;								else {
-					default:									cout << "value of x unknown";
-						cout << "value of x unknown";		}
-				}
-					
-			The switch statement has a somewhat peculiar syntax inherited from the early times of the first C compilers,
-			because it uses labels instead of blocks.
-			In the most typical use (shown above),
-			this means that break statements are needed after each group of statements for a particular label.
-			If break is not included, all statements following the case (including those under any other labels) are also executed,
-			until the end of the switch block or a jump statement (such as break) is reached.
+			일치하는 case를 찾으면
+			그 지점부터 실행을 시작한다.
 
-			If the example above lacked the break statement after the first group for case one,
-			the program would not jump automatically to the end of the switch block after printing x is 1,
-			and would instead continue executing the statements in case two (thus printing also x is 2).
-			It would then continue doing so until a break statement is encountered,
-			or the end of the switch block. This makes unnecessary to enclose the statements for each case in braces {},
-			and can also be useful to execute the same group of statements for different possible values.
-			For example:
+			그리고 break를 만나면 switch를 빠져나간다.
+
+
+			=======================================================================================
+			2. break 가 왜 중요한가?
+			=======================================================================================
+
+			switch 는 case가 블록이 아니라 label 개념이기 때문에,
+			break 가 없으면 다음 case로 계속 흘러간다.
+			이를 fallthrough 라고 한다.
+
+			즉:
+				case 1:
+					...
+				case 2:
+					...
+
+			이렇게 break 없이 두면
+			case 1에 들어왔어도 case 2 내용까지 실행될 수 있다.
+
+			이 동작은 때로 의도적으로 사용되기도 한다.
+
+
+			=======================================================================================
+			3. 여러 case를 하나로 묶기
+			=======================================================================================
+
+			break를 일부러 생략해서
+			여러 case를 한 동작으로 묶을 수 있다.
+
+			예:
+				case 1:
+				case 2:
+				case 3:
+					...
+
+			그러면 x가 1, 2, 3 중 무엇이든 같은 코드가 실행된다.
+
+
+			=======================================================================================
+			4. switch의 한계
+			=======================================================================================
+
+			switch 의 case 라벨은
+			상수식(constant expression)이어야 한다.
+
+			즉:
+				- 변수
+				- 범위 비교
+				- 조건식
+
+			같은 것은 직접 case 라벨로 쓸 수 없다.
+
+			이런 경우에는 if / else if 가 더 مناسب하다.
+
+
+			=======================================================================================
+			5. 핵심 요약
+			=======================================================================================
+
+				- switch 는 한 값을 여러 상수와 비교하는 선택문
+				- case 라벨은 상수식이어야 함
+				- break 없으면 다음 case로 이어서 실행됨
+				- 여러 case를 한 처리로 묶을 수 있음
 		*/
-		{
-			int x(1);
 
-			switch (x) {
+
+		//=========================================================================================
+		// [테스트 예제 1] 여러 case를 하나로 묶기
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] 여러 case를 하나로 묶기" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			int x = 1;
+
+			switch (x)
+			{
 			case 1:
 			case 2:
 			case 3:
 				std::cout << "x is 1, 2 or 3\n";
 				break;
+
 			default:
 				std::cout << "x is not 1, 2 nor 3\n";
+				break;
 			}
 
-			system("pause");
-
-			/*
-			output:
-				x is 1, 2 or 3
-			*/
+			std::cout << std::endl;
 		}
-		/*
-			Notice that switch is limited to compare its evaluated expression against labels that are constant expressions.
-			It is not possible to use variables as labels or ranges,
-			because they are not valid C++ constant expressions.
 
-			To check for ranges or values that are not constant,
-			it is better to use concatenations of if and else if statements.
-		*/
+
+		//=========================================================================================
+		// [테스트 예제 2] break 없을 때 fallthrough 설명
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] break 없을 때 fallthrough" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			int x = 1;
+
+			switch (x)
+			{
+			case 1:
+				std::cout << "case 1\n";
+				// break 없음
+
+			case 2:
+				std::cout << "case 2\n";
+				break;
+
+			default:
+				std::cout << "default\n";
+				break;
+			}
+
+			std::cout << "break가 없으면 다음 case까지 계속 실행될 수 있다." << std::endl;
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
 
 
 	void advanced_flow_control()
 	{
 		/*
-			Advanced flow control
+			📚 고급(?) 흐름 제어 예제에 대한 설명
 
-			switch + for + if ���� ȥ�� ��� ���� !!!
+			이 함수는 switch, for, if, goto, label, 중첩 블록을
+			매우 복잡하게 섞어 사용한 예제이다.
+
+			문법적으로는 가능한 코드 조합을 보여줄 수 있지만,
+			실무적으로는 거의 반드시 피해야 하는 스타일이다.
+
+			왜냐하면 이런 코드는:
+
+				- 읽기 어렵다
+				- 흐름 추적이 어렵다
+				- 디버깅이 힘들다
+				- 유지보수가 어렵다
+				- 버그를 만들기 쉽다
+
+			즉, "할 수 있다"와 "해도 좋다"는 전혀 다른 문제이다.
+
+
+			=======================================================================================
+			1. 이 코드가 보여주는 것
+			=======================================================================================
+
+			이 코드는 다음을 섞을 수 있다는 점을 보여준다.
+
+				- switch 안의 case label
+				- for/if 내부와 goto의 결합
+				- label 로의 점프
+				- 복합적인 제어 흐름 중첩
+
+			하지만 실제로는 이런 식으로 작성하지 말아야 한다.
+
+
+			=======================================================================================
+			2. 왜 나쁜가?
+			=======================================================================================
+
+			좋은 제어 흐름 코드는 다음 특성이 있어야 한다.
+
+				- 위에서 아래로 자연스럽게 읽힌다
+				- 블록 구조가 명확하다
+				- 각 조건 분기가 이해 가능하다
+				- 점프가 적다
+				- 지역적으로 reasoning 가능하다
+
+			현재 예제는 이런 원칙을 거의 모두 깨뜨린다.
+
+			즉, "흐름이 한눈에 보이지 않는 코드"는
+			팀 개발에서 매우 위험하다.
+
+
+			=======================================================================================
+			3. 실무에서의 대안
+			=======================================================================================
+
+			이런 코드는 보통 다음 방식으로 개선한다.
+
+				- 큰 로직을 함수로 분리
+				- 상태 머신(state machine) 구조로 단순화
+				- switch / if 중 하나만 중심적으로 사용
+				- goto 제거
+				- 조기 return 사용
+				- 의미 있는 이름의 helper 함수 도입
+
+			즉, 흐름을 평평하고 읽기 쉽게 만드는 것이 중요하다.
+
+
+			=======================================================================================
+			4. 핵심 요약
+			=======================================================================================
+
+				- 복잡한 제어 흐름 혼합은 문법적으로 가능할 수 있다.
+				- 하지만 실무적으로는 거의 항상 피해야 한다.
+				- 좋은 코드는 읽기 쉽고 흐름이 명확해야 한다.
 		*/
-		std::cout << "logic 1" << std::endl;
 
-		int input = 1;
-		int change = 0;
 
-		switch (input) {
-			case 0: {
-				if (change) {
+		//=========================================================================================
+		// [테스트 예제 1] 원래 예제 실행
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] 원래 복잡한 흐름 제어 예제 실행" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			std::cout << "logic 1" << std::endl;
+
+			int input = 1;
+			int change = 0;
+
+			switch (input)
+			{
+			case 0:
+			{
+				if (change)
+				{
 					goto terminate_logic;
 
-					terminate_logic:
-						change = -1;
-						goto bail_out_of_logic;
+				terminate_logic:
+					change = -1;
+					goto bail_out_of_logic;
 
-					bail_out_of_logic:
-						break;
+				bail_out_of_logic:
+					break;
 				}
-				else {}
+				else
+				{
+				}
 			}
 
-			case 1: {
+			case 1:
+			{
 				std::cout << "logic 2" << std::endl;
 
-				for (change = 1;;) {
-			
-					if (change == 0) {
-						case 2: { // if ���� ���Ͽ� ���Խ� case 2: �ڵ�� ���õ� !!!, switch ���� ���� !!!
-							break;
-						}
+				for (change = 1;;)
+				{
+					if (change == 0)
+					{
+			case 2:
+			{
+				break;
+			}
 					}
-					else {
-						switch (change ? 0 : 1) {
-							for (;;) {
-								case -1: {
-									if (change)
-										goto terminate_logic;
-									else {
-										for (;;) {
-											case 1: {
-												if (change)
-													goto bail_out_of_logic;
-												else {
-													case 0: { // if ���� ���Ͽ� ���Խ� case 0: �ڵ�� ���õ� !!!, switch ���� ���� !!!
-														std::cout << "logic 3" << std::endl;
-													}
-												}
-											}
-										}
-									}
+					else
+					{
+						switch (change ? 0 : 1)
+						{
+							for (;;)
+							{
+						case -1:
+						{
+							if (change)
+								goto terminate_logic;
+							else
+							{
+								for (;;)
+								{
+						case 1:
+						{
+							if (change)
+								goto bail_out_of_logic;
+							else
+							{
+						case 0:
+						{
+							std::cout << "logic 3" << std::endl;
+						}
+							}
+						}
 								}
+							}
+						}
 							}
 						}
 					}
 				}
+
 				std::cout << "logic 4" << std::endl;
 			}
+			}
+
+			std::cout << std::endl;
+
+			/*
+				가능한 출력:
+					logic 1
+					logic 2
+					logic 3
+			*/
+		}
+
+
+		//=========================================================================================
+		// [테스트 예제 2] 왜 피해야 하는지 설명
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] 왜 이런 코드는 피해야 하는가" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			std::cout << "이 코드는 switch, goto, for, if, label이 과도하게 섞여 있어 흐름 추적이 매우 어렵다." << std::endl;
+			std::cout << "실무에서는 함수 분리, 상태 분리, 조기 return 등으로 훨씬 단순하게 작성해야 한다." << std::endl;
+			std::cout << std::endl;
 		}
 
 		system("pause");
-
-		/*
-		output:
-			logic 1
-			logic 2
-			logic 3
-		*/
 	}
 
+	//------------------------------------------------------------------------------------------------
 	
 	void Test()
 	{
-		//statements_n_flow_control();
-
-		//selection_statements();
-
-		//iteration_statements();
+		//advanced_flow_control();
+		
+		//another_selection_statement();
 
 		//jump_statements();
 
-		//another_selection_statement();
+		//iteration_statements();
 
-		//advanced_flow_control();
+		//selection_statements();
+
+		//statements_n_flow_control();
 	}
 
 }// end of StatementsAndFlowControl

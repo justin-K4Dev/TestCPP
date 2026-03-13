@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 
 #include <csetjmp>
@@ -7,15 +7,170 @@
 namespace NonLocalGoTo
 {
 	/*
-		Non-local GoTo
+		📚 비지역 점프 (Non-local GoTo)
 
-		longjmp() restores the environment saved by the last call of setjmp().
-		It then returns in such a way that execution continues as if
-		the call of setjmp() had just returned the value val to the corresponding call to setjmp(),
-		which must not itself have returned in the interim.
-		longjmp() cannot return the value 0.
-		If longjmp() is invoked with it's second argument 0, it will return a 1.
-		All accessible data have values as of the time longjmp() was called.
+		setjmp() / longjmp() 는 일반적인 함수 호출/반환 흐름을 벗어나
+		프로그램의 실행 위치를 한 번에 다른 지점으로 이동시키는 기능이다.
+
+		보통 함수는:
+			호출 -> 실행 -> return -> 호출한 곳으로 복귀
+		형태로 동작한다.
+
+		하지만 longjmp()를 사용하면
+		중간에 여러 함수 호출 단계를 건너뛰고
+		과거에 setjmp()로 저장해둔 위치로 즉시 되돌아갈 수 있다.
+
+		이런 점프를 비지역 점프(non-local jump)라고 한다.
+
+
+		=======================================================================================
+		1. setjmp()
+		=======================================================================================
+
+		setjmp(jmp_buf)는 현재 실행 위치와 실행 환경을 저장한다.
+
+		이 함수는 처음 호출될 때는 0을 반환한다.
+
+		하지만 나중에 longjmp()에 의해 다시 돌아오면
+		longjmp()가 전달한 값을 반환한 것처럼 동작한다.
+
+		즉:
+
+			int result = setjmp(buf);
+
+		처음에는:
+			result == 0
+
+		longjmp(buf, 1) 이후에는:
+			result == 1
+
+		longjmp(buf, 2) 이후에는:
+			result == 2
+
+
+		=======================================================================================
+		2. longjmp()
+		=======================================================================================
+
+		longjmp(buf, val)는
+		이전에 setjmp(buf)가 저장한 위치로 실행을 즉시 되돌린다.
+
+		그리고 setjmp()가 방금 val을 반환한 것처럼 실행이 이어진다.
+
+		단, longjmp()는 0을 반환값으로 만들 수 없다.
+
+		즉:
+			longjmp(buf, 0);
+
+		처럼 호출해도 실제로는 setjmp()가 1을 반환한 것처럼 동작한다.
+
+
+		=======================================================================================
+		3. 왜 "비지역 점프"라고 부르는가?
+		=======================================================================================
+
+		일반적인 goto는 같은 함수 내부에서만 점프한다.
+		하지만 longjmp()는 함수 경계를 넘어 점프할 수 있다.
+
+		예를 들어:
+
+			main()
+			  -> funcA()
+				 -> funcB()
+					-> funcC()
+					   -> longjmp(...)
+
+		이 경우 funcC 에서 longjmp()를 호출하면
+		funcB, funcA 의 return 과정을 거치지 않고
+		setjmp()가 있던 위치로 한 번에 돌아갈 수 있다.
+
+		즉, 함수 지역(local) 범위를 넘어 점프하므로
+		비지역 점프라고 한다.
+
+
+		=======================================================================================
+		4. 이 코드의 동작 원리
+		=======================================================================================
+
+		이 예제는 다음 흐름으로 동작한다.
+
+			1) setjmp(jumper)로 점프 위치 저장
+			2) jump_func() 호출
+			3) jump_func()는 call_count 증가
+			4) call_count가 10보다 작으면 longjmp(jumper, 1)
+			5) setjmp()는 1을 반환한 것처럼 다시 실행됨
+			6) 다시 jump_func() 호출
+			7) call_count가 10이 되면 longjmp(jumper, 2)
+			8) setjmp()는 2를 반환한 것처럼 다시 실행됨
+			9) flag = true
+			10) 더 이상 jump_func()를 호출하지 않고 종료
+
+		즉, jump_func()가 여러 번 호출되면서
+		setjmp() 지점으로 계속 되돌아오다가
+		마지막에 result == 2가 되면 반복을 멈춘다.
+
+
+		=======================================================================================
+		5. 왜 출력이 count=10, flag=1 인가?
+		=======================================================================================
+
+		call_count는 jump_func()가 호출될 때마다 1씩 증가한다.
+
+		호출 순서는 대략 다음과 같다.
+
+			1회 호출 -> longjmp(..., 1)
+			2회 호출 -> longjmp(..., 1)
+			3회 호출 -> longjmp(..., 1)
+			...
+			9회 호출 -> longjmp(..., 1)
+			10회 호출 -> longjmp(..., 2)
+
+		10번째 호출에서 result == 2가 되므로
+		flag = true 가 되고,
+		그 뒤에는 jump_func()를 다시 호출하지 않는다.
+
+		따라서 최종 출력은:
+
+			count = 10
+			flag  = 1(true)
+
+
+		=======================================================================================
+		6. 주의사항
+		=======================================================================================
+
+		setjmp()/longjmp()는 강력하지만 위험할 수 있다.
+
+		특히 다음 점들을 주의해야 한다.
+
+			1) 중간 함수들의 정상 return 경로를 건너뛴다.
+			   즉, 정리 코드가 실행되지 않을 수 있다.
+
+			2) C++에서는 객체 소멸자 호출 문제를 일으킬 수 있다.
+			   즉, RAII와 잘 맞지 않는다.
+
+			3) 지역 변수 값이 예상과 다르게 보일 수 있다.
+			   특히 setjmp() 이후 변경된 자동 변수는 volatile 여부에 따라 주의가 필요하다.
+
+			4) 유지보수가 어렵다.
+			   흐름이 갑자기 바뀌므로 디버깅이 힘들어진다.
+
+		그래서 현대 C++에서는 보통
+				- 예외 처리(exception)
+				- 반환값 기반 오류 처리
+				- 상태 머신
+		같은 방법이 더 권장된다.
+
+
+		=======================================================================================
+		7. 핵심 요약
+		=======================================================================================
+
+			- setjmp()는 돌아올 위치를 저장한다.
+			- longjmp()는 그 위치로 즉시 점프한다.
+			- longjmp() 후 setjmp()는 지정한 값을 반환한 것처럼 동작한다.
+			- 함수 호출 스택을 중간에 건너뛸 수 있다.
+			- C에서는 쓰이기도 하지만, C++에서는 매우 신중히 써야 한다.
 	*/
 
 	int call_count = 0;
@@ -25,36 +180,118 @@ namespace NonLocalGoTo
 	{
 		call_count++;
 
-		if (call_count < 10) {
-			std::longjmp(jumper, 1); // jump setjmp() function !!!
+		if (call_count < 10)
+		{
+			std::longjmp(jumper, 1); // setjmp() 위치로 점프, 반환값 1처럼 동작
 		}
-		else {
-			std::longjmp(jumper, 2); // jump setjmp() function !!!
+		else
+		{
+			std::longjmp(jumper, 2); // setjmp() 위치로 점프, 반환값 2처럼 동작
 		}
 	}
 
 	void non_local_goto_use()
 	{
-		bool flag = false;
+		/*
+			📚 setjmp / longjmp 사용 예제
 
-		int result = setjmp(jumper); // set jump position
+			이 함수는 setjmp()와 longjmp()를 이용해
+			한 위치로 반복해서 되돌아오는 예제를 보여준다.
 
-		if (result == 2) {
-			flag = true;
+			동작 목표:
+				- jump_func()가 호출될 때마다 call_count 증가
+				- 10회 미만이면 longjmp(..., 1)
+				- 10회째에는 longjmp(..., 2)
+				- result == 2 일 때 반복 중단
+		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] setjmp / longjmp 기본 반복 흐름
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] setjmp / longjmp 기본 반복 흐름" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			call_count = 0;
+			bool flag = false;
+
+			int result = setjmp(jumper); // 점프 복귀 위치 저장
+
+			std::cout << "setjmp 반환값 : " << result
+				<< ", call_count : " << call_count
+				<< ", flag : " << flag << std::endl;
+
+			if (result == 2)
+			{
+				flag = true;
+			}
+
+			if (flag != true)
+			{
+				jump_func();
+			}
+
+			std::printf("최종 결과 -> count=%d, flag=%d\n", call_count, flag ? 1 : 0);
+			std::cout << std::endl;
+
+			/*
+				예상 흐름:
+					setjmp 반환값 : 0
+					setjmp 반환값 : 1
+					setjmp 반환값 : 1
+					...
+					setjmp 반환값 : 2
+					최종 결과 -> count=10, flag=1
+			*/
 		}
-		
-		if (flag != true) {
-			jump_func();
+
+
+		//=========================================================================================
+		// [테스트 예제 2] longjmp(..., 0) 는 실제로 1이 됨
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] longjmp(..., 0) 동작 확인" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			std::jmp_buf localBuf;
+			int result = setjmp(localBuf);
+
+			if (result == 0)
+			{
+				std::cout << "처음 setjmp 호출 -> result = 0" << std::endl;
+				std::longjmp(localBuf, 0); // 실제로는 1처럼 돌아온다
+			}
+			else
+			{
+				std::cout << "longjmp(localBuf, 0) 이후 result = " << result << std::endl;
+			}
+
+			std::cout << std::endl;
+
+			/*
+				예상 출력:
+					처음 setjmp 호출 -> result = 0
+					longjmp(localBuf, 0) 이후 result = 1
+			*/
 		}
 
-		printf("count=%d, flag=%d\n", call_count, flag);
+
+		//=========================================================================================
+		// [테스트 예제 3] 함수 경계를 넘는 점프 개념 확인
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 3] 함수 경계를 넘는 점프 개념 확인" << std::endl;
+			std::cout << "==================================================" << std::endl;
+			std::cout << "longjmp 는 일반 return 과 달리 여러 함수 단계를 건너뛸 수 있다." << std::endl;
+			std::cout << "즉, 호출 스택을 따라 정상 복귀하지 않고 setjmp 위치로 즉시 돌아간다." << std::endl;
+			std::cout << std::endl;
+		}
 
 		system("pause");
-
-		/*
-		output:
-			count=10, flag=1
-		*/
 	}
 
 	void Test()

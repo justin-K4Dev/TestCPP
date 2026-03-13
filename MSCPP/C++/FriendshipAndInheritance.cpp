@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 
 namespace FriendshipAndInheritance
@@ -25,165 +25,221 @@ namespace FriendshipAndInheritance
 	void friend_functions()
 	{
 		/*
-			Friend functions
+			📚 friend 함수 (Friend functions)
 
-			In principle, private and protected members of a class cannot be accessed from outside the same class in which they are declared.
-			However, this rule does not apply to "friends".
+			원칙적으로 클래스의 private / protected 멤버는
+			클래스 외부에서 직접 접근할 수 없다.
 
-			Friends are functions or classes declared with the friend keyword.
+			하지만 예외가 있는데, 바로 friend 이다.
 
-			A non-member function can access the private and protected members of a class if it is declared a friend of that class.
-			That is done by including a declaration of this external function within the class,
-			and preceding it with the keyword friend:
+			friend 로 선언된 함수는
+			그 클래스의 멤버 함수가 아니더라도
+			private / protected 멤버에 접근할 수 있다.
+
+			즉:
+			- friend 함수는 클래스 "밖에 있는 일반 함수"이다
+			- 하지만 특별히 접근 권한을 부여받는다
 		*/
+
 		{
 			Box foo;
 			Box bar(2, 3);
-				
-			foo = duplicate(bar);
-				
-			std::cout << foo.area() << '\n';
 
-			system("pause");
+			foo = duplicate(bar);
+
+			std::cout << foo.area() << std::endl;
+			std::cout << std::endl;
 
 			/*
-			output:
-				24
+				출력:
+					24
+
+				설명:
+				bar 는 width=2, height=3
+
+				duplicate(bar) 는
+				width=4, height=6 인 Box 를 만들어 반환한다.
+
+				따라서 area() = 4 * 6 = 24
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] friend 함수는 멤버 함수가 아니다" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			Box box(3, 4);
+			Box doubled = duplicate(box);
+
+			std::cout << "original area = " << box.area() << std::endl;
+			std::cout << "doubled  area = " << doubled.area() << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				duplicate 는 Box 클래스의 멤버 함수가 아니다.
+				즉 box.duplicate(...) 형태로 호출하는 함수가 아니다.
+
+				그냥 일반 함수이지만,
+				friend 선언 덕분에 Box의 private 멤버에 접근할 수 있다.
 			*/
 		}
 
 		/*
-			The duplicate function is a friend of class Rectangle.
-			Therefore, function duplicate is able to access the members width and height (which are private) of different objects of type Rectangle.
-			Notice though that neither in the declaration of duplicate nor in its later use in main,
-			function duplicate is considered a member of class Rectangle.
-			It isn't! It simply has access to its private and protected members without being a member.
+			실무 감각:
+			friend 함수는 강력하지만
+			캡슐화를 일부 깨는 수단이다.
 
-			Typical use cases of friend functions are operations that are conducted between two different classes accessing private
-			or protected members of both. 
+			따라서 꼭 필요한 경우에만 사용하는 것이 좋다.
+			대표적으로 두 객체의 내부 상태를 함께 다뤄야 하는 연산에서 사용된다.
 		*/
+
+		system("pause");
 	}
 
 
 	void friend_classes()
 	{
 		/*
-			Friend classes
+			📚 friend 클래스 (Friend classes)
 
-			Similar to friend functions, a friend class is a class whose members have access to the private
-			or protected members of another class:
+			friend 함수와 비슷하게,
+			특정 클래스 전체에 대해 접근 권한을 줄 수도 있다.
+
+			즉 A 클래스가 B 클래스를 friend 로 선언하면,
+			B 클래스의 멤버 함수들은 A 클래스의 private / protected 멤버에 접근할 수 있다.
+
+			주의:
+			friend 관계는 일방향이다.
+			A가 B를 friend 로 선언했다고 해서
+			B도 자동으로 A를 friend 로 보는 것은 아니다.
 		*/
+
 		{
 			class Rectangle;
 
-			class Square {
-				friend class Rectangle;
+			class Square
+			{
+				friend class Rectangle; // Rectangle 을 friend 로 선언
+
 			private:
 				int side;
+
 			public:
 				Square(int a) : side(a) {}
 			};
 
-			class Rectangle {
+			class Rectangle
+			{
 				int width, height;
+
 			public:
+				Rectangle() : width(0), height(0) {}
+
 				int area()
 				{
-					return (width * height);
+					return width * height;
 				}
 
-				void convert(Square a) {
-					width = a.side;
+				void convert(Square a)
+				{
+					width = a.side;   // Square::side 는 private 이지만 friend 이므로 접근 가능
 					height = a.side;
 				}
 			};
 
 			Rectangle rect;
 			Square sqr(4);
+
 			rect.convert(sqr);
 
-			std::cout << rect.area();
-
-			system("pause");
+			std::cout << rect.area() << std::endl;
+			std::cout << std::endl;
 
 			/*
-			output:
-				16
+				출력:
+					16
+
+				설명:
+				Square 의 side 는 private 멤버이지만,
+				Rectangle 은 Square 의 friend 이므로
+				a.side 에 접근할 수 있다.
+
+				결과적으로 width=4, height=4 가 되어
+				area() = 16
 			*/
 		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] friend 관계는 일방향" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << "Square 가 Rectangle 을 friend 로 선언했다면," << std::endl;
+			std::cout << "Rectangle 은 Square 의 private 멤버에 접근 가능하다." << std::endl;
+			std::cout << "하지만 Square 가 Rectangle 의 private 멤버에 자동 접근 가능한 것은 아니다." << std::endl;
+			std::cout << std::endl;
+		}
+
 		/*
-			In this example, class Rectangle is a friend of class Square allowing Rectangle's member functions to access private
-			and protected members of Square.
-			More concretely, Rectangle accesses the member variable Square::side, which describes the side of the square.
+			추가 설명:
+			예제 맨 위의
+				class Rectangle;
+			는 전방 선언(forward declaration)이다.
 
-			There is something else new in this example: at the beginning of the program, there is an empty declaration of class Square.
-			This is necessary because class Rectangle uses Square (as a parameter in member convert), and Square uses Rectangle (declaring it a friend). 
-
-			Friendships are never corresponded unless specified: In our example, Rectangle is considered a friend class by Square,
-			but Square is not considered a friend by Rectangle.
-			Therefore, the member functions of Rectangle can access the protected and private members of Square but not the other way around.
-			Of course, Square could also be declared friend of Rectangle, if needed, granting such an access.
-
-			Another property of friendships is that they are not transitive:
-			The friend of a friend is not considered a friend unless explicitly specified.
+			이유:
+			Square 안에서 Rectangle 을 friend class 로 선언하려면
+			컴파일러가 Rectangle 이라는 이름이 클래스임을 미리 알아야 하기 때문이다.
 		*/
+
+		system("pause");
 	}
 
 
 	void inheritance_between_classes()
 	{
 		/*
-			Inheritance between classes
+			📚 클래스 간 상속 (Inheritance between classes)
 
-			Classes in C++ can be extended, creating new classes which retain characteristics of the base class.
-			This process, known as inheritance, involves a base class and a derived class: The derived class inherits the members of the base class,
-			on top of which it can add its own members.
+			C++에서는 기존 클래스를 확장해서
+			새로운 클래스를 만들 수 있다.
+			이것을 상속(inheritance)이라고 한다.
 
-			For example, let's imagine a series of classes to describe two kinds of polygons: rectangles and triangles.
-			These two polygons have certain common properties,
-			such as the values needed to calculate their areas: they both can be described simply with a height and a width (or base).
+			상속 관계에는:
+			- 기반 클래스(base class)
+			- 파생 클래스(derived class)
+			가 있다.
 
-			This could be represented in the world of classes with a class Polygon from which we would derive the two other ones: Rectangle and Triangle:
-				
-				CPolygon
-					|
-					|--- CRactangle
-					|
-					|--- CTriangle
+			파생 클래스는 기반 클래스의 멤버를 물려받고,
+			거기에 자기만의 멤버를 추가할 수 있다.
 
-			The Polygon class would contain members that are common for both types of polygon. In our case: width and height.
-			And Rectangle and Triangle would be its derived classes,
-			with specific features that are different from one type of polygon to the other.
+			문법:
+				class Derived : public Base
+				{
+				};
 
-			Classes that are derived from others inherit all the accessible members of the base class.
-			That means that if a base class includes a member A and we derive a class from it with another member called B,
-			the derived class will contain both member A and member B.
-
-			The inheritance relationship of two classes is declared in the derived class.
-			Derived classes definitions use the following syntax:
-
-				class derived_class_name: public base_class_name
-				{ ... };
-
-			Where derived_class_name is the name of the derived class
-			and base_class_name is the name of the class on which it is based.
-			The public access specifier may be replaced by any one of the other access specifiers(protected or private).
-			This access specifier limits the most accessible level for the members inherited from the base class :
-			The members with a more accessible level are inherited with this level instead, while the members with an equal
-			or more restrictive access level keep their restrictive level in the derived class.
+			public 상속은
+			기반 클래스의 public 멤버를 public 으로,
+			protected 멤버를 protected 로 유지하면서 상속한다.
 		*/
+
 		{
-			class Polygon {
+			class Polygon
+			{
 			protected:
 				int width, height;
+
 			public:
 				void set_values(int a, int b)
 				{
-					width = a; height = b;
+					width = a;
+					height = b;
 				}
 			};
 
-			class Rectangle : public Polygon {
+			class Rectangle : public Polygon
+			{
 			public:
 				int area()
 				{
@@ -191,7 +247,8 @@ namespace FriendshipAndInheritance
 				}
 			};
 
-			class Triangle : public Polygon {
+			class Triangle : public Polygon
+			{
 			public:
 				int area()
 				{
@@ -205,220 +262,259 @@ namespace FriendshipAndInheritance
 			rect.set_values(4, 5);
 			trgl.set_values(4, 5);
 
-			std::cout << rect.area() << '\n';
-			std::cout << trgl.area() << '\n';
-
-			system("pause");
+			std::cout << rect.area() << std::endl;
+			std::cout << trgl.area() << std::endl;
+			std::cout << std::endl;
 
 			/*
-			output:
-				20
-				10
+				출력:
+					20
+					10
+
+				설명:
+				Rectangle 과 Triangle 은 Polygon 을 상속받았기 때문에
+				width, height, set_values() 를 물려받는다.
+
+				Rectangle 은 area() 에서 width*height
+				Triangle 은 area() 에서 width*height/2 를 계산한다.
 			*/
 		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] protected 의 의미" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << "protected 멤버는 파생 클래스에서는 접근 가능하지만," << std::endl;
+			std::cout << "클래스 외부에서는 직접 접근할 수 없다." << std::endl;
+			std::cout << std::endl;
+
+			/*
+				예를 들어 위 예제에서
+					rect.width = 10;
+				같은 코드는 오류이다.
+
+				하지만 Rectangle::area() 안에서는
+				width, height 에 접근할 수 있다.
+			*/
+		}
+
 		/*
-			The objects of the classes Rectangle and Triangle each contain members inherited from Polygon.
-			These are: width, height and set_values.
+			접근 지정자 요약:
 
-			The protected access specifier used in class Polygon is similar to private.
-			Its only difference occurs in fact with inheritance:
-			When a class inherits another one, the members of the derived class can access the protected members inherited from the base class,
-			but not its private members.
+			public:
+				같은 클래스 / 파생 클래스 / 외부 모두 접근 가능
 
-			By declaring width and height as protected instead of private, these members are also accessible from the derived classes Rectangle
-			and Triangle, instead of just from members of Polygon.
-			If they were public, they could be accessed just from anywhere.
+			protected:
+				같은 클래스 / 파생 클래스 접근 가능
+				외부는 접근 불가
 
-			We can summarize the different access types according to which functions can access them in the following way:
-
-				Access						public	protected	private
-				members of the same class	yes		yes			yes
-				members of derived class	yes		yes			no
-				not members					yes		no			no
-
-			Where "not members" represents any access from outside the class, such as from main,
-			from another class or from a function.
-
-			In the example above, the members inherited by Rectangle
-			and Triangle have the same access permissions as they had in their base class Polygon:
-
-				Polygon::width           // protected access
-				Rectangle::width         // protected access
-
-				Polygon::set_values()    // public access
-				Rectangle::set_values()  // public access
-
-			This public keyword after the colon (:) denotes the most accessible level the members inherited from the class
-			that follows it (in this case Polygon) will have from the derived class (in this case Rectangle).
-				
-			Since public is the most accessible level,
-			by specifying this keyword the derived class will inherit all the members
-			with the same levels they had in the base class.
-
-			With protected, all public members of the base class are inherited as protected in the derived class.
-			Conversely, if the most restricting access level is specified (private),
-			all the base class members are inherited as private.
-
-			For example, if daughter were a class derived from mother that we defined as:
-
-				class Daughter: protected Mother;
-
-			This would set protected as the less restrictive access level for the members of Daughter that it inherited from mother.
-			That is, all members that were public in Mother would become protected in Daughter.
-				
-			Of course, this would not restrict Daughter from declaring its own public members.
-			That less restrictive access level is only set for the members inherited from Mother.
-
-			If no access level is specified for the inheritance,
-			the compiler assumes private for classes declared with keyword class
-			and public for those declared with struct.
-
-			Actually, most use cases of inheritance in C++ should use public inheritance.
-			When other access levels are needed for base classes,
-			they can usually be better represented as member variables instead.
+			private:
+				같은 클래스만 접근 가능
 		*/
 
+		system("pause");
 	}
 
 	void what_is_inherited_from_the_base_class()
 	{
 		/*
-			What is inherited from the base class ?
+			📚 기반 클래스에서 무엇이 상속되는가?
 
-			In principle, a publicly derived class inherits access to every member of a base class except:
+			공개(public) 상속 기준으로
+			파생 클래스는 기반 클래스의 대부분의 접근 가능한 멤버를 물려받는다.
 
-				* its constructors and its destructor
-				* its assignment operator members (operator=)
-				* its friends
-				* its private members
+			하지만 원칙적으로 다음은 그대로 "상속되는 것"이 아니다.
 
-			Even though access to the constructors and destructor of the base class is not inherited as such,
-			they are automatically called by the constructors and destructor of the derived class.
+			- 생성자(constructor)
+			- 소멸자(destructor)
+			- 대입 연산자(operator=)
+			- friend 관계
+			- private 멤버 직접 접근 권한
 
-			Unless otherwise specified, the constructors of a derived class calls the default constructor of its base classes (i.e., the constructor taking no arguments).
-			Calling a different constructor of a base class is possible,
-			using the same syntax used to initialize member variables in the initialization list:
-
-			derived_constructor_name (parameters) : base_constructor_name (parameters) {...}
-
-			For example:
+			중요:
+			기반 클래스 생성자는 파생 클래스 객체가 만들어질 때 자동으로 호출된다.
+			다만 어떤 생성자를 호출할지는 파생 클래스 생성자 정의에 따라 달라진다.
 		*/
+
 		{
-			class Mother {
+			class Mother
+			{
 			public:
 				Mother()
 				{
-					std::cout << "Mother: no parameters\n";
+					std::cout << "Mother: no parameters" << std::endl;
 				}
+
 				Mother(int a)
 				{
-					std::cout << "Mother: int parameter\n";
+					std::cout << "Mother: int parameter" << std::endl;
 				}
 			};
 
-			class Daughter : public Mother {
+			class Daughter : public Mother
+			{
 			public:
 				Daughter(int a)
 				{
-					std::cout << "Daughter: int parameter\n\n";
+					std::cout << "Daughter: int parameter" << std::endl;
+					std::cout << std::endl;
 				}
 			};
 
-			class Son : public Mother {
+			class Son : public Mother
+			{
 			public:
 				Son(int a) : Mother(a)
 				{
-					std::cout << "Son: int parameter\n\n";
+					std::cout << "Son: int parameter" << std::endl;
+					std::cout << std::endl;
 				}
 			};
 
 			Daughter kelly(0);
 			Son bud(0);
 
-			system("pause");
-
 			/*
-			output:
-				Mother: no parameters
-				Daughter: int parameter
+				출력:
+					Mother: no parameters
+					Daughter: int parameter
 
-				Mother: int parameter
-				Son: int parameter
+					Mother: int parameter
+					Son: int parameter
 			*/
 		}
-		/*
-			Notice the difference between which Mother's constructor is called when a new Daughter object is created and which when it is a Son object.
-			The difference is due to the different constructor declarations of Daughter and Son:
 
-				Daughter (int a)			// nothing specified: call default constructor
-				Son (int a) : Mother (a)	// constructor specified: call this specific constructor
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] 어떤 기반 생성자가 호출되는가" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << "Daughter(int a) 는 기반 생성자를 명시하지 않았으므로" << std::endl;
+			std::cout << "Mother() 기본 생성자가 호출된다." << std::endl;
+			std::cout << "Son(int a) : Mother(a) 는 Mother(int) 를 명시적으로 호출한다." << std::endl;
+			std::cout << std::endl;
+		}
+
+		/*
+			핵심:
+			파생 클래스 생성자는
+			기반 클래스 생성자를 반드시 먼저 거친다.
+
+			명시하지 않으면 기본 생성자,
+			명시하면 원하는 생성자가 호출된다.
 		*/
+
+		system("pause");
 	}
 
 	
 	void multiple_inheritance()
 	{
 		/*
-			Multiple inheritance
-			
-			A class may inherit from more than one class by simply specifying more base classes,
-			separated by commas, in the list of a class's base classes (i.e., after the colon).
-			For example, if the program had a specific class to print on screen called Output,
-			and we wanted our classes Rectangle
-			and Triangle to also inherit its members in addition to those of Polygon we could write:
+			📚 다중 상속 (Multiple inheritance)
 
-				class Rectangle: public Polygon, public Output;
-				class Triangle: public Polygon, public Output;
+			C++에서는 한 클래스가
+			둘 이상의 기반 클래스를 동시에 상속받을 수 있다.
 
-			Here is the complete example:
+			문법:
+				class Derived : public Base1, public Base2
+				{
+				};
+
+			즉 파생 클래스는 여러 기반 클래스의 기능을 함께 가질 수 있다.
+
+			다만 다중 상속은 강력한 만큼
+			이름 충돌, 모호성(ambiguity), 설계 복잡도 문제가 생길 수 있으므로
+			실무에서는 신중하게 사용한다.
 		*/
+
 		{
-			class Polygon {
+			class Polygon
+			{
 			protected:
 				int width, height;
+
 			public:
 				Polygon(int a, int b) : width(a), height(b) {}
 			};
 
-			class Output {
+			class Output
+			{
 			public:
 				static void print(int i)
 				{
-					std::cout << i << '\n';
+					std::cout << i << std::endl;
 				}
 			};
 
-			class Rectangle : public Polygon, public Output {
+			class Rectangle : public Polygon, public Output
+			{
 			public:
 				Rectangle(int a, int b) : Polygon(a, b) {}
+
 				int area()
 				{
-					return width*height;
+					return width * height;
 				}
 			};
 
-			class Triangle : public Polygon, public Output {
+			class Triangle : public Polygon, public Output
+			{
 			public:
 				Triangle(int a, int b) : Polygon(a, b) {}
+
 				int area()
 				{
-					return width*height / 2;
+					return width * height / 2;
 				}
 			};
 
 			Rectangle rect(4, 5);
 			Triangle trgl(4, 5);
+
 			rect.print(rect.area());
 			Triangle::print(trgl.area());
 
-			system("pause");
+			std::cout << std::endl;
 
 			/*
-			output:
-				20
-				10
+				출력:
+					20
+					10
+
+				설명:
+				Rectangle 과 Triangle 은
+				Polygon 에서 width, height 관련 기능을 받고,
+				Output 에서 print 기능을 받는다.
+
+				즉 두 기반 클래스의 기능을 함께 사용한다.
 			*/
 		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] 다중 상속의 의미" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << "Rectangle : public Polygon, public Output" << std::endl;
+			std::cout << "-> Rectangle 은 Polygon 의 특성과 Output 의 특성을 모두 가진다." << std::endl;
+			std::cout << std::endl;
+		}
+
+		/*
+			실무 감각:
+			다중 상속은 가능하지만,
+			복잡도를 크게 올릴 수 있다.
+
+			특히 공통 조상 문제가 생기면
+			가상 상속(virtual inheritance) 같은 추가 개념이 필요할 수 있다.
+
+			그래서 단순 기능 조합은
+			상속보다 멤버 객체 조합(composition)으로 해결하는 편이 더 깔끔한 경우도 많다.
+		*/
+
+		system("pause");
 	}
 
 	void Test()

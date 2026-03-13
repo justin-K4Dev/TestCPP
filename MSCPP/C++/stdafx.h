@@ -47,6 +47,7 @@
 #include <sstream>
 #include <fstream>
 #include <iosfwd>
+#include <cmath>
 #include <utility>
 #include <locale>
 #include <clocale>

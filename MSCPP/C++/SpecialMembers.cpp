@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 
 namespace SpecialMembers
@@ -6,474 +6,565 @@ namespace SpecialMembers
 	void special_members()
 	{
 		/*
-			Special members
+			📚 특수 멤버 함수 (Special members)
 
-			Special member functions are member functions that are implicitly defined as
-			member of classes under certain circumstances.
-			There are six:
+			C++ 클래스에는 특정 조건에서
+			컴파일러가 자동으로 만들어주거나,
+			우리가 직접 정의할 수 있는 특별한 멤버 함수들이 있다.
 
-				Member function			typical form for class C:
-				Default constructor		C::C();
-				Destructor				C::~C();
-				Copy constructor		C::C (const C&);
-				Copy assignment			C& operator= (const C&);
-				Move constructor		C::C (C&&);
-				Move assignment			C& operator= (C&&);
+			대표적으로 6개가 있다:
 
-			Let's examine each of these:
+				1) 기본 생성자
+					C::C();
+
+				2) 소멸자
+					C::~C();
+
+				3) 복사 생성자
+					C::C(const C&);
+
+				4) 복사 대입 연산자
+					C& operator=(const C&);
+
+				5) 이동 생성자
+					C::C(C&&);
+
+				6) 이동 대입 연산자
+					C& operator=(C&&);
+
+			이 함수들은 객체가
+			- 생성될 때
+			- 복사될 때
+			- 대입될 때
+			- 이동될 때
+			- 파괴될 때
+			자동으로 관여한다.
+
+			특히 동적 메모리를 직접 관리하는 클래스에서는
+			이 함수들을 정확히 이해하는 것이 매우 중요하다.
 		*/
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[특수 멤버 함수 6가지]" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << "1. Default constructor" << std::endl;
+			std::cout << "2. Destructor" << std::endl;
+			std::cout << "3. Copy constructor" << std::endl;
+			std::cout << "4. Copy assignment" << std::endl;
+			std::cout << "5. Move constructor" << std::endl;
+			std::cout << "6. Move assignment" << std::endl;
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
 
 
 	void default_constructor()
 	{
 		/*
-			Default constructor
+			📚 기본 생성자 (Default constructor)
 
-			The default constructor is the constructor called when objects of a class are declared,
-			but are not initialized with any arguments.
+			기본 생성자는
+			객체를 생성할 때 인자를 주지 않았을 경우 호출되는 생성자이다.
 
-			If a class definition has no constructors, the compiler assumes the class to have an implicitly defined default constructor.
-			Therefore, after declaring a class like this:
-
-				class Example {
-				public:
-					int total;
-					void accumulate (int x) { total += x; }
-				};
-
-
-			The compiler assumes that Example has a default constructor.
-			Therefore, objects of this class can be constructed by simply declaring them without any arguments:
-
+			예:
 				Example ex;
 
-			But as soon as a class has some constructor taking any number of parameters explicitly declared,
-			the compiler no longer provides an implicit default constructor,
-			and no longer allows the declaration of new objects of that class without arguments.
-			For example, the following class:
+			이처럼 괄호 없이 객체를 만들 때 호출되는 생성자가
+			기본 생성자이다.
 
-				class Example2 {
-				public:
-					int total;
-					Example2 (int initial_value) : total(initial_value) { };
-					void accumulate (int x) { total += x; };
-				};
+			규칙:
+			1) 클래스에 생성자를 하나도 직접 만들지 않으면
+			   컴파일러가 암시적 기본 생성자를 제공할 수 있다.
 
-			Here, we have declared a constructor with a parameter of type int.
-			Therefore the following object declaration would be correct:
-				Example2 ex (100);   // ok: calls constructor
+			2) 하지만 매개변수가 있는 생성자를 하나라도 직접 선언하면
+			   컴파일러는 더 이상 자동 기본 생성자를 만들어주지 않는다.
 
-
-			But the following:
-				Example2 ex;         // not valid: no default constructor
-
-			Would not be valid, since the class has been declared with an explicit constructor taking one argument
-			and that replaces the implicit default constructor taking none.
-
-			Therefore, if objects of this class need to be constructed without arguments,
-			the proper default constructor shall also be declared in the class.
-			For example:
+			3) 따라서 인자 없이 객체를 만들고 싶다면
+			   기본 생성자를 직접 선언해야 한다.
 		*/
+
 		{
-			class Example3 {
+			class Example3
+			{
 				std::string data;
+
 			public:
 				Example3(const std::string& str) : data(str) {}
 				Example3() {}
 				const std::string& content() const { return data; }
 			};
 
-			Example3 foo;
-			Example3 bar("Example");
+			Example3 foo;             // 기본 생성자 호출
+			Example3 bar("Example");  // 매개변수 생성자 호출
 
-			std::cout << "bar's content: " << bar.content() << '\n';
-
-			system("pause");
+			std::cout << "bar's content: " << bar.content() << std::endl;
+			std::cout << std::endl;
 
 			/*
-			output:
-				bar's content: Example
+				출력:
+					bar's content: Example
 			*/
 		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] 왜 기본 생성자가 필요한가?" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << "매개변수 생성자만 있으면" << std::endl;
+			std::cout << "인자 없이 객체를 만들 수 없다." << std::endl;
+			std::cout << "그래서 필요하면 기본 생성자를 따로 선언해야 한다." << std::endl;
+			std::cout << std::endl;
+		}
+
 		/*
-			Here, Example3 has a default constructor (i.e., a constructor without parameters) defined as an empty block:
+			예를 들어 아래는 오류 상황이다.
 
-				Example3() {}
+				class Example2
+				{
+				public:
+					Example2(int v) {}
+				};
 
-			This allows objects of class Example3 to be constructed without arguments (like foo was declared in this example).
-			Normally, a default constructor like this is implicitly defined for all classes that have no other constructors
-			and thus no explicit definition is required. But in this case, Example3 has another constructor:
+				Example2 ex; // 오류: 기본 생성자 없음
 
-				Example3 (const string& str);
-
-			And when any constructor is explicitly declared in a class, no implicit default constructors is automatically provided.
+			이 문제를 해결하려면:
+				Example2() {}
+			같은 기본 생성자를 추가해야 한다.
 		*/
+
+		system("pause");
 	}
 
 	void destructor()
 	{
 		/*
-			Destructor
+			📚 소멸자 (Destructor)
 
-			Destructors fulfill the opposite functionality of constructors: They are responsible for the necessary cleanup needed by a class when its lifetime ends.
-			The classes we have defined in previous chapters did not allocate any resource and thus did not really require any clean up.
+			소멸자는 객체의 수명이 끝날 때 자동으로 호출되는 특별한 함수이다.
 
-			But now, let's imagine that the class in the last example allocates dynamic memory to store the string it had as data member;
-			in this case, it would be very useful to have a function called automatically at the end of the object's life in charge of releasing this memory.
-			To do this, we use a destructor.
-			A destructor is a member function very similar to a default constructor:
-			it takes no arguments and returns nothing, not even void.
-			It also uses the class name as its own name, but preceded with a tilde sign (~):
+			역할:
+			- 동적 메모리 해제
+			- 파일 닫기
+			- 핸들 정리
+			- 리소스 정리
+
+			문법:
+				~클래스이름()
+
+			특징:
+			1) 인자가 없다
+			2) 반환형이 없다 (void도 없음)
+			3) 객체가 파괴될 때 자동 호출된다
+
+			생성자가 "준비"를 담당한다면,
+			소멸자는 "정리"를 담당한다고 보면 된다.
 		*/
+
 		{
-			class Example4 {
+			class Example4
+			{
 				std::string* ptr;
+
 			public:
-				// constructors:
 				Example4() : ptr(new std::string) {}
 				Example4(const std::string& str) : ptr(new std::string(str)) {}
-				// destructor:
-				~Example4() { delete ptr; }
-				// access content:
+
+				~Example4()
+				{
+					delete ptr;
+				}
+
 				const std::string& content() const { return *ptr; }
 			};
 
 			Example4 foo;
 			Example4 bar("Example");
 
-			std::cout << "bar's content: " << bar.content() << '\n';
-
-			system("pause");
+			std::cout << "bar's content: " << bar.content() << std::endl;
+			std::cout << std::endl;
 
 			/*
-			output:
-				bar's content: Example
+				출력:
+					bar's content: Example
+
+				설명:
+				Example4 는 내부에서 new 로 문자열을 할당한다.
+				따라서 객체가 끝날 때 delete 로 반드시 해제해야 한다.
+
+				이 역할을 소멸자가 담당한다.
 			*/
 		}
-		/*
-			On construction, Example4 allocates storage for a string. Storage that is later released by the destructor.
-			The destructor for an object is called at the end of its lifetime;
-			in the case of foo and bar this happens at the end of function main.
-		*/
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] 소멸자가 필요한 이유" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << "new 로 확보한 자원은 나중에 반드시 해제해야 한다." << std::endl;
+			std::cout << "그렇지 않으면 메모리 누수(memory leak)가 발생할 수 있다." << std::endl;
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
 
 
 	void copy_constructor()
 	{
 		/*
-			Copy constructor
+			📚 복사 생성자 (Copy constructor)
 
-			When an object is passed a named object of its own type as argument, its copy constructor is invoked in order to construct a copy.
+			복사 생성자는
+			같은 타입의 다른 객체를 이용해서
+			새 객체를 만들 때 호출되는 생성자이다.
 
-			A copy constructor is a constructor whose first parameter is of type reference to the class itself (possibly const qualified)
-			and which can be invoked with a single argument of this type.
-			For example, for a class MyClass, the copy constructor may have the following signature:
+			대표적인 형태:
+				MyClass(const MyClass& other)
 
-				MyClass::MyClass (const MyClass&);
+			호출되는 대표 상황:
+				MyClass a("hello");
+				MyClass b(a);      // 복사 생성자
+				MyClass c = a;     // 이것도 복사 생성자
 
-
-			If a class has no custom copy nor move constructors (or assignments) defined, an implicit copy constructor is provided.
-			This copy constructor simply performs a copy of its own members.
-			For example, for a class such as:
-
-				class MyClass {
-				public:
-					int a, b; string c;
-				};
-
-			An implicit copy constructor is automatically defined.
-			The definition assumed for this function performs a shallow copy,
-			roughly equivalent to:
-
-				MyClass::MyClass(const MyClass& x) : a(x.a), b(x.b), c(x.c) {}
-
-			This default copy constructor may suit the needs of many classes.
-			But shallow copies only copy the members of the class themselves,
-			and this is probably not what we expect for classes like class Example4 we defined above,
-			because it contains pointers of which it handles its storage.
-				
-			For that class, performing a shallow copy means that the pointer value is copied, but not the content itself;
-			This means that both objects (the copy and the original) would be sharing a single string object (they would both be pointing to the same object),
-			and at some point (on destruction) both objects would try to delete the same block of memory,
-			probably causing the program to crash on runtime.
-				
-			This can be solved by defining the following custom copy constructor that performs a deep copy:
+			중요:
+			복사 생성자는 "새 객체를 만들 때" 호출된다.
+			이미 있는 객체에 값을 넣는 것은 복사 대입이다.
 		*/
+
 		{
-			class Example5 {
+			class Example5
+			{
 				std::string* ptr;
+
 			public:
-				Example5(const std::string& str) : ptr(new std::string(str)) {}
-				~Example5() { delete ptr; }
-				// copy constructor:
-				Example5(const Example5& x) : ptr(new std::string(x.content())) {}
-				// access content:
-				const std::string& content() const { return *ptr; }
+				Example5(const std::string& str)
+					: ptr(new std::string(str))
+				{
+				}
+
+				~Example5()
+				{
+					delete ptr;
+				}
+
+				// 깊은 복사(deep copy)를 하는 복사 생성자
+				Example5(const Example5& x)
+					: ptr(new std::string(x.content()))
+				{
+				}
+
+				const std::string& content() const
+				{
+					return *ptr;
+				}
 			};
 
 			Example5 foo("Example");
-			Example5 bar = foo;
+			Example5 bar = foo; // 복사 생성자 호출
 
-			std::cout << "bar's content: " << bar.content() << '\n';
-
-			system("pause");
+			std::cout << "bar's content: " << bar.content() << std::endl;
+			std::cout << std::endl;
 
 			/*
-			output:
-				bar's content: Example
+				출력:
+					bar's content: Example
 			*/
 		}
-		/*
-			The deep copy performed by this copy constructor allocates storage for a new string, which is initialized to contain a copy of the original object.
-			In this way, both objects (copy and original) have distinct copies of the content stored in different locations.
-		*/
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] 왜 깊은 복사가 필요한가?" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << "포인터 멤버를 가진 클래스에서 얕은 복사(shallow copy)를 하면" << std::endl;
+			std::cout << "원본과 복사본이 같은 메모리를 가리킬 수 있다." << std::endl;
+			std::cout << "그러면 둘 다 같은 메모리를 delete 하려 해서 문제가 생길 수 있다." << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				깊은 복사는
+				새로운 메모리를 따로 만들고
+				그 안에 원본 내용을 복사하는 방식이다.
+			*/
+		}
+
+		system("pause");
 	}
 
 
 	void copy_assignment()
 	{
 		/*
-			Copy assignment
+			📚 복사 대입 연산자 (Copy assignment)
 
-			Objects are not only copied on construction, when they are initialized:
-			They can also be copied on any assignment operation. See the difference:
+			복사 생성자는 "새 객체 생성 시 복사"이고,
+			복사 대입 연산자는 "이미 존재하는 객체에 복사"이다.
 
+			예:
 				MyClass foo;
-				MyClass bar (foo);       // object initialization: copy constructor called
-				MyClass baz = foo;       // object initialization: copy constructor called
-				foo = bar;               // object already initialized: copy assignment called 
+				MyClass bar(foo);  // 복사 생성자
+				MyClass baz = foo; // 복사 생성자
+				foo = bar;         // 복사 대입 연산자
 
-			Note that baz is initialized on construction using an equal sign,
-			but this is not an assignment operation! (although it may look like one): 
-			The declaration of an object is not an assignment operation, it is just another of the syntaxes to call single-argument constructors.
-
-			The assignment on foo is an assignment operation. No object is being declared here,
-			but an operation is being performed on an existing object; foo.
-
-			The copy assignment operator is an overload of operator= which takes a value or reference of the class itself as parameter.
-			The return value is generally a reference to *this (although this is not required).
-			For example, for a class MyClass, the copy assignment may have the following signature:
- 
-				MyClass& operator= (const MyClass&);
-
-			The copy assignment operator is also a special function
-			and is also defined implicitly if a class has no custom copy nor move assignments (nor move constructor) defined.
-
-			But again, the implicit version performs a shallow copy which is suitable for many classes,
-			but not for classes with pointers to objects they handle its storage, as is the case in Example5.
-			In this case, not only the class incurs the risk of deleting the pointed object twice,
-			but the assignment creates memory leaks by not deleting the object pointed by the object before the assignment.
-			These issues could be solved with a copy assignment that deletes the previous object and performs a deep copy:
-
-				Example5& operator= (const Example5& x) {
-					delete ptr;                      // delete currently pointed string
-					ptr = new string (x.content());  // allocate space for new string, and copy
-					return *this;
-				}
-
-			Or even better, since its string member is not constant, it could re-utilize the same string object:
-
-				Example5& operator= (const Example5& x) {
-					*ptr = x.content();
-					return *this;
-				}
+			대표 형태:
+				MyClass& operator=(const MyClass& other)
 		*/
+
 		{
-			class Example5 {
+			class Example5
+			{
 				std::string* ptr;
+
 			public:
-				Example5() : ptr(new std::string()) { }
+				Example5() : ptr(new std::string()) {}
 				Example5(const std::string& str) : ptr(new std::string(str)) {}
-				~Example5() { delete ptr; }
-					
-				// copy constructor:
-				Example5(const Example5& x) : ptr(new std::string(x.content())) {}
-				// copy assignment:
-				Example5& operator= (const Example5& x) {
-					delete ptr;                      // delete currently pointed string
-					ptr = new std::string(x.content());  // allocate space for new string, and copy
+
+				~Example5()
+				{
+					delete ptr;
+				}
+
+				// 복사 생성자
+				Example5(const Example5& x)
+					: ptr(new std::string(x.content()))
+				{
+				}
+
+				// 복사 대입 연산자
+				Example5& operator=(const Example5& x)
+				{
+					if (this != &x)
+					{
+						delete ptr;
+						ptr = new std::string(x.content());
+					}
 					return *this;
 				}
 
-				// access content:
-				const std::string& content() const { return *ptr; }
+				const std::string& content() const
+				{
+					return *ptr;
+				}
 			};
 
 			Example5 foo;
-			Example5 bar(foo);	// object initialization: copy constructor called
-			Example5 baz = foo;	// object initialization: copy constructor called
-			foo = bar;			// object already initialized: copy assignment called
+			Example5 bar(foo); // 복사 생성자
+			Example5 baz = foo; // 복사 생성자
+			foo = bar; // 복사 대입 연산자
 
-			system("pause");
+			std::cout << "copy assignment test done" << std::endl;
+			std::cout << std::endl;
 		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] 자기 자신 대입 방지" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << "operator= 에서는 보통 this != &x 검사를 넣는다." << std::endl;
+			std::cout << "자기 자신을 자기 자신에게 대입하는 경우를 안전하게 처리하기 위해서이다." << std::endl;
+			std::cout << std::endl;
+		}
+
+		/*
+			핵심:
+			복사 생성자는 새 객체를 만들 때,
+			복사 대입은 이미 있는 객체에 값을 덮어쓸 때 호출된다.
+		*/
+
+		system("pause");
 	}
 
 
 	void move_constructor_n_assignment()
 	{
 		/*
-			Move constructor and assignment
+			📚 이동 생성자와 이동 대입 (Move constructor and move assignment)
 
-			Similar to copying, moving also uses the value of an object to set the value to another object.
-			But, unlike copying, the content is actually transferred from one object (the source) to the other (the destination):
-			the source loses that content, which is taken over by the destination.
-				
-			This moving only happens when the source of the value is an unnamed object. 
+			복사는 내용을 새로 복제하는 것이고,
+			이동은 자원의 소유권을 다른 객체로 넘기는 것이다.
 
-			Unnamed objects are objects that are temporary in nature, and thus haven't even been given a name.
-			Typical examples of unnamed objects are return values of functions or type-casts.
+			즉:
+			- 복사(copy): 새 메모리를 만들고 내용을 복제
+			- 이동(move): 기존 메모리 주소를 넘기고 원본은 비움
 
-			Using the value of a temporary object such as these to initialize another object or to assign its value, does not really require a copy:
-			the object is never going to be used for anything else, and thus, its value can be moved into the destination object.
-				
-			These cases trigger the move constructor and move assignments:
+			이동은 주로 "임시 객체(temporary)" 에서 일어난다.
 
-			The move constructor is called when an object is initialized on construction using an unnamed temporary.
-			Likewise, the move assignment is called when an object is assigned the value of an unnamed temporary:
+			대표 형태:
+				MyClass(MyClass&&);            // 이동 생성자
+				MyClass& operator=(MyClass&&); // 이동 대입
 
-				MyClass fn();            // function returning a MyClass object
-				MyClass foo;             // default constructor
-				MyClass bar = foo;       // copy constructor
-				MyClass baz = fn();      // move constructor
-				foo = bar;               // copy assignment
-				baz = MyClass();         // move assignment 
-
-
-			Both the value returned by fn and the value constructed with MyClass are unnamed temporaries.
-			In these cases, there is no need to make a copy, because the unnamed object is very short-lived
-			and can be acquired by the other object when this is a more efficient operation.
-
-			The move constructor and move assignment are members that take a parameter of type rvalue reference to the class itself:
-
-				MyClass (MyClass&&);             // move-constructor
-				MyClass& operator= (MyClass&&);  // move-assignment 
-
-
-			An rvalue reference is specified by following the type with two ampersands (&&).
-			As a parameter, an rvalue reference matches arguments of temporaries of this type.
-
-			The concept of moving is most useful for objects that manage the storage they use, such as objects that allocate storage with new and delete.
-			In such objects, copying and moving are really different operations:
-			- Copying from A to B means that new memory is allocated to B and then the entire content of A is copied to this new memory allocated for B.
-			- Moving from A to B means that the memory already allocated to A is transferred to B without allocating any new storage.
-				It involves simply copying the pointer.
-
-			For example:
+			장점:
+			포인터 / 동적 메모리 / 큰 리소스를 가진 클래스에서
+			복사보다 훨씬 효율적일 수 있다.
 		*/
+
 		{
-			class Example6 {
+			class Example6
+			{
 				std::string* ptr;
+
 			public:
-				Example6(const std::string& str) : ptr(new std::string(str)) {}
-				~Example6() { delete ptr; }
-				// move constructor
-				Example6(Example6&& x) : ptr(x.ptr) { x.ptr = nullptr; }
-				// move assignment
-				Example6& operator= (Example6&& x) {
+				Example6(const std::string& str)
+					: ptr(new std::string(str))
+				{
+				}
+
+				~Example6()
+				{
 					delete ptr;
-					ptr = x.ptr;
+				}
+
+				// 이동 생성자
+				Example6(Example6&& x)
+					: ptr(x.ptr)
+				{
 					x.ptr = nullptr;
+				}
+
+				// 이동 대입
+				Example6& operator=(Example6&& x)
+				{
+					if (this != &x)
+					{
+						delete ptr;
+						ptr = x.ptr;
+						x.ptr = nullptr;
+					}
 					return *this;
 				}
-				// access content:
-				const std::string& content() const { return *ptr; }
-				// addition:
-				Example6 operator+(const Example6& rhs) {
+
+				const std::string& content() const
+				{
+					return *ptr;
+				}
+
+				Example6 operator+(const Example6& rhs)
+				{
 					return Example6(content() + rhs.content());
 				}
 			};
 
 			Example6 foo("Exam");
-			Example6 bar = Example6("ple");   // move-construction
+			Example6 bar = Example6("ple"); // 이동 생성자 가능 상황
 
-			foo = foo + bar;                  // move-assignment
+			foo = foo + bar; // 이동 대입 가능 상황
 
-			std::cout << "foo's content: " << foo.content() << '\n';
-
-			system("pause");
+			std::cout << "foo's content: " << foo.content() << std::endl;
+			std::cout << std::endl;
 
 			/*
-			output:
-				foo's content: Example
+				출력:
+					foo's content: Example
 			*/
 		}
-		/*
-			Compilers already optimize many cases that formally require a move-construction call in what is known as Return Value Optimization.
-			Most notably, when the value returned by a function is used to initialize an object.
-			In these cases, the move constructor may actually never get called.
 
-			Note that even though rvalue references can be used for the type of any function parameter,
-			it is seldom useful for uses other than the move constructor.
-			Rvalue references are tricky, and unnecessary uses may be the source of errors quite difficult to track.
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] 이동의 핵심" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << "이동은 임시 객체의 자원을 복사하지 않고 넘겨받는 것이다." << std::endl;
+			std::cout << "원본 객체는 보통 nullptr 같은 비어 있는 안전한 상태로 만든다." << std::endl;
+			std::cout << std::endl;
+		}
+
+		/*
+			주의:
+			컴파일러 최적화(RVO, NRVO) 때문에
+			이동 생성자가 실제로 눈에 보이게 호출되지 않는 경우도 많다.
+
+			하지만 개념적으로는
+			"복사 대신 자원 소유권 이전" 이 핵심이다.
 		*/
+
+		system("pause");
 	}
 
 
 	void implicit_members()
 	{
 		/*
-			Implicit members
+			📚 암시적 멤버 함수 (Implicit members)
 
-			The six special members functions described above are members implicitly declared on classes under certain circumstances:
+			컴파일러는 특정 조건에서
+			특수 멤버 함수들을 자동으로 만들어줄 수 있다.
 
-				Member function			implicitly defined:														default definition:
-				Default constructor		if no other constructors												does nothing
-				Destructor				if no destructor														does nothing
-				Copy constructor		if no move constructor and no move assignment							copies all members
-				Copy assignment			if no move constructor and no move assignment							copies all members
-				Move constructor		if no destructor, no copy constructor and no copy nor move assignment	moves all members
-				Move assignment			if no destructor, no copy constructor and no copy nor move assignment	moves all members
+			대표적인 규칙은 대략 다음과 같다.
 
-			Notice how not all special member functions are implicitly defined in the same cases.
-			This is mostly due to backwards compatibility with C structures and earlier C++ versions,
-			and in fact some include deprecated cases.
+			1) 기본 생성자
+			   다른 생성자가 없으면 암시적으로 생성될 수 있다
+
+			2) 소멸자
+			   직접 정의하지 않으면 암시적으로 생성될 수 있다
+
+			3) 복사 생성자 / 복사 대입
+			   move 관련 멤버가 없으면 암시적으로 생성될 수 있다
+
+			4) 이동 생성자 / 이동 대입
+			   소멸자, 복사 생성자, 복사 대입 등을 직접 정의하지 않은 경우 등에
+			   조건부로 암시 생성될 수 있다
+
+			하지만 실제 규칙은 꽤 미묘하므로
+			리소스 소유 클래스라면
+			명시적으로 default / delete / 직접 구현을 고려하는 편이 좋다.
 		*/
+
 		{
-			class Rectangle {
+			class Rectangle
+			{
 				int width, height;
+
 			public:
-				Rectangle() {}
+				Rectangle() : width(0), height(0) {}
 				Rectangle(int x, int y) : width(x), height(y) {}
-					
-				int area() { return width*height; }
+
+				int area() { return width * height; }
 			};
 
 			Rectangle foo;
 			Rectangle bar(10, 20);
 
-			std::cout << "bar's area: " << bar.area() << '\n';
-
-			system("pause");
+			std::cout << "bar's area: " << bar.area() << std::endl;
+			std::cout << std::endl;
 
 			/*
-			output:
-				bar's area: 200
+				출력:
+					bar's area: 200
 			*/
 		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] default 와 delete 개념" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << "특수 멤버 함수는 직접 구현하지 않더라도" << std::endl;
+			std::cout << "컴파일러가 자동 생성할 수 있다." << std::endl;
+			std::cout << "하지만 의도를 명확히 하려면 = default 또는 = delete 를 쓰는 것도 좋다." << std::endl;
+			std::cout << std::endl;
+		}
+
 		/*
-			Here, Rectangle can be constructed either with two int arguments or be default-constructed (with no arguments).
-			It cannot however be copy-constructed from another Rectangle object, because this function has been deleted.
-			Therefore, assuming the objects of the last example, the following statement would not be valid:
+			예:
+				Rectangle(const Rectangle&) = default;
+				Rectangle& operator=(const Rectangle&) = default;
 
-				Rectangle baz (foo);
+				또는
+				Rectangle(const Rectangle&) = delete;
 
-			It could, however, be made explicitly valid by defining its copy constructor as:
-
-				Rectangle::Rectangle (const Rectangle& other) = default;
-
-			Which would be essentially equivalent to:
-
-				Rectangle::Rectangle (const Rectangle& other) : width(other.width), height(other.height) {}
-
-			Note that, the keyword default does not define a member function equal to the default constructor
-			(i.e., where default constructor means constructor with no parameters),
-			but equal to the constructor that would be implicitly defined if not deleted.
-
-			In general, and for future compatibility, classes that explicitly define one copy/move constructor
-			or one copy/move assignment but not both, are encouraged to specify either delete
-			or default on the other special member functions they don't explicitly define.
+			설명:
+			= default 는 컴파일러 기본 동작을 명시적으로 사용하겠다는 뜻
+			= delete 는 그 함수를 사용 금지하겠다는 뜻
 		*/
+
+		system("pause");
 	}
 	
 	void Test()

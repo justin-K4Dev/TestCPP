@@ -45,6 +45,7 @@ namespace RecursiveToNonRecursive
 		*/
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	struct node
 	{
@@ -247,6 +248,7 @@ namespace RecursiveToNonRecursive
 		*/
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	// 주 로직이 중간에 실행될 경우
 
@@ -322,9 +324,9 @@ namespace RecursiveToNonRecursive
 		*/
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	// 주 로직이 마지막에 실행될 경우
-
 	void postorder_traverse_recursive(node *t)
 	{
 		if (t != tail) {
@@ -412,15 +414,16 @@ namespace RecursiveToNonRecursive
 		*/
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	void Test()
 	{
-		//factorial();
-
-		//preorder_traverse();
+		//postorder_traverse();
 
 		//inorder_traverse();
 
-		//postorder_traverse();
+		//preorder_traverse();
+
+		//factorial();
 	}
 }

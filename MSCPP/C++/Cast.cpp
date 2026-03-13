@@ -6,275 +6,552 @@ namespace Cast
 	void c_style_cast()
 	{
 		/*
-			c style cast
+			📚 C 스타일 캐스트 (C-style cast)
 
-			syntax :
-				(type-id)(expression)
+			문법:
+				(타입)(식)
+
+			예:
+				int i = (int)f;
+				double d = (double)x;
+
+			C 스타일 캐스트는 가장 오래된 형변환 방식이다.
+			문법은 짧고 간단하지만,
+			무슨 의도의 변환인지 코드만 보고는 명확히 구분하기 어렵다.
+
+			즉,
+			- const 제거인지
+			- 일반 숫자 변환인지
+			- 위험한 포인터 변환인지
+
+			가 한눈에 드러나지 않는다.
+
+			그래서 현대 C++에서는
+			가능하면 static_cast, const_cast, reinterpret_cast, dynamic_cast
+			같은 C++ 스타일 캐스트를 더 선호한다.
 		*/
+
 		{
 			float fv(0.00001f);
 
-			double dv = (double)fv;
+			double dv = (double)fv;   // float -> double
+			int iv = (int)(fv);       // float -> int
 
-			int iv = (int)(fv);
+			std::cout << "fv = " << fv << std::endl;
+			std::cout << "dv = " << dv << std::endl;
+			std::cout << "iv = " << iv << std::endl;
+			std::cout << std::endl;
 
-			system("pause");
+			/*
+				설명:
+				fv = 0.00001f
+
+				double 로 바꾸면:
+					값은 그대로 더 큰 실수형으로 변환된다.
+
+				int 로 바꾸면:
+					소수점 이하는 버려진다.
+					0.00001 -> 0
+			*/
 		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] 실수 -> 정수 변환 시 소수점 손실" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			float f = 3.99f;
+			int i = (int)f;
+
+			std::cout << "f = " << f << std::endl;
+			std::cout << "i = " << i << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				3.99 를 int 로 바꾸면
+				소수점 이하는 버려져서 3이 된다.
+			*/
+		}
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	class BaseClass
 	{
 	public:
+		virtual ~BaseClass() {}
+
 		virtual void Update()
 		{
 			std::cout << "call BaseClass::Update()" << std::endl;
 		}
 	};
+
 	class DrivenClass : public BaseClass
 	{
 	public:
-		void Update() 
+		virtual void Update()
 		{
 			std::cout << "call DrivenClass::Update()" << std::endl;
 		}
 	};
 
-	void Update(DrivenClass *psw) {
+	void Update(DrivenClass* psw)
+	{
 		psw->Update();
 	}
 
 	void use_const_cast()
 	{
 		/*
-			C++ style cast : use const_cast
+			📚 C++ 스타일 캐스트 : const_cast
 
-			const_cast is used to remove constants in expressions.
-			You can of course assign constants to expressions with const_cast,
-			but this is rarely used because you do not need a caster.
+			const_cast 는 식의 const / volatile 속성을 제거하거나 추가할 때 사용한다.
 
-			For constants other than constants, const_cast does not work.
+			주요 용도:
+			1) const 제거
+			2) const 추가
+
+			예:
+				const T* -> T*
+				T* -> const T*
+
+			중요:
+			const_cast 는 "const 성질"만 다룬다.
+			즉,
+			- 숫자형 변환
+			- 클래스 계층 변환
+			- 포인터 재해석
+			같은 것은 할 수 없다.
+
+			또한 매우 중요한 점:
+			원래부터 const였던 객체를 const_cast 로 억지로 const 제거 후 수정하면
+			정의되지 않은 동작(undefined behavior)이 될 수 있다.
+
+			즉,
+			원본 객체가 실제로 non-const 일 때만
+			const_cast 로 const 를 제거해서 사용하는 것이 안전하다.
 		*/
+
 		{
 			char chArray[] = "Hello";
 
 			const char* chPointer = nullptr;
 			chPointer = chArray;
+
+			// const 추가
 			chPointer = const_cast<const char*>(chArray);
 
-			//*chPointer = 'X'; //error !!!: can not change data because it is const char* !!!
+			std::cout << "chArray   = " << chArray << std::endl;
+			std::cout << "chPointer = " << chPointer << std::endl;
+			std::cout << std::endl;
 
-			system("pause");
+			/*
+				설명:
+				chArray 는 char[] 이고,
+				const_cast<const char*>(chArray) 는
+				const char* 형태로 보겠다는 뜻이다.
+
+				이 경우는 굳이 const_cast 없이도
+				일반적인 변환으로 const char* 에 담을 수 있다.
+			*/
+
+			//*chPointer = 'X'; // 오류: const char* 를 통해서는 수정 불가
 		}
+
 		{
 			DrivenClass childObj;
 			const DrivenClass& constChildObj = childObj;
 
-			//Update(&csw); //error: To pass const SpecialWidget* to the function that receives SpecialWidget*
+			// Update(&constChildObj); // 오류: const DrivenClass* 를 DrivenClass* 로 넘길 수 없음
 
-			Update(const_cast<DrivenClass*>(&constChildObj)); //OK, const is definitely removed
+			Update(const_cast<DrivenClass*>(&constChildObj));
 
-			system("pause");
+			std::cout << std::endl;
 
 			/*
-			output:
-				call DrivenClass::Update()
+				설명:
+				constChildObj 는 const 참조이므로
+				주소를 넘기면 const DrivenClass* 로 해석된다.
+
+				하지만 Update 함수는 DrivenClass* 를 받으므로
+				const 제거가 필요하다.
+
+				여기서 childObj 자체는 원래 non-const 객체이므로
+				const_cast 로 const 를 제거하는 것이 가능하다.
+
+				출력:
+					call DrivenClass::Update()
 			*/
 		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 3] const_cast 사용 시 주의점" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << "원래부터 const 인 객체를 const_cast 후 수정하면 위험하다." << std::endl;
+			std::cout << "원본이 실제로 non-const 일 때만 제거해서 써야 한다." << std::endl;
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	void use_reinterpret_cast()
 	{
 		/*
-			C++ style cast : use reinterpret_cast
+			📚 C++ 스타일 캐스트 : reinterpret_cast
 
-			reinterpret_cast can convert any pointer type to any pointer type.
-			In other words, the following things are possible.
-			Any integer type can be converted to any pointer type, and vice versa (pointer type -> integer type).
-			It can be from int * to char *, or from One_Class * to Unrelated_Class *.
-			At first glance, it looks like a fairly free and powerful caster,
-			but I recommend not to use it unless it is a special case.
+			reinterpret_cast 는
+			"비트 패턴을 다른 타입으로 해석"하는 매우 저수준 캐스트이다.
 
-			First, pointer transformations that
-			can escape the traditional casting concept are forced to be cast using reinterpret_cast.
-			It is desirable to use the relationship only when the relationship between
-			the two entities in the conversion relationship is clear, or to achieve a specific purpose.
+			주요 특징:
+			- 임의의 포인터 타입을 다른 포인터 타입으로 바꿀 수 있다
+			- 포인터와 정수 타입 사이 변환도 가능하다
+			- 하지만 매우 위험하고, 이식성이 떨어질 수 있다
 
-			In addition, the result of the conversion after this operator is applied is
-			almost always defined differently by the compiler.
-			Thus, the source of this casting operator may not be directly ported elsewhere. (Almost)
+			즉,
+			reinterpret_cast 는
+			"이 두 타입이 논리적으로 관계가 있다"라기보다
+			"이 메모리를 다른 방식으로 보겠다"
+			에 가깝다.
+
+			그래서 특별한 이유가 없다면 남용하지 않는 것이 좋다.
+
+			실무적으로는 주로:
+			- 저수준 시스템 코드
+			- 직렬화 / 패킹
+			- API 경계
+			- 포인터를 정수로 임시 저장
+			같은 특수 상황에서만 사용한다.
 		*/
+
 		{
-			// reinterpret_cast void* -> int cast
-			// of course casting C style: val = (unsigned int)p; It is also possible.
-
 			DrivenClass dc;
-			void* p = (void*)(&dc);
+			void* p = reinterpret_cast<void*>(&dc);
 
-			unsigned int val = reinterpret_cast<unsigned int>(p);
-				
-			system("pause");
+			// 포인터 -> 정수
+			// x86/x64 모두를 고려하면 unsigned int 보다 uintptr_t 가 더 안전하다.
+			std::uintptr_t val = reinterpret_cast<std::uintptr_t>(p);
+
+			std::cout << "address as void*      = " << p << std::endl;
+			std::cout << "address as uintptr_t  = " << val << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				객체 주소를 void* 로 본 뒤,
+				그 포인터 값을 정수(std::uintptr_t)로 변환했다.
+
+				주의:
+				unsigned int 는 포인터를 담기에 부족할 수 있다.
+				특히 x64 환경에서는 포인터가 64비트이므로
+				uintptr_t 사용이 더 적절하다.
+			*/
 		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] 포인터 타입 재해석 예제" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int value = 0x12345678;
+			int* pInt = &value;
+			char* pChar = reinterpret_cast<char*>(pInt);
+
+			std::cout << "value = 0x" << std::hex << value << std::dec << std::endl;
+			std::cout << "pInt  = " << pInt << std::endl;
+			std::cout << "pChar = " << static_cast<void*>(pChar) << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				int* 를 char* 로 재해석했다.
+
+				이런 방식은 메모리 바이트 단위 접근 같은
+				특수 목적에서는 쓰일 수 있지만,
+				의미를 잘못 이해하면 매우 위험할 수 있다.
+			*/
+		}
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	void use_static_cast()
 	{
 		/*
-			C++ style cast : use static_cast
+			📚 C++ 스타일 캐스트 : static_cast
 
-			Static_cast is the most basic cast operator with the same semantics and
-			castability as C style castors.
-			The C style has the same pretext, so the constraints are the same.
- 
-			For example, a struct type can not be cast to an int or a double type, and
-			a float type can not be cast to a pointer type.
-			In addition, static_cast does not remove the constants inherent in the expression.
-			(There is a separate const_cast for this)
+			static_cast 는 가장 기본적인 C++ 스타일 캐스트이다.
 
-			Static_cast does type checking for casting at run time, but at static compile time.
-			That is, the dynamic_cast (run-time type check) to be introduced next and
-			the type checking time are opposite.
+			주요 용도:
+			- 숫자형 변환
+			- 관련 있는 타입 사이의 명시적 변환
+			- 업캐스팅 / 일부 다운캐스팅
+			- void* 와 구체 타입 포인터 간의 변환(특정 상황)
+
+			특징:
+			- 컴파일 시점에 타입 검사를 한다
+			- const 제거는 하지 못한다
+			- 런타임 RTTI 검사는 하지 않는다
+
+			즉,
+			static_cast 는
+			"컴파일 타임에 허용되는 명시적 변환"에 적합하다.
 		*/
+
 		{
 			char ch;
 			int i = 65;
 			float f = 2.5f;
-			double dbl;
+			double dbl = 0.0;
 
-			ch = static_cast<char>(i);		// int -> char
-			dbl = static_cast<double>(f);	// float -> double
-			i = static_cast<int>(ch);		// char -> int
+			ch = static_cast<char>(i);      // int -> char
+			dbl = static_cast<double>(f);   // float -> double
+			i = static_cast<int>(ch);       // char -> int
 
-			system("pause");
+			std::cout << "ch  = " << ch << std::endl;
+			std::cout << "i   = " << i << std::endl;
+			std::cout << "f   = " << f << std::endl;
+			std::cout << "dbl = " << dbl << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				65 는 ASCII 코드상 'A' 이므로
+				char 로 바꾸면 'A' 가 된다.
+
+				그 후 다시 int 로 바꾸면 65 가 된다.
+			*/
 		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] BaseClass* -> DrivenClass* static_cast" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			BaseClass* pBase = new DrivenClass();
+
+			DrivenClass* pDriven = static_cast<DrivenClass*>(pBase);
+			if (pDriven)
+			{
+				pDriven->Update();
+			}
+
+			delete pBase;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				실제로 pBase 가 DrivenClass 객체를 가리키고 있으므로
+				static_cast 로 다운캐스팅 후 사용 가능하다.
+
+				하지만 static_cast 는 런타임 검사를 하지 않기 때문에
+				실제 객체 타입이 다르면 위험할 수 있다.
+			*/
+		}
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	void use_dynamic_cast()
 	{
 		/*
-			C++ style cast : use dynamic cast
+			📚 C++ 스타일 캐스트 : dynamic_cast
 
-			dynamic_cast is a casting operator that is used at runtime (dynamically) to traverse
-			the inheritance hierarchy or downcast.
-			(Of course, you can not use it in upcasting, but you do not have to use the caster operator in upcasting ...)
+			dynamic_cast 는 런타임에 타입을 검사하는 캐스트이다.
 
-			In other words, dynamic_cast converts the type of a pointer or
-			reference to a base class object to a derived class or a type of a sibling class.
+			주요 용도:
+			- 상속 계층에서 다운캐스팅
+			- 형제 클래스 간의 안전한 캐스팅 시도
+			- 실제 객체 타입을 런타임에 확인하면서 변환
 
-			Casting failure can be determined by looking at NULL (a pointer) or an exception (a reference).
+			중요 조건:
+			기반 클래스가 다형성(polymorphic)을 가져야 한다.
+			즉, virtual 함수가 하나 이상 있어야 한다.
 
-			That is, when dynamic_cast attempts to cast an ambiguous type using polymorphism at runtime (polymorphism violation)
-			It prevents run-time errors by preventing out-of-order conversion results.
+			현재 BaseClass 는 virtual Update() 를 가지고 있으므로 가능하다.
 
-			Why did you express the polymorphism in bold ?
-			Just because a class is inherited can not be said to be polymorphic.
-			To have polymorphism, a virtual member function must exist.
-			(If you have an inheritance but no virtual member function, you do not have a polymorphism, but a polymorphism)
+			결과:
+			- 포인터 캐스팅 실패 -> nullptr
+			- 참조 캐스팅 실패 -> 예외 발생
 
-			Dynamic_cast can not convert between objects that are not polymorphic, and compile errors occur when trying.
-
-			Because of this dependence on C++ RTTI, the cost of casting is quite expensive.
-			The computational cost increases as the complexity and depth of the inheritance system grows and deepens.
+			static_cast 와 비교:
+			- static_cast  : 빠르지만 런타임 안전성 확인 안 함
+			- dynamic_cast : 느리지만 타입 검사를 수행함
 		*/
-		{
-			BaseClass* pBC = new DrivenClass;
 
+		{
+			BaseClass* pBC = new DrivenClass();
 			DrivenClass* pSDC = nullptr;
 
-			// static casting. Only cast itself
+			// static_cast : 런타임 검사 없음
 			pSDC = static_cast<DrivenClass*>(pBC);
-			/*
-				mov		eax, dword ptr[ebp - 14h]
-				mov		dword ptr[ebp - 20h], eax
-			*/
-				
-			// Dynamically cast and RTTI check at runtime
-			pSDC = dynamic_cast<DrivenClass*>(pBC);
-			/*
-				push 	0
-				push 	offset DerivedClass 'RTTI Type Descriptor' (0C7A01Ch)
-				push 	offset BaseClass 'RTTI Type Descriptor' (0C7A094h)
-				push 	0
-				mov		eax, dword ptr[ebp - 14h]
-				push		eax
-				call		@ILT+715(___RTDynamicCast)(0C712D0h)
-				add		esp, 14h
-				mov		dword ptr[ebp - 2Ch], eax
-			*/
+			if (pSDC)
+			{
+				std::cout << "[static_cast] ";
+				pSDC->Update();
+			}
 
-			system("pause");
+			// dynamic_cast : 런타임 RTTI 검사
+			pSDC = dynamic_cast<DrivenClass*>(pBC);
+			if (pSDC)
+			{
+				std::cout << "[dynamic_cast] ";
+				pSDC->Update();
+			}
+
+			delete pBC;
+			std::cout << std::endl;
 		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] dynamic_cast 실패 예제" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			BaseClass* pBC = new BaseClass();
+
+			DrivenClass* pDriven = dynamic_cast<DrivenClass*>(pBC);
+			if (pDriven == nullptr)
+			{
+				std::cout << "dynamic_cast 실패 -> nullptr 반환" << std::endl;
+			}
+
+			delete pBC;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				실제 객체는 BaseClass 이고,
+				DrivenClass 가 아니므로
+				dynamic_cast 는 실패하고 nullptr 를 반환한다.
+			*/
+		}
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	void static_cast_vs_dynamic_cast()
 	{
-		// use static_cast VS. dynamic_cast (for Inheritance Class Casting)
+		/*
+			📚 static_cast VS dynamic_cast
+			(상속 관계에서의 캐스팅 비교)
+
+			핵심 차이:
+
+			1) static_cast
+			   - 컴파일 타임 변환
+			   - 런타임 타입 검사 없음
+			   - 실제 객체 타입이 맞다는 확신이 있을 때 사용
+
+			2) dynamic_cast
+			   - 런타임 타입 검사 수행
+			   - 실제 타입이 다르면 nullptr 반환(포인터 기준)
+			   - 여러 종류의 객체가 섞인 컬렉션에서 안전하게 특정 타입만 골라낼 때 유용
+		*/
+
+		class Student : public BaseClass
 		{
-			class Student : public BaseClass {
-			public:
-				void Update()
-				{
-					std::cout << "call Student::Update()" << std::endl;
-				}
-			};
-			class Teacher : public BaseClass {
-			public:
-				void Update()
-				{
-					std::cout << "call Teacher::Update()" << std::endl;
-				}
-			};
-
-			typedef std::vector<BaseClass*> BaseClassList;
-			BaseClassList vtBaseObjList;
-
+		public:
+			virtual void Update()
 			{
-				BaseClass* pObj = new Student();
-				if (pObj) {
-					vtBaseObjList.push_back(pObj);
-
-					Student* pStudent = static_cast<Student*>(pObj);
-					pStudent->Update();
-				}
+				std::cout << "call Student::Update()" << std::endl;
 			}
-			/*
-			output:
-				call Student::Update()
-			*/
+		};
 
+		class Teacher : public BaseClass
+		{
+		public:
+			virtual void Update()
 			{
-				BaseClass* pObj = new Teacher();
-				if (pObj) {
-					vtBaseObjList.push_back(pObj);
-				}
+				std::cout << "call Teacher::Update()" << std::endl;
 			}
-			/*
-			output:
-				call Teacher::Update()
-			*/
+		};
 
-			for (auto itPos = vtBaseObjList.begin();
-				itPos != vtBaseObjList.end();
-				++itPos)
+		typedef std::vector<BaseClass*> BaseClassList;
+		BaseClassList vtBaseObjList;
+
+		{
+			BaseClass* pObj = new Student();
+			if (pObj)
 			{
-				// The run-time polymorphism check will result in the casting of non-Teacher characters to NULL
-				Teacher* pObj = dynamic_cast<Teacher*>(*itPos);
-				if (pObj)
-				{
-					pObj->Update();
-				}
-			}
-			/*
-			output:
-				call Teacher::Update()
-			*/
+				vtBaseObjList.push_back(pObj);
 
-			system("pause");
+				Student* pStudent = static_cast<Student*>(pObj);
+				pStudent->Update();
+			}
 		}
+
+		{
+			BaseClass* pObj = new Teacher();
+			if (pObj)
+			{
+				vtBaseObjList.push_back(pObj);
+				pObj->Update();
+			}
+		}
+
+		std::cout << "============================================" << std::endl;
+		std::cout << "[dynamic_cast 로 Teacher 만 골라내기]" << std::endl;
+		std::cout << "============================================" << std::endl;
+
+		for (BaseClassList::iterator itPos = vtBaseObjList.begin();
+			itPos != vtBaseObjList.end();
+			++itPos)
+		{
+			Teacher* pObj = dynamic_cast<Teacher*>(*itPos);
+			if (pObj)
+			{
+				pObj->Update();
+			}
+		}
+
+		for (BaseClassList::iterator itPos = vtBaseObjList.begin();
+			itPos != vtBaseObjList.end();
+			++itPos)
+		{
+			delete* itPos;
+		}
+		vtBaseObjList.clear();
+
+		std::cout << std::endl;
+
+		/*
+			설명:
+
+			첫 번째 객체는 Student
+			두 번째 객체는 Teacher
+
+			static_cast<Student*>(pObj) 는
+			첫 번째 블록에서 실제로 Student 객체라는 걸 알고 있기 때문에 사용했다.
+
+			반면 벡터에는 Student 와 Teacher 가 섞여 들어 있으므로
+			반복문에서 특정 타입 Teacher 만 찾으려면
+			dynamic_cast 가 더 안전하다.
+
+			dynamic_cast<Teacher*>(...)
+			는 Teacher 가 아닌 객체는 nullptr 로 걸러준다.
+
+			출력 예:
+				call Student::Update()
+				call Teacher::Update()
+				call Teacher::Update()
+		*/
+
+		system("pause");
 	}
 
 	void Test()

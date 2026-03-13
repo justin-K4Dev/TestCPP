@@ -245,6 +245,9 @@
     <ClCompile Include="Time.cpp">
       <Filter>Logic\Etc</Filter>
     </ClCompile>
+    <ClCompile Include="FloatingPoint.cpp">
+      <Filter>Logic\Basic of C++</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="locale_cpp_facets.gif">

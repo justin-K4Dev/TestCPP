@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 
 namespace Functions
@@ -22,181 +22,296 @@ namespace Functions
 	void functions()
 	{
 		/*
-			Functions
+			📚 함수 (Functions)
 
-			Functions allow to structure programs in segments of code to perform individual tasks.
+			함수는 프로그램을 여러 개의 작업 단위로 나누어
+			구조적으로 작성할 수 있게 해주는 기능이다.
 
-			In C++, a function is a group of statements that is given a name,
-			and which can be called from some point of the program.
-			The most common syntax to define a function is:
+			C++에서 함수는
+			이름이 붙은 코드 블록이며,
+			필요한 시점에 호출해서 실행할 수 있다.
 
-				type name ( parameter1, parameter2, ...) { statements }
+			가장 기본적인 함수 정의 형태는 다음과 같다.
 
-			Where:
-			- type is the type of the value returned by the function.
-			- name is the identifier by which the function can be called.
-			- parameters (as many as needed): Each parameter consists of a type followed by an identifier,
-				with each parameter being separated from the next by a comma.
-				Each parameter looks very much like a regular variable declaration (for example: int x),
-				and in fact acts within the function as a regular variable which is local to the function.
-				The purpose of parameters is to allow passing arguments to the function from the location
-				where it is called from.
-			- statements is the function's body.
-				It is a block of statements surrounded by braces { } that specify what the function actually does.
+				반환형 함수이름(매개변수1, 매개변수2, ...)
+				{
+					실행문들
+				}
 
-			Let's have a look at an example:
+			각 요소의 의미:
+
+				1) 반환형(type)
+					함수가 실행을 마친 뒤 돌려주는 값의 타입
+					예: int, double, void
+
+				2) 함수 이름(name)
+					함수를 호출할 때 사용하는 식별자
+
+				3) 매개변수(parameters)
+					함수 호출 시 전달받는 입력값
+					함수 안에서는 지역 변수처럼 사용된다
+
+				4) 함수 본문(statements)
+					실제로 함수가 수행하는 작업 코드
+
+
+			=======================================================================================
+			1. 함수가 왜 필요한가?
+			=======================================================================================
+
+			함수를 사용하면 다음과 같은 장점이 있다.
+
+				- 같은 코드를 여러 번 재사용할 수 있다
+				- 긴 프로그램을 기능별로 나눌 수 있다
+				- 가독성이 좋아진다
+				- 유지보수가 쉬워진다
+				- 테스트가 쉬워진다
+
+			즉, 함수는 프로그램을 "의미 있는 작업 단위"로 분리하는 핵심 도구이다.
+
+
+			=======================================================================================
+			2. 함수 호출(Function Call)
+			=======================================================================================
+
+			함수는 정의만 해두면 자동으로 실행되지 않는다.
+			직접 호출해야 실행된다.
+
+			예:
+				z = addition(5, 3);
+
+			이 의미는:
+				- addition 함수를 호출하고
+				- 5와 3을 전달하고
+				- 반환값을 받아
+				- z에 저장한다
+
+			즉, 함수 호출 자체는 하나의 "값을 만드는 식(expression)"으로 볼 수 있다.
+
+			예를 들어 addition(5, 3)이 8을 반환한다면:
+
+				z = addition(5, 3);
+
+			은 개념적으로 다음과 비슷하다.
+
+				z = 8;
+
+
+			=======================================================================================
+			3. 매개변수(parameter)와 인자(argument)
+			=======================================================================================
+
+			이 둘은 비슷해 보이지만 의미가 다르다.
+
+				매개변수(parameter)
+					함수 정의에 적는 변수
+					예: int a, int b
+
+				인자(argument)
+					함수 호출 시 실제로 전달하는 값
+					예: 5, 3
+
+			예:
+				int addition(int a, int b)   // a, b는 매개변수
+				addition(5, 3);              // 5, 3은 인자
+
+			함수가 호출되면
+			인자의 값이 매개변수에 복사되어 들어간다.
+
+
+			=======================================================================================
+			4. return 의 의미
+			=======================================================================================
+
+			return 문은 함수 실행을 끝내고
+			호출한 곳으로 값을 돌려준다.
+
+			예:
+				return r;
+
+			의미:
+				- 현재 함수를 종료하고
+				- r 값을 호출한 곳으로 돌려준다
+
+			즉, 반환형이 int 인 함수라면
+			return 뒤에는 int 값이 와야 한다.
+
+			반환값이 없는 함수는 보통 void 를 사용한다.
+
+			예:
+				void printHello()
+				{
+					std::cout << "Hello";
+				}
+
+
+			=======================================================================================
+			5. main 함수
+			=======================================================================================
+
+			C++ 프로그램은 항상 main 함수부터 시작한다.
+
+			즉:
+				- main 은 자동으로 호출된다
+				- 나머지 함수는 main 이 직접 또는 간접적으로 호출해야 실행된다
+
+			그래서 프로그램의 시작점(entry point)은 main 이다.
+
+
+			=======================================================================================
+			6. 함수 호출은 여러 번 가능하다
+			=======================================================================================
+
+			한 번 정의한 함수는
+			여러 번 호출할 수 있다.
+
+			그리고 인자는 꼭 숫자 리터럴일 필요가 없다.
+
+				- 상수
+				- 변수
+				- 수식
+				- 다른 함수 호출 결과
+
+			모두 전달할 수 있다.
+
+			예:
+				subtraction(7, 2)
+				subtraction(x, y)
+				4 + subtraction(x, y)
+
+			이처럼 함수 호출 결과는 다른 연산식 안에서도 사용할 수 있다.
+
+
+			=======================================================================================
+			7. 핵심 요약
+			=======================================================================================
+
+				- 함수는 특정 작업을 수행하는 이름 있는 코드 블록이다.
+				- 함수는 호출해야 실행된다.
+				- 함수 호출은 반환값을 가지는 식이 될 수 있다.
+				- 매개변수는 함수 정의 쪽, 인자는 호출 쪽이다.
+				- return 은 함수 종료와 반환값 전달을 의미한다.
+				- 프로그램은 main 함수부터 시작한다.
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] 기본 함수 호출 - addition()
+		//=========================================================================================
 		{
-			int z;
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] 기본 함수 호출 - addition()" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			// addition(int, int) 함수가 이미 정의되어 있다고 가정
+			// 예:
+			// int addition(int a, int b)
+			// {
+			//     return a + b;
+			// }
+
+			int z = 0;
 
 			z = addition(5, 3);
 
-			std::cout << "The result is " << z;
-
-			system("puase");
+			std::cout << "The result is " << z << std::endl;
+			std::cout << std::endl;
 
 			/*
-			output:
-				The result is 8
+				예상 출력:
+					The result is 8
 			*/
 		}
-		/*
-			This program is divided in two functions: addition and main.
-			Remember that no matter the order in which they are defined, a C++ program always starts by calling main.
-				
-			In fact, main is the only function called automatically,
-			and the code in any other function is only executed if its function is called from main (directly or indirectly).
 
-			In the example above, main begins by declaring the variable z of type int, and right after that,
-			it performs the first function call: it calls addition.
-			The call to a function follows a structure very similar to its declaration.
-			In the example above, the call to addition can be compared to its definition just a few lines earlier:
 
-				int addition( int a, int b )
-
-				z = addition( 5 , 3 );
-
-			The parameters in the function declaration have a clear correspondence to the arguments passed in the function call.
-			The call passes two values, 5 and 3, to the function; these correspond to the parameters a and b,
-			declared for function addition.
-
-			At the point at which the function is called from within main, the control is passed to function addition:
-			here, execution of main is stopped, and will only resume once the addition function ends.
-			At the moment of the function call, the value of both arguments (5 and 3) are copied to the local variables int a and int b within the function.
-
-			Then, inside addition, another local variable is declared (int r), and by means of the expression r=a+b,
-			the result of a plus b is assigned to r; which, for this case, where a is 5 and b is 3,
-			means that 8 is assigned to r.
-
-			The final statement within the function:
-
-				return r;
-
-			Ends function addition, and returns the control back to the point where the function was called;
-			in this case: to function main.
-			At this precise moment, the program resumes its course on main returning exactly at the same point at which it was interrupted by the call to addition.
-			But additionally, because addition has a return type, the call is evaluated as having a value,
-			and this value is the value specified in the return statement that ended addition: in this particular case,
-			the value of the local variable r, which at the moment of the return statement had a value of 8.
-
-				int addition( int a, int b )
-
-				z = addition( 5 , 3 ); // z : 8
-
-			Therefore, the call to addition is an expression with the value returned by the function,
-			and in this case, that value, 8, is assigned to z.
-			It is as if the entire function call (addition(5,3)) was replaced by the value it returns (i.e., 8).
-
-			Then main simply prints this value by calling:
-
-				cout << "The result is " << z;
-
-			A function can actually be called multiple times within a program,
-			and its argument is naturally not limited just to literals:
-		*/
+		//=========================================================================================
+		// [테스트 예제 2] 함수 호출은 값처럼 사용 가능
+		//=========================================================================================
 		{
-			int x = 5, y = 3, z(0);
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] 함수 호출은 값처럼 사용 가능" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			int x = 5;
+			int y = 3;
+			int z = 0;
+
+			// subtraction(int, int) 함수가 이미 정의되어 있다고 가정
+			// 예:
+			// int subtraction(int a, int b)
+			// {
+			//     return a - b;
+			// }
 
 			z = subtraction(7, 2);
-
 			std::cout << "The first result is " << z << '\n';
+
 			std::cout << "The second result is " << subtraction(7, 2) << '\n';
 			std::cout << "The third result is " << subtraction(x, y) << '\n';
 
 			z = 4 + subtraction(x, y);
-
 			std::cout << "The fourth result is " << z << '\n';
 
-			system("pause");
+			std::cout << std::endl;
 
 			/*
-			output:
-				The first result is 5
-				The second result is 5
-				The third result is 2
-				The fourth result is 6
+				예상 출력:
+					The first result is 5
+					The second result is 5
+					The third result is 2
+					The fourth result is 6
 			*/
 		}
-		/*
-			Similar to the addition function in the previous example, this example defines a subtract function,
-			that simply returns the difference between its two parameters.
-			This time, main calls this function several times, demonstrating more possible ways in
-			which a function can be called.
 
-			Let's examine each of these calls, bearing in mind that each function call is itself an expression
-			that is evaluated as the value it returns.
-			Again, you can think of it as if the function call was itself replaced by the returned value:
 
-				z = subtraction ( 7, 2 );
-				cout << "The first result is " << z;
+		//=========================================================================================
+		// [테스트 예제 3] 함수 호출과 식(expression) 개념 확인
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 3] 함수 호출은 식(expression)" << std::endl;
+			std::cout << "==================================================" << std::endl;
 
-			If we replace the function call by the value it returns (i.e., 5), we would have:
+			int result1 = addition(10, 20);
+			int result2 = addition(1, 2) * 3;
+			int result3 = addition(addition(1, 2), 5);
 
-				z = 5;
-				cout << "The first result is " << z;
+			std::cout << "addition(10, 20) = " << result1 << std::endl;
+			std::cout << "addition(1, 2) * 3 = " << result2 << std::endl;
+			std::cout << "addition(addition(1, 2), 5) = " << result3 << std::endl;
+			std::cout << std::endl;
 
-			With the same procedure, we could interpret:
+			/*
+				설명:
+					addition(10, 20)        -> 30
+					addition(1, 2) * 3      -> 3 * 3 = 9
+					addition(addition(1,2), 5)
+						-> addition(3, 5)
+						-> 8
+			*/
+		}
 
-				cout << "The second result is " << subtraction (7,2);
 
-			as:
-				cout << "The second result is " << 5;
+		//=========================================================================================
+		// [테스트 예제 4] 매개변수와 지역 변수 개념
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 4] 매개변수와 지역 변수 개념 설명" << std::endl;
+			std::cout << "==================================================" << std::endl;
 
-			since 5 is the value returned by subtraction (7,2).
+			std::cout << "함수의 매개변수는 함수 내부에서 지역 변수처럼 동작한다." << std::endl;
+			std::cout << "즉, addition(int a, int b) 에서 a, b 는 함수 내부 전용 변수이다." << std::endl;
+			std::cout << "호출자가 전달한 값은 보통 이 매개변수에 복사되어 들어간다." << std::endl;
+			std::cout << std::endl;
+		}
 
-			In the case of:
-
-				cout << "The third result is " << subtraction (x,y);
-
-			The arguments passed to subtraction are variables instead of literals.
-			That is also valid, and works fine.
-			The function is called with the values x and y have at the moment of the call:
-			5 and 3 respectively, returning 2 as result.
-
-			The fourth call is again similar:
-
-				z = 4 + subtraction (x,y);
-
-			The only addition being that now the function call is also an operand of an addition operation.
-			Again, the result is the same as if the function call was replaced by its result:
-			6. Note, that thanks to the commutative property of additions,
-			the above can also be written as:
-
-				z = subtraction (x,y) + 4;
-
-			With exactly the same result.
-			Note also that the semicolon does not necessarily go after the function call,
-			but, as always, at the end of the whole statement.
-
-			Again, the logic behind may be easily seen again by replacing the function calls by their returned value:
-
-				z = 4 + 2;    // same as z = 4 + subtraction (x,y);
-				z = 2 + 4;    // same as z = subtraction (x,y) + 4;
-		*/
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
-	// Functions with no type example
+	// 반환값이 없는 함수 예제
 	void printMessage()
 	{
 		std::cout << "I'm a function!";
@@ -205,101 +320,407 @@ namespace Functions
 	void functions_with_no_type()
 	{
 		/*
-			Functions with no type.
-			
-			The use of void		
+			📚 반환형이 없는 함수 (Functions with no type)
 
-			The syntax shown above for functions:
+			앞에서 본 함수 기본 형태는 다음과 같았다.
 
-				type name ( argument1, argument2 ...) { statements }
-
-			Requires the declaration to begin with a type. This is the type of the value returned by the function.
-			But what if the function does not need to return a value? In this case,
-			the type to be used is void, which is a special type to represent the absence of value.
-			For example, a function that simply prints a message may not need to return any value:
-		*/
-		{
-			printMessage();
-
-			system("pause");
-
-			/*
-			output:
-				I'm a function!
-			*/
-		}
-		/*
-			void can also be used in the function's parameter list to explicitly specify
-			that the function takes no actual parameters when called.
-			For example, printmessage could have been declared as:
-
-				void printmessage (void)
+				type name(argument1, argument2, ...)
 				{
-					cout << "I'm a function!";
+					statements
 				}
 
-			In C++, an empty parameter list can be used instead of void with same meaning,
-			but the use of void in the argument list was popularized by the C language, where this is a requirement.
+			여기서 맨 앞의 type은
+			함수가 실행을 마친 뒤 호출한 곳으로 돌려주는 값의 타입이다.
 
-			Something that in no case is optional are the parentheses that follow the function name,
-			neither in its declaration nor when calling it.
-				
-			And even when the function takes no parameters,
-			at least an empty pair of parentheses shall always be appended to the function name.
-			See how printmessage was called in an earlier example:
+			예:
+				int addition(int a, int b)
+				{
+					return a + b;
+				}
 
-				printmessage ();
+			이 함수는 int 값을 반환한다.
 
-			The parentheses are what differentiate functions from other kinds of declarations or statements.
-			The following would not call the function:
+			그런데 어떤 함수는
+			특정 작업만 수행하고
+			값을 돌려줄 필요가 없을 수도 있다.
 
-				printmessage;
+			예:
+				- 메시지 출력
+				- 화면 지우기
+				- 로그 기록
+				- 상태 변경
+				- 파일 닫기
+
+			이런 함수는 반환값이 필요 없으므로
+			반환형으로 void를 사용한다.
+
+			즉, void는
+			"반환할 값이 없음"을 의미하는 특별한 타입이다.
+
+
+			=======================================================================================
+			1. void 반환형
+			=======================================================================================
+
+			예:
+				void printMessage()
+				{
+					std::cout << "I'm a function!";
+				}
+
+			이 함수는 콘솔에 메시지를 출력하는 작업만 하고,
+			호출한 쪽에 값을 돌려주지 않는다.
+
+			즉:
+				- 작업은 수행한다
+				- 반환값은 없다
+
+			그래서 return 값이 필요 없고,
+			필요하다면 그냥 return; 만 쓸 수 있다.
+
+
+			=======================================================================================
+			2. 매개변수가 없는 함수
+			=======================================================================================
+
+			매개변수가 없는 함수는
+			다음 두 가지 형태로 쓸 수 있다.
+
+				void printMessage()
+				void printMessage(void)
+
+			C++에서는 이 둘이 같은 의미이다.
+
+			즉:
+				- 빈 괄호 ()
+				- (void)
+
+			둘 다 "이 함수는 인자를 받지 않는다"는 뜻이다.
+
+			단, C 언어에서는 역사적으로 (void)를 명시하는 것이 더 중요했고,
+			그 습관이 C++ 예제에도 자주 남아 있다.
+
+
+			=======================================================================================
+			3. 괄호는 반드시 필요하다
+			=======================================================================================
+
+			함수는 매개변수가 없더라도
+			이름 뒤에 괄호가 반드시 와야 한다.
+
+			즉:
+				printMessage();
+
+			처럼 호출해야 한다.
+
+			다음은 함수 호출이 아니다.
+
+				printMessage;
+
+			이것은 단순히 함수 이름 자체를 적은 것일 뿐,
+			함수를 실행하지 않는다.
+
+			즉, 함수 호출에서 괄호는 절대 생략할 수 없다.
+
+
+			=======================================================================================
+			4. void 함수의 return
+			=======================================================================================
+
+			void 함수는 값을 반환하지 않으므로
+			다음처럼 값 없는 return은 가능하다.
+
+				void func()
+				{
+					if (something)
+						return;
+
+					...
+				}
+
+			즉, return; 은
+			현재 함수를 즉시 종료하라는 뜻이다.
+
+			하지만 이런 것은 불가능하다.
+
+				return 10;   // void 함수에서는 오류
+
+			왜냐하면 void 함수는 값을 반환하지 않기 때문이다.
+
+
+			=======================================================================================
+			5. 핵심 요약
+			=======================================================================================
+
+				- void는 "반환값 없음"을 의미한다.
+				- 값 없이 어떤 작업만 수행하는 함수에 사용한다.
+				- 매개변수가 없는 함수는 () 또는 (void)로 선언할 수 있다.
+				- 함수 호출에는 괄호가 반드시 필요하다.
+				- void 함수에서는 return; 은 가능하지만 return 값; 은 불가능하다.
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] 가장 기본적인 void 함수 호출
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] 기본 void 함수 호출" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			printMessage();
+			std::cout << std::endl << std::endl;
+
+			/*
+				예상 출력:
+					I'm a function!
+			*/
+		}
+
+
+		//=========================================================================================
+		// [테스트 예제 2] void 함수는 반환값이 없음
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] void 함수는 반환값이 없음" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			std::cout << "printMessage() 는 작업만 수행하고 값을 돌려주지 않는다." << std::endl;
+			std::cout << "즉, int x = printMessage(); 같은 코드는 허용되지 않는다." << std::endl;
+			std::cout << std::endl;
+		}
+
+
+		//=========================================================================================
+		// [테스트 예제 3] 매개변수 없는 함수는 괄호가 필수
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 3] 함수 호출에서 괄호는 필수" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			std::cout << "올바른 호출: printMessage();" << std::endl;
+			std::cout << "잘못된 형태: printMessage;" << std::endl;
+			std::cout << "괄호가 있어야 실제 함수 호출이 된다." << std::endl;
+			std::cout << std::endl;
+		}
+
+
+		//=========================================================================================
+		// [테스트 예제 4] void 함수 안에서 return; 사용 예
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 4] void 함수의 return; 개념 설명" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			std::cout << "void 함수에서는 return; 으로 조기 종료할 수 있다." << std::endl;
+			std::cout << "하지만 return 값; 은 사용할 수 없다." << std::endl;
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	void the_return_value_of_main()
 	{
 		/*
-			The return value of main
+			📚 main 함수의 반환값 (The return value of main)
 
-			You may have noticed that the return type of main is int,
-			but most examples in this and earlier chapters did not actually return any value from main.
+			C++ 프로그램의 시작점은 main 함수이다.
+			그리고 main 함수의 반환형은 보통 int 이다.
 
-			Well, there is a catch:
-			If the execution of main ends normally without encountering a return statement the compiler assumes the function ends
-			with an implicit return statement:
+			예:
+				int main()
+				{
+					...
+				}
+
+			그런데 많은 예제에서 main 끝에
+			return 문이 없는 경우를 볼 수 있다.
+
+			왜냐하면 main 함수에는 특별 규칙이 있기 때문이다.
+
+			main 함수가 정상적으로 끝났는데
+			명시적인 return 문이 없으면,
+			컴파일러는 다음 문장이 있는 것처럼 간주한다.
 
 				return 0;
 
-			Note that this only applies to function main for historical reasons.
-			All other functions with a return type shall end with a proper return statement that includes a return value,
-			even if this is never used.
+			즉, main 함수에 한해서는
+			return 0; 이 생략될 수 있다.
 
-			When main returns zero (either implicitly or explicitly),
-			it is interpreted by the environment as that the program ended successfully.
-			Other values may be returned by main,
-			and some environments give access to that value to the caller in some way,
-			although this behavior is not required nor necessarily portable between platforms.
-			The values for main that are guaranteed to be interpreted in the same way on all platforms are:
 
-				value			description
-				0				The program was successful
-				EXIT_SUCCESS	The program was successful (same as above).
-								This value is defined in header <cstdlib>.
-				EXIT_FAILURE	The program failed.
-								This value is defined in header <cstdlib>.
+			=======================================================================================
+			1. 왜 main 만 특별한가?
+			=======================================================================================
 
-			Because the implicit return 0; statement for main is a tricky exception,
-			some authors consider it good practice to explicitly write the statement.
+			이 규칙은 역사적인 이유로
+			main 함수에만 허용된 특별 예외이다.
+
+			즉:
+				- main 함수는 return 생략 가능
+				- 일반 함수는 return 타입이 있으면 return 문이 필요
+
+			예:
+				int func()
+				{
+				} // 잘못된 코드 가능성
+
+			이런 일반 함수는 반드시 적절한 반환값을 돌려줘야 한다.
+
+			하지만 main 은:
+
+				int main()
+				{
+				}
+
+			처럼 끝나도
+			암묵적으로 return 0; 으로 처리된다.
+
+
+			=======================================================================================
+			2. main 의 반환값 의미
+			=======================================================================================
+
+			main 함수가 반환하는 값은
+			프로그램이 종료될 때 운영체제(또는 호출한 쪽)에 전달되는 종료 코드(exit code)이다.
+
+			보통 다음 의미로 사용된다.
+
+				0
+					프로그램 성공 종료
+
+				0이 아닌 값
+					어떤 종류의 실패 또는 비정상 종료
+
+			즉, 운영체제나 배치 파일, 스크립트 등은
+			이 반환값을 보고 프로그램 성공/실패를 판단할 수 있다.
+
+
+			=======================================================================================
+			3. 표준적으로 보장된 값
+			=======================================================================================
+
+			모든 플랫폼에서 같은 의미로 보장되는 대표 값은 다음과 같다.
+
+				0
+					성공
+
+				EXIT_SUCCESS
+					성공
+					<cstdlib> 에 정의됨
+
+				EXIT_FAILURE
+					실패
+					<cstdlib> 에 정의됨
+
+			즉, 다음은 모두 성공 종료 의미로 볼 수 있다.
+
+				return 0;
+				return EXIT_SUCCESS;
+
+			그리고 실패를 명확하게 표현하려면:
+
+				return EXIT_FAILURE;
+
+			를 사용할 수 있다.
+
+
+			=======================================================================================
+			4. 왜 명시적으로 return 0; 을 쓰기도 하는가?
+			=======================================================================================
+
+			main 에서는 return 0; 이 생략 가능하지만,
+			일부 개발자는 명시적으로 써주는 것을 선호한다.
+
+			이유:
+				- 함수 종료 의도가 분명하다
+				- 초보자에게 더 이해하기 쉽다
+				- "main 만 특별하다"는 예외 규칙을 덜 의존한다
+				- 코드 스타일이 일관적이다
+
+			즉, 생략해도 맞지만
+			써주는 것도 좋은 습관일 수 있다.
+
+
+			=======================================================================================
+			5. 핵심 요약
+			=======================================================================================
+
+				- main 의 반환형은 보통 int 이다.
+				- main 에서 return 을 생략하면 암묵적으로 return 0; 이 적용된다.
+				- 이는 main 에만 허용된 특별 규칙이다.
+				- 0 또는 EXIT_SUCCESS 는 성공 종료를 의미한다.
+				- EXIT_FAILURE 는 실패 종료를 의미한다.
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] main 의 암묵적 return 0 설명
+		//=========================================================================================
 		{
-			system("pause");
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] main 의 암묵적 return 0 설명" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			std::cout << "int main() { } 처럼 끝나도 main 은 암묵적으로 return 0; 처리될 수 있다." << std::endl;
+			std::cout << "즉, main 함수에 한해서만 return 생략이 허용된다." << std::endl;
+			std::cout << std::endl;
 		}
+
+
+		//=========================================================================================
+		// [테스트 예제 2] 성공/실패 종료 코드 설명
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] 성공/실패 종료 코드 설명" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			std::cout << "return 0;            -> 성공 종료" << std::endl;
+			std::cout << "return EXIT_SUCCESS; -> 성공 종료" << std::endl;
+			std::cout << "return EXIT_FAILURE; -> 실패 종료" << std::endl;
+			std::cout << std::endl;
+		}
+
+
+		//=========================================================================================
+		// [테스트 예제 3] 일반 함수와의 차이 설명
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 3] 일반 함수와의 차이" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			std::cout << "main 만 return 생략 특례가 있다." << std::endl;
+			std::cout << "일반 함수에서 반환형이 int, double 등이라면 적절한 return 문이 필요하다." << std::endl;
+			std::cout << std::endl;
+		}
+
+
+		//=========================================================================================
+		// [테스트 예제 4] 명시적 작성 권장 스타일 설명
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 4] 명시적 return 0; 스타일" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			std::cout << "생략 가능하더라도 int main() 끝에 return 0; 을 명시적으로 쓰는 스타일도 흔하다." << std::endl;
+			std::cout << "이렇게 하면 함수 종료 의도가 더 분명해질 수 있다." << std::endl;
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
-	// Arguments passed by value and by reference example
+	// 인자를 참조로 받는 함수 예제
 	void duplicate(int& a, int& b, int& c)
 	{
 		a *= 2;
@@ -310,78 +731,233 @@ namespace Functions
 	void arguments_passed_by_value_n_by_reference()
 	{
 		/*
-			Arguments passed by value and by reference
+			📚 값에 의한 전달과 참조에 의한 전달
+			(Arguments passed by value and by reference)
 
-			In the functions seen earlier, arguments have always been passed by value.
-			This means that, when calling a function,
-			what is passed to the function are the values of these arguments on the moment of the call,
-			which are copied into the variables represented by the function parameters.
-			For example, take:
+			함수에 인자를 전달하는 대표적인 방법에는 크게 두 가지가 있다.
 
-				int x = 5, y = 3, z;
-				z = addition ( x, y );
+				1) 값에 의한 전달 (pass by value)
+				2) 참조에 의한 전달 (pass by reference)
 
-			In this case, function addition is passed 5 and 3, which are copies of the values of x and y, respectively.
-			These values (5 and 3) are used to initialize the variables set as parameters in the function's definition,
-			but any modification of these variables within the function has no effect on the values of the variables x and y outside it,
-			because x and y were themselves not passed to the function on the call,
-			but only copies of their values at that moment.
+			이 둘의 가장 큰 차이는
+			함수 안에서 값을 바꿨을 때
+			원래 변수까지 바뀌느냐 아니냐이다.
 
-				int addition( int a, int b )
 
-				z = addition( 5 , 3 );
+			=======================================================================================
+			1. 값에 의한 전달 (pass by value)
+			=======================================================================================
 
-			In certain cases, though, it may be useful to access an external variable from within a function.
-			To do that, arguments can be passed by reference, instead of by value.
-			For example, the function duplicate in this code duplicates the value of its three arguments,
-			causing the variables used as arguments to actually be modified by the call:
+			값에 의한 전달은
+			함수를 호출하는 순간,
+			인자의 "값"만 복사해서 함수의 매개변수로 넘기는 방식이다.
+
+			예:
+				int x = 5;
+				int y = 3;
+				int z = addition(x, y);
+
+			이 경우 addition 함수 안의 a, b는
+			x, y 그 자체가 아니라
+			그 시점의 값 5, 3을 복사한 별도의 지역 변수이다.
+
+			즉:
+				x -> a(복사본)
+				y -> b(복사본)
+
+			따라서 함수 안에서 a, b를 바꿔도
+			바깥의 x, y는 바뀌지 않는다.
+
+			즉, 함수 내부 수정은 "복사본"에만 적용된다.
+
+
+			=======================================================================================
+			2. 참조에 의한 전달 (pass by reference)
+			=======================================================================================
+
+			참조에 의한 전달은
+			값의 복사본이 아니라
+			원래 변수 자체를 함수와 연결하는 방식이다.
+
+			C++에서는 매개변수 타입 뒤에 & 를 붙여 참조를 나타낸다.
+
+			예:
+				void duplicate(int& a, int& b, int& c)
+
+			여기서 a, b, c는 단순한 지역 복사본이 아니라
+			호출자가 전달한 변수의 별명(alias)처럼 동작한다.
+
+			즉:
+				a -> x의 별명
+				b -> y의 별명
+				c -> z의 별명
+
+			그래서 함수 안에서 a를 바꾸면
+			실제로는 x가 바뀌게 된다.
+
+
+			=======================================================================================
+			3. duplicate 함수의 의미
+			=======================================================================================
+
+			이 함수는 전달받은 세 값을 각각 2배로 만든다.
+
+				a *= 2;
+				b *= 2;
+				c *= 2;
+
+			그런데 a, b, c가 참조이므로
+			실제 바깥 변수인 x, y, z가 직접 수정된다.
+
+			예:
+				x = 1, y = 3, z = 7
+
+			duplicate(x, y, z) 호출 후:
+
+				x = 2
+				y = 6
+				z = 14
+
+			즉, 참조 전달은 "함수 밖 변수를 함수 안에서 바꾸고 싶을 때" 사용한다.
+
+
+			=======================================================================================
+			4. 만약 참조가 아니라 값 전달이었다면?
+			=======================================================================================
+
+			만약 duplicate가 다음처럼 정의되었다면:
+
+				void duplicate(int a, int b, int c)
+
+			이 경우 a, b, c는 x, y, z의 복사본일 뿐이다.
+
+			그래서 함수 안에서 2배를 해도
+			복사본만 바뀌고,
+			바깥의 x, y, z는 그대로 유지된다.
+
+			즉, 출력은 다음이 되었을 것이다.
+
+				x=1, y=3, z=7
+
+
+			=======================================================================================
+			5. 언제 무엇을 써야 하나?
+			=======================================================================================
+
+			값 전달:
+				- 원본을 보호하고 싶을 때
+				- 함수 안에서 값을 바꿔도 외부에 영향이 없어야 할 때
+				- 작은 기본형(int, double 등)에 자주 사용
+
+			참조 전달:
+				- 원본을 직접 수정해야 할 때
+				- 큰 객체 복사를 피하고 싶을 때
+				- 출력 파라미터(out parameter)처럼 사용할 때
+
+			또한 읽기 전용 큰 객체는
+			보통 const reference를 많이 사용한다.
+
+			예:
+				void print(const std::string& s)
+
+			이렇게 하면 복사는 피하고,
+			수정은 막을 수 있다.
+
+
+			=======================================================================================
+			6. 핵심 요약
+			=======================================================================================
+
+				- 값 전달은 복사본을 넘긴다.
+				- 참조 전달은 원본 변수 자체를 연결한다.
+				- 값 전달은 원본이 바뀌지 않는다.
+				- 참조 전달은 함수 내부 수정이 원본에 반영된다.
+				- & 는 참조 매개변수를 의미한다.
 		*/
-		{
-			int x = 1, y = 3, z = 7;
-			duplicate(x, y, z);
-			std::cout << "x=" << x << ", y=" << y << ", z=" << z;
 
-			system("pause");
+
+		//=========================================================================================
+		// [테스트 예제 1] 참조 전달 - 원본 값이 실제로 변경됨
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] 참조 전달 - 원본 값 변경" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			int x = 1;
+			int y = 3;
+			int z = 7;
+
+			std::cout << "호출 전 : x=" << x << ", y=" << y << ", z=" << z << std::endl;
+
+			duplicate(x, y, z);
+
+			std::cout << "호출 후 : x=" << x << ", y=" << y << ", z=" << z << std::endl;
+			std::cout << std::endl;
 
 			/*
-			output:
-				x=2, y=6, z=14
+				예상 출력:
+					호출 전 : x=1, y=3, z=7
+					호출 후 : x=2, y=6, z=14
 			*/
 		}
-		/*
-			To gain access to its arguments, the function declares its parameters as references.
-			In C++, references are indicated with an ampersand (&) following the parameter type,
-			as in the parameters taken by duplicate in the example above.
 
-			When a variable is passed by reference, what is passed is no longer a copy,
-			but the variable itself, the variable identified by the function parameter,
-			becomes somehow associated with the argument passed to the function,
-			and any modification on their corresponding local variables within the function are reflected in the variables passed as arguments in the call.
 
-			In fact, a, b, and c become aliases of the arguments passed on the function call (x, y, and z)
-			and any change on a within the function is actually modifying variable x outside the function.
-				
-			Any change on b modifies y, and any change on c modifies z.
-			That is why when, in the example,
-			function duplicate modifies the values of variables a, b, and c, the values of x, y, and z are affected.
+		//=========================================================================================
+		// [테스트 예제 2] 값 전달이었다면 바뀌지 않는다는 설명
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] 값 전달이었다면?" << std::endl;
+			std::cout << "==================================================" << std::endl;
 
-			If instead of defining duplicate as:
+			std::cout << "만약 duplicate가 void duplicate(int a, int b, int c) 였다면" << std::endl;
+			std::cout << "함수 안에서 a, b, c를 바꿔도 x, y, z는 바뀌지 않는다." << std::endl;
+			std::cout << "즉, 복사본만 수정되고 원본은 그대로 유지된다." << std::endl;
+			std::cout << std::endl;
+		}
 
-				void duplicate( int& a, int& b, int& c ) 
 
-			Was it to be defined without the ampersand signs as:
+		//=========================================================================================
+		// [테스트 예제 3] 참조는 원본의 별명(alias)처럼 동작
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 3] 참조의 별명(alias) 개념" << std::endl;
+			std::cout << "==================================================" << std::endl;
 
-				void duplicate( int a, int b, int c )
+			int value = 10;
+			int& ref = value;
 
-			The variables would not be passed by reference, but by value, creating instead copies of their values.
-			In this case, the output of the program would have been the values of x, y, and z
-			without being modified (i.e., 1, 3, and 7).
-		*/
+			std::cout << "초기값 value = " << value << ", ref = " << ref << std::endl;
 
+			ref = 20;
+
+			std::cout << "ref = 20 이후 value = " << value << ", ref = " << ref << std::endl;
+			std::cout << "즉, ref는 value의 별명처럼 동작한다." << std::endl;
+			std::cout << std::endl;
+		}
+
+
+		//=========================================================================================
+		// [테스트 예제 4] 값 전달과 참조 전달 개념 요약
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 4] 값 전달 vs 참조 전달 요약" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			std::cout << "값 전달  : 복사본 전달 -> 원본 보호" << std::endl;
+			std::cout << "참조 전달: 원본 연결   -> 원본 수정 가능" << std::endl;
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
-	// Efficiency considerations and const references example
+	// const reference 예제
 	std::string concatenate(const std::string& a, const std::string& b)
 	{
 		return a + b;
@@ -390,72 +966,244 @@ namespace Functions
 	void efficiency_considerations_n_const_references()
 	{
 		/*
-			Efficiency considerations and const references
+			📚 효율성과 const 참조 (Efficiency considerations and const references)
 
-			Calling a function with parameters taken by value causes copies of the values to be made.
-			This is a relatively inexpensive operation for fundamental types such as int,
-			but if the parameter is of a large compound type, it may result on certain overhead.
-			For example, consider the following function:
+			함수에 인자를 값으로 전달(pass by value)하면
+			매개변수는 인자의 복사본이 된다.
 
-				string concatenate( string a, string b )
-				{
-					return a+b;
-				}
+			기본형(int, double 등)은 복사 비용이 매우 작아서
+			대부분 큰 문제가 되지 않는다.
 
-			This function takes two strings as parameters (by value), and returns the result of concatenating them.
-			By passing the arguments by value,
-			the function forces a and b to be copies of the arguments passed to the function when it is called.
-			And if these are long strings, it may mean copying large quantities of data just for the function call.
+			하지만 큰 객체(예: std::string, std::vector, 사용자 정의 클래스)를
+			값으로 전달하면,
+			함수 호출 시 복사 비용이 추가될 수 있다.
 
-			But this copy can be avoided altogether if both parameters are made references:
+			즉:
+				- 메모리 복사
+				- 생성/파괴 비용
+				- 성능 오버헤드
 
-				string concatenate( string& a, string& b )
-				{
-					return a + b;
-				}
+			가 생길 수 있다.
 
-			Arguments by reference do not require a copy.
-			The function operates directly on (aliases of) the strings passed as arguments,
-			and, at most, it might mean the transfer of certain pointers to the function.
-				
-			In this regard, the version of concatenate taking references is more efficient than the version taking values,
-			since it does not need to copy expensive-to-copy strings.
-			On the flip side, functions with reference parameters are generally perceived as functions that modify the arguments passed,
-			because that is why reference parameters are actually for.
+			예를 들어 다음 함수를 생각해보자.
 
-			The solution is for the function to guarantee that its reference parameters are not going to be modified by this function.
-			This can be done by qualifying the parameters as constant:
-
-				string concatenate( const string& a, const string& b )
+				std::string concatenate(std::string a, std::string b)
 				{
 					return a + b;
 				}
 
-			By qualifying them as const, the function is forbidden to modify the values of neither a nor b,
-			but can actually access their values as references (aliases of the arguments),
-			without having to make actual copies of the strings.
+			이 함수는 문자열 두 개를 이어 붙여 반환하지만,
+			호출 시 a와 b는 원래 문자열의 복사본이 된다.
 
-			Therefore, const references provide functionality similar to passing arguments by value,
-			but with an increased efficiency for parameters of large types.
-			That is why they are extremely popular in C++ for arguments of compound types.
-			Note though, that for most fundamental types, there is no noticeable difference in efficiency,
-			and in some cases, const references may even be less efficient!
+			문자열이 매우 길다면
+			이 복사는 무시하기 어려운 비용이 될 수 있다.
+
+
+			=======================================================================================
+			1. 참조로 받으면 복사를 피할 수 있다
+			=======================================================================================
+
+			다음처럼 참조로 받으면:
+
+				std::string concatenate(std::string& a, std::string& b)
+
+			a와 b는 복사본이 아니라
+			원래 인자의 별명(alias)이 된다.
+
+			따라서 큰 문자열을 새로 복사하지 않아도 된다.
+
+			즉:
+				- 값 전달 : 복사 발생
+				- 참조 전달 : 복사 없음
+
+			이 점에서 참조 전달이 더 효율적일 수 있다.
+
+
+			=======================================================================================
+			2. 그런데 그냥 참조는 오해를 부를 수 있다
+			=======================================================================================
+
+			문제는 매개변수가 참조(`T&`)이면
+			"이 함수가 인자를 수정할 수도 있겠다"라고 읽히기 쉽다는 점이다.
+
+			예:
+				void func(std::string& s)
+
+			이런 코드는 보통
+			함수 안에서 s를 바꿀 가능성이 있다고 생각하게 된다.
+
+			하지만 concatenate는
+			입력 문자열을 읽기만 하고,
+			원본을 바꿀 의도가 없다.
+
+
+			=======================================================================================
+			3. const reference가 해결책
+			=======================================================================================
+
+			그래서 보통 다음처럼 쓴다.
+
+				std::string concatenate(const std::string& a, const std::string& b)
+
+			의미:
+				- 참조로 받으므로 복사를 피할 수 있다
+				- const 이므로 함수 안에서 수정할 수 없다
+
+			즉, const reference는
+			"효율성과 안정성"을 동시에 확보하는 매우 중요한 방식이다.
+
+			특히 큰 객체를 읽기 전용으로 받는 함수에서
+			C++에서 가장 흔히 쓰이는 패턴 중 하나이다.
+
+
+			=======================================================================================
+			4. 왜 compound type에서 특히 중요할까?
+			=======================================================================================
+
+			std::string 같은 복합 타입(compound type)은
+			내부적으로 메모리를 동적 할당하거나
+			길이/버퍼/포인터 같은 정보를 관리한다.
+
+			따라서 복사가 단순 정수 복사보다 비쌀 수 있다.
+
+			예:
+				- 긴 문자열 복사
+				- 큰 vector 복사
+				- 큰 struct/class 복사
+
+			이런 경우 const reference는 성능상 큰 이점을 줄 수 있다.
+
+
+			=======================================================================================
+			5. 모든 타입에서 const reference가 더 좋은가?
+			=======================================================================================
+
+			항상 그런 것은 아니다.
+
+			int, double, char 같은 기본형은
+			복사 비용이 매우 작다.
+
+			오히려 이런 타입에서는
+			참조 전달이 더 복잡하거나 덜 효율적일 수도 있다.
+
+			즉, 일반적인 기준은 다음과 같다.
+
+				기본형 / 작은 타입
+					값 전달이 보통 충분함
+
+				큰 객체 / 복사 비용 큰 타입
+					const reference가 유리함
+
+
+			=======================================================================================
+			6. 현재 예제 concatenate 의미
+			=======================================================================================
+
+			현재 함수는 다음과 같다.
+
+				std::string concatenate(const std::string& a, const std::string& b)
+				{
+					return a + b;
+				}
+
+			이 함수는:
+				- a, b를 복사하지 않고 참조로 받는다
+				- a, b를 수정하지 않는다
+				- 새로운 문자열을 만들어 반환한다
+
+			즉, 입력은 읽기 전용으로 효율적으로 받고,
+			결과만 새로 만들어 돌려주는 좋은 형태이다.
+
+
+			=======================================================================================
+			7. 핵심 요약
+			=======================================================================================
+
+				- 값 전달은 복사 비용이 발생할 수 있다.
+				- 큰 객체는 값 전달이 비효율적일 수 있다.
+				- 참조 전달은 복사를 피한다.
+				- const reference는 복사 없이 읽기 전용 접근을 제공한다.
+				- 큰 객체를 입력 전용으로 받을 때 매우 자주 사용된다.
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] const reference 기반 concatenate 호출
+		//=========================================================================================
 		{
-			std::string strA("a"), strB("b");
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] const reference 기반 concatenate 호출" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			std::string strA("a");
+			std::string strB("b");
 			std::string strC = concatenate(strA, strB);
 
 			std::cout << "A=" << strA << " B=" << strB << " C=" << strC << std::endl;
-
-			system("pause");
+			std::cout << std::endl;
 
 			/*
-			output:
-				A=a B=b, C=ab
+				예상 출력:
+					A=a B=b C=ab
 			*/
 		}
+
+
+		//=========================================================================================
+		// [테스트 예제 2] 원본 문자열은 수정되지 않음
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] 원본 문자열은 수정되지 않음" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			std::string left = "Hello";
+			std::string right = "World";
+			std::string merged = concatenate(left, right);
+
+			std::cout << "left   = " << left << std::endl;
+			std::cout << "right  = " << right << std::endl;
+			std::cout << "merged = " << merged << std::endl;
+			std::cout << "const reference 이므로 함수는 left/right 를 수정할 수 없다." << std::endl;
+			std::cout << std::endl;
+		}
+
+
+		//=========================================================================================
+		// [테스트 예제 3] 값 전달과 const reference 전달 개념 비교
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 3] 값 전달 vs const reference 전달 비교" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			std::cout << "값 전달  : 매개변수에 복사본 생성 가능" << std::endl;
+			std::cout << "const 참조: 복사 없이 원본을 읽기 전용으로 참조" << std::endl;
+			std::cout << std::endl;
+		}
+
+
+		//=========================================================================================
+		// [테스트 예제 4] 기본형은 값 전달이 보통 충분함
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 4] 기본형은 값 전달이 보통 충분함" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			int a = 10;
+			int b = 20;
+
+			std::cout << "int, double 같은 작은 기본형은 복사 비용이 매우 작다." << std::endl;
+			std::cout << "따라서 이런 타입은 const reference 보다 값 전달이 더 단순하고 충분한 경우가 많다." << std::endl;
+			std::cout << "예: a=" << a << ", b=" << b << std::endl;
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	// Inline functions example
 	inline std::string il_concatenate(const std::string& a, const std::string& b)
@@ -466,100 +1214,254 @@ namespace Functions
 	void inline_functions()
 	{
 		/*
-			Inline functions
+			📚 인라인 함수 (Inline Functions)
 
-			Calling a function generally causes a certain overhead (stacking arguments, jumps, etc...),
-			and thus for very short functions,
-			it may be more efficient to simply insert the code of the function where it is called,
-			instead of performing the process of formally calling a function.
+			함수를 호출하면 일반적으로 다음과 같은 비용이 발생할 수 있다.
 
-			Preceding a function declaration with the inline specifier informs the compiler
-			that inline expansion is preferred over the usual function call mechanism for a specific function.
-			This does not change at all the behavior of a function,
-			but is merely used to suggest the compiler that the code generated by the function body
-			shall be inserted at each point the function is called,
-			instead of being invoked with a regular function call.
+				- 인자 전달
+				- 함수 호출 지점으로 점프
+				- 복귀 주소 저장
+				- 함수 종료 후 원래 위치로 복귀
 
-			For example, the concatenate function above may be declared inline as:
+			이런 호출 오버헤드는 함수가 매우 짧을 때는
+			오히려 함수 본문 자체보다 더 부담이 될 수도 있다.
 
-				inline string concatenate (const string& a, const string& b)
+			그래서 아주 짧고 단순한 함수는
+			함수 호출 대신 "함수 본문 코드를 호출 위치에 직접 삽입"하는 방식이 더 유리할 수 있다.
+
+			이 개념을 인라인 확장(inline expansion)이라고 한다.
+
+			예:
+				inline std::string il_concatenate(const std::string& a, const std::string& b)
 				{
-					return a+b;
+					return a + b;
 				}
 
-			This informs the compiler that when concatenate is called,
-			the program prefers the function to be expanded inline, instead of performing a regular call.
-			inline is only specified in the function declaration, not when it is called.
+			inline 키워드는
+			컴파일러에게 "이 함수는 인라인 확장이 선호된다"는 힌트를 주는 역할을 한다.
 
-			Note that most compilers already optimize code to generate inline functions
-			when they see an opportunity to improve efficiency,
-			even if not explicitly marked with the inline specifier.
-			Therefore, this specifier merely indicates the compiler that inline is preferred for this function,
-			although the compiler is free to not inline it, and optimize otherwise.
-			In C++, optimization is a task delegated to the compiler,
-			which is free to generate any code for as long as the resulting behavior is the one specified by the code.
+			즉, inline은
+				"반드시 인라인으로 만들어라"
+			가 아니라
+				"가능하면 인라인으로 해주면 좋겠다"
+			는 의미이다.
+
+			실제로 인라인 여부는 최종적으로 컴파일러가 결정한다.
+
+
+			=======================================================================================
+			1. inline의 핵심 의미
+			=======================================================================================
+
+			inline은 함수의 동작 자체를 바꾸지 않는다.
+
+			즉:
+				- 반환값
+				- 인자
+				- 실행 결과
+				- 사용 방법
+
+			은 일반 함수와 동일하다.
+
+			차이는 오직
+			"컴파일러가 코드를 어떻게 생성할 수 있는가"
+			에 대한 힌트라는 점이다.
+
+
+			=======================================================================================
+			2. inline을 붙여도 반드시 인라인되지는 않는다
+			=======================================================================================
+
+			컴파일러는 다음 요소들을 고려해서
+			인라인 여부를 판단한다.
+
+				- 함수 크기
+				- 최적화 옵션
+				- 호출 빈도
+				- 디버그/릴리즈 빌드 여부
+				- 재귀 여부
+				- 복잡한 제어 흐름 존재 여부
+
+			즉, inline을 붙여도
+			컴파일러가 일반 함수 호출로 남겨둘 수 있다.
+
+			반대로,
+			inline을 안 붙여도 컴파일러가 자동으로 인라인할 수도 있다.
+
+
+			=======================================================================================
+			3. 어디에 주로 쓰는가?
+			=======================================================================================
+
+			보통 다음 같은 짧은 함수에 자주 쓴다.
+
+				- getter / setter
+				- 아주 짧은 유틸 함수
+				- 템플릿 함수
+				- 헤더에 정의하는 짧은 함수
+
+			하지만 성능은 반드시 측정으로 판단해야 하며,
+			무조건 inline이 빠르다고 생각하면 안 된다.
+
+
+			=======================================================================================
+			4. 핵심 요약
+			=======================================================================================
+
+				- inline은 인라인 확장을 선호한다는 힌트이다.
+				- 함수 동작은 일반 함수와 같다.
+				- 인라인 여부는 컴파일러가 최종 결정한다.
+				- 짧고 단순한 함수에 자주 사용된다.
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] inline 함수 기본 호출
+		//=========================================================================================
 		{
-			std::string strA("a"), strB("b");
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] inline 함수 기본 호출" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			std::string strA("a");
+			std::string strB("b");
 			std::string strC = il_concatenate(strA, strB);
 
 			std::cout << "A=" << strA << " B=" << strB << " C=" << strC << std::endl;
-
-			system("pause");
+			std::cout << std::endl;
 
 			/*
-			output:
-				A=a B=b, C=ab
+				예상 출력:
+					A=a B=b C=ab
 			*/
 		}
+
+
+		//=========================================================================================
+		// [테스트 예제 2] inline은 사용법이 일반 함수와 동일
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] inline은 사용법이 일반 함수와 동일" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			std::string left = "Hello, ";
+			std::string right = "World!";
+			std::string merged = il_concatenate(left, right);
+
+			std::cout << "merged = " << merged << std::endl;
+			std::cout << "inline이 붙어 있어도 호출 방식은 일반 함수와 동일하다." << std::endl;
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	// Default values in parameters example
 	int divide(int a, int b = 2)
 	{
-		int r;
-		r = a / b;
-		return (r);
+		int r = a / b;
+		return r;
 	}
 
 	void default_values_in_parameters()
 	{
 		/*
-			Default values in parameters
+			📚 기본 인자 (Default values in parameters)
 
-			In C++, functions can also have optional parameters, for which no arguments are required in the call,
-			in such a way that, for example, a function with three parameters may be called with only two.
-			For this, the function shall include a default value for its last parameter,
-			which is used by the function when called with fewer arguments.
-			For example:
+			C++ 함수는 매개변수에 기본값(default value)을 지정할 수 있다.
+
+			예:
+				int divide(int a, int b = 2)
+
+			이 뜻은:
+				- 두 번째 인자 b를 생략하면 자동으로 2를 사용하라
+			는 의미이다.
+
+			즉, 이 함수는 다음 두 방식으로 호출할 수 있다.
+
+				divide(12);     // b는 기본값 2 사용
+				divide(20, 4);  // b는 4 사용
+
+			이렇게 하면 하나의 함수로
+			여러 형태의 호출을 자연스럽게 지원할 수 있다.
+
+
+			=======================================================================================
+			1. 기본 인자의 의미
+			=======================================================================================
+
+			기본 인자는
+			호출자가 인자를 생략했을 때 사용할 자동값이다.
+
+			즉, 인자를 넘기면 그 값이 사용되고,
+			생략하면 기본값이 사용된다.
+
+
+			=======================================================================================
+			2. 주의사항
+			=======================================================================================
+
+			기본 인자는 보통 "오른쪽부터" 생략 가능해야 한다.
+
+			예:
+				void f(int a, int b = 10, int c = 20);  // 가능
+
+			하지만:
+				void f(int a = 10, int b, int c);       // 이런 형태는 문제
+
+			즉, 기본값 없는 매개변수가 기본값 뒤에 오면 안 된다.
+
+
+			=======================================================================================
+			3. 핵심 요약
+			=======================================================================================
+
+				- 기본 인자는 인자 생략 시 자동으로 쓰이는 값이다.
+				- 인자를 전달하면 기본값은 무시된다.
+				- 보통 오른쪽 매개변수부터 기본값을 둔다.
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] 기본 인자 사용
+		//=========================================================================================
 		{
-			std::cout << divide(12) << '\n';
-			std::cout << divide(20, 4) << '\n';
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] 기본 인자 사용" << std::endl;
+			std::cout << "==================================================" << std::endl;
 
-			system("pause");
+			std::cout << "divide(12)    = " << divide(12) << '\n';
+			std::cout << "divide(20, 4) = " << divide(20, 4) << '\n';
+			std::cout << std::endl;
+
+			/*
+				예상 출력:
+					divide(12)    = 6
+					divide(20, 4) = 5
+			*/
 		}
-		/*
-			In this example, there are two calls to function divide. In the first one:
 
-				divide (12)
 
-			The call only passes one argument to the function, even though the function has two parameters.
-			In this case, the function assumes the second parameter to be 2 (notice the function definition,
-			which declares its second parameter as int b=2).
-			Therefore, the result is 6.
+		//=========================================================================================
+		// [테스트 예제 2] 기본값이 언제 사용되는가
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] 기본값 사용 규칙" << std::endl;
+			std::cout << "==================================================" << std::endl;
 
-			In the second call:
+			std::cout << "divide(12) 에서는 b를 생략했으므로 기본값 2 사용" << std::endl;
+			std::cout << "divide(20, 4) 에서는 b에 4를 직접 넘겼으므로 기본값은 무시" << std::endl;
+			std::cout << std::endl;
+		}
 
-				divide (20,4)
-
-			The call passes two arguments to the function.
-			Therefore, the default value for b (int b=2) is ignored,
-			and b takes the value passed as argument, that is 4, yielding a result of 5.
-		*/
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	// Declaring functions example
 	void even(int x);
@@ -567,203 +1469,338 @@ namespace Functions
 
 	void odd(int x)
 	{
-		if ((x % 2) != 0) std::cout << "It is odd.\n";
-		else even(x);
+		if ((x % 2) != 0)
+			std::cout << "It is odd.\n";
+		else
+			even(x);
 	}
 
 	void even(int x)
 	{
-		if ((x % 2) == 0) std::cout << "It is even.\n";
-		else odd(x);
+		if ((x % 2) == 0)
+			std::cout << "It is even.\n";
+		else
+			odd(x);
 	}
 
 	void declaring_functions()
 	{
 		/*
-			Declaring functions
+			📚 함수 선언 (Declaring functions)
 
-			In C++, identifiers can only be used in expressions once they have been declared.
-			For example, some variable x cannot be used before being declared with a statement,
-			such as:
+			C++에서는 식별자를 사용하기 전에
+			먼저 선언(declaration)되어 있어야 한다.
 
-				int x;
+			이 규칙은 함수에도 그대로 적용된다.
 
-			The same applies to functions. Functions cannot be called before they are declared.
-			That is why, in all the previous examples of functions,
-			the functions were always defined before the main function,
-			which is the function from where the other functions were called.
-			If main were defined before the other functions,
-			this would break the rule that functions shall be declared before being used,
-			and thus would not compile.
+			즉, 어떤 함수를 호출하려면
+			그 함수는 최소한 "이름, 반환형, 매개변수 타입" 정도는
+			미리 알려져 있어야 한다.
 
-			The prototype of a function can be declared without actually defining the function completely,
-			giving just enough details to allow the types involved in a function call to be known.
-			Naturally, the function shall be defined somewhere else, like later in the code.
-			But at least, once declared like this, it can already be called.
+			이때 사용하는 것이 함수 선언, 즉 함수 원형(prototype)이다.
 
-			The declaration shall include all types involved (the return type and the type of its arguments),
-			using the same syntax as used in the definition of the function,
-			but replacing the body of the function (the block of statements) with an ending semicolon.
+			예:
+				void even(int x);
+				void odd(int x);
 
-			The parameter list does not need to include the parameter names, but only their types.
-			Parameter names can nevertheless be specified,
-			but they are optional, and do not need to necessarily match those in the function definition.
-			For example, a function called protofunction with two int parameters can be declared with either of these statements:
+			이 선언은
+			아직 함수 본문은 없지만,
+			이런 형태의 함수가 어딘가에 존재한다는 정보를 컴파일러에 알려준다.
 
-				int protofunction (int first, int second);
-				int protofunction (int, int);
 
-			Anyway, including a name for each parameter always improves legibility of the declaration.			
+			=======================================================================================
+			1. 선언과 정의의 차이
+			=======================================================================================
+
+			선언(declaration)
+				함수의 존재와 형태를 알림
+
+			정의(definition)
+				함수의 실제 코드까지 작성
+
+			예:
+				void odd(int x);   // 선언
+				void odd(int x)    // 정의 시작
+				{
+					...
+				}
+
+
+			=======================================================================================
+			2. 왜 필요한가?
+			=======================================================================================
+
+			함수 호출 시점보다 정의가 뒤에 있으면
+			컴파일러는 아직 그 함수를 모른다.
+
+			그래서 선언이 필요하다.
+
+			특히 서로가 서로를 호출하는 함수에서는
+			선언이 거의 필수적이다.
+
+			예:
+				odd() 안에서 even() 호출
+				even() 안에서 odd() 호출
+
+			이 경우 둘 다 서로를 알아야 하므로
+			앞쪽에 선언을 두는 것이 자연스럽다.
+
+
+			=======================================================================================
+			3. 매개변수 이름은 선언에서 생략 가능
+			=======================================================================================
+
+			선언에서는 매개변수 이름을 생략할 수도 있다.
+
+			예:
+				int protofunction(int first, int second);
+				int protofunction(int, int);
+
+			둘 다 가능하다.
+
+			하지만 이름을 적어 주는 편이
+			가독성은 더 좋다.
+
+
+			=======================================================================================
+			4. 핵심 요약
+			=======================================================================================
+
+				- 함수는 사용 전에 선언되어야 한다.
+				- 선언은 함수 원형(prototype)이다.
+				- 정의는 실제 함수 본문까지 포함한다.
+				- 서로 호출하는 함수들에서는 선언이 특히 중요하다.
 		*/
+
+
+		//=========================================================================================
+		// [테스트 예제 1] 선언된 함수 호출
+		//=========================================================================================
 		{
-			int i;
-			do {
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] 함수 선언 후 호출" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			int i = 0;
+			do
+			{
 				std::cout << "Please, enter number (0 to exit): ";
 				std::cin >> i;
 				odd(i);
 			} while (i != 0);
 
-			system("pause");
+			std::cout << std::endl;
 
 			/*
-			output:
-				Please, enter number (0 to exit): 9
-				It is odd.
-				Please, enter number (0 to exit): 6
-				It is even.
-				Please, enter number (0 to exit): 1030
-				It is even.
-				Please, enter number (0 to exit): 0
-				It is even.
+				예상 동작:
+					9   -> It is odd.
+					6   -> It is even.
+					0   -> It is even.
 			*/
 		}
-		/*
-			This example is indeed not an example of efficiency.
-			You can probably write yourself a version of this program with half the lines of code.
-			Anyway, this example illustrates how functions can be declared before its definition:
 
-			The following lines:
-				void odd (int a);
-				void even (int a); 
 
-			Declare the prototype of the functions.
-			They already contain all what is necessary to call them, their name, the types of their argument,
-			and their return type (void in this case).
-				
-			With these prototype declarations in place,
-			they can be called before they are entirely defined, allowing for example,
-			to place the function from where they are called (main) before the actual definition of these functions.
+		//=========================================================================================
+		// [테스트 예제 2] 선언의 의미 설명
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] 함수 선언의 의미" << std::endl;
+			std::cout << "==================================================" << std::endl;
 
-			But declaring functions before being defined is not only useful to
-			reorganize the order of functions within the code.
-				
-			In some cases, such as in this particular case,
-			at least one of the declarations is required,
-			because odd and even are mutually called; there is a call to even in odd
-			and a call to odd in even.
-			And, therefore, there is no way to structure the code so that odd is defined before even,
-			and even before odd.
-		*/
+			std::cout << "void odd(int x); 와 void even(int x); 는 함수 원형(prototype)이다." << std::endl;
+			std::cout << "컴파일러는 이를 통해 함수 이름, 반환형, 인자 타입을 미리 알 수 있다." << std::endl;
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	// Variadic function example
-	// ShowVar takes a format string of the form "ifcs", 
-	// where each character specifies the type of the argument in that position.  
-	//  
-	//  i = int  
-	//  f = float  
-	//  c = char  
-	//  s = string (char *)  
-	//  
-	// Following the format specification is a variable list of arguments.
-	// Each argument corresponds to a format character in the format string to which
-	// the szTypes parameter points   
-	void PrintVariadic(char *szTypes, ...)
+	void PrintVariadic(char* szTypes, ...)
 	{
 		va_list vl;
-		int i;
-
-		// Before accessing variable arguments,
-		// you must set the list display to a variable of type va_list.
-		// In the previous example, the marker name is vl.
-		// 
-		// szTypes is the last argument specified; you must access   
-		// all others using the variable-argument macros.  
 		va_start(vl, szTypes);
 
-		// Step through the list.  
-		for (i = 0; szTypes[i] != '\0'; ++i) {
-			union Printable_t {
-				int     i;
-				float   f;
-				char    c;
-				char   *s;
-			} Printable;
-
-			// Use the va_arg macro to access each argument.
-			// The va_arg macro should describe the type of the search argument so that
-			// it can transfer the correct number of bytes from the stack.
-			// If you specify an incorrect size type of va_arg that
-			// is different from the one provided by the calling program,
-			// the result is unpredictable.
-
-			// You must explicitly cast
-			// the results obtained by using the va_arg macro in the desired format.
-
-			switch (szTypes[i]) {   // Type to expect.  
+		for (int i = 0; szTypes[i] != '\0'; ++i)
+		{
+			switch (szTypes[i])
+			{
 			case 'i':
-				Printable.i = va_arg(vl, int);
-				printf_s("%i\n", Printable.i);
+			{
+				int value = va_arg(vl, int);
+				printf_s("%i\n", value);
 				break;
-
+			}
 			case 'f':
-				Printable.f = (float)va_arg(vl, double);
-				printf_s("%f\n", Printable.f);
+			{
+				float value = (float)va_arg(vl, double); // float는 가변 인자에서 double로 승격
+				printf_s("%f\n", value);
 				break;
-
+			}
 			case 'c':
-				Printable.c = va_arg(vl, char);
-				printf_s("%c\n", Printable.c);
+			{
+				// char는 가변 인자에서 int로 승격됨
+				char value = (char)va_arg(vl, int);
+				printf_s("%c\n", value);
 				break;
-
+			}
 			case 's':
-				Printable.s = va_arg(vl, char*);
-				printf_s("%s\n", Printable.s);
+			{
+				char* value = va_arg(vl, char*);
+				printf_s("%s\n", value);
 				break;
-
+			}
 			default:
 				break;
 			}
 		}
 
-		// You must call va_end macro to end processing variable arguments. 
 		va_end(vl);
 	}
 
 	void variadic_function()
 	{
 		/*
-			Variadic function
+			📚 가변 인자 함수 (Variadic Function)
 
-			Variadic = variable + adic
-			Variadic argument is the same as C
-			The va series of macro functions we used to define the variable arguments are in the <cstdarg> file.
-			I will simply skip the usage of the printf () function.
+			가변 인자 함수는
+			매개변수 개수가 고정되지 않은 함수이다.
+
+			즉, 호출할 때 상황에 따라
+			추가 인자를 여러 개 받을 수 있다.
+
+			C 스타일 문법으로는 다음처럼 쓴다.
+
+				void func(char* format, ...)
+
+			여기서 ... 은
+			뒤에 인자가 몇 개가 올지 정해져 있지 않다는 뜻이다.
+
+			대표적인 예:
+				printf()
+
+			즉, 가변 인자 함수는 C에서 온 기능이며,
+			C++에서도 사용할 수 있다.
+
+
+			=======================================================================================
+			1. 사용 도구
+			=======================================================================================
+
+			가변 인자를 처리하려면 <cstdarg> 의 매크로를 사용한다.
+
+				va_list
+				va_start
+				va_arg
+				va_end
+
+			흐름:
+				1) va_list 준비
+				2) va_start 로 시작
+				3) va_arg 로 하나씩 꺼냄
+				4) va_end 로 종료
+
+
+			=======================================================================================
+			2. 현재 예제 의미
+			=======================================================================================
+
+			PrintVariadic(char* szTypes, ...)
+
+			여기서 szTypes는 형식 문자열 역할을 한다.
+
+			예:
+				"ifcs"
+
+			의미:
+				i -> int
+				f -> float
+				c -> char
+				s -> char*
+
+			즉, 형식 문자열을 보고
+			뒤에 넘어온 가변 인자들을 순서대로 해석해서 출력한다.
+
+
+			=======================================================================================
+			3. 주의사항
+			=======================================================================================
+
+			가변 인자 함수는 타입 안전성이 약하다.
+
+			즉:
+				- 실제 전달 타입과
+				- va_arg로 꺼낼 타입이
+
+			정확히 맞아야 한다.
+
+			틀리면 결과는 예측할 수 없다.
+
+			또한 가변 인자에서는 기본 승격(default argument promotion)이 일어난다.
+
+				- float -> double
+				- char  -> int
+				- short -> int
+
+			그래서 예를 들어 char를 꺼낼 때도
+			va_arg(vl, char)가 아니라
+			va_arg(vl, int)로 꺼내야 한다.
+
+
+			=======================================================================================
+			4. 핵심 요약
+			=======================================================================================
+
+				- 가변 인자 함수는 인자 개수가 고정되지 않는다.
+				- C 스타일로 ... 을 사용한다.
+				- va_list / va_start / va_arg / va_end 로 처리한다.
+				- 타입 안전성이 약하므로 매우 주의해야 한다.
 		*/
-		{
-			PrintVariadic("%i%c", 5, 'a');
 
-			system("pause");
+
+		//=========================================================================================
+		// [테스트 예제 1] 가변 인자 함수 기본 사용
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] 가변 인자 함수 기본 사용" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			char format[] = "ic";
+			PrintVariadic(format, 5, 'a');
+
+			std::cout << std::endl;
 
 			/*
-			output:
-				5
-				a
+				예상 출력:
+					5
+					a
 			*/
 		}
+
+
+		//=========================================================================================
+		// [테스트 예제 2] 여러 타입 처리
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] 여러 타입 처리" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			char format[] = "isf";
+			char text[] = "hello";
+			PrintVariadic(format, 10, text, 3.14f);
+
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	// Recursivity example
 	long factorial(long a)
@@ -777,55 +1814,186 @@ namespace Functions
 	void recursivity()
 	{
 		/*
-			Recursivity
+			📚 재귀 (Recursivity / Recursion)
 
-			Recursivity is the property that functions have to be called by themselves.
-			It is useful for some tasks, such as sorting elements, or calculating the factorial of numbers.
-			For example, in order to obtain the factorial of a number (n!) the mathematical formula would be:
+			재귀란 함수가 자기 자신을 다시 호출하는 성질을 말한다.
 
-				n! = n * (n-1) * (n-2) * (n-3) ... * 1 
-				
-			More concretely, 5! (factorial of 5) would be:
+			즉, 함수 안에서 같은 함수를 호출하는 방식이다.
 
-				5! = 5 * 4 * 3 * 2 * 1 = 120 
-				
-			And a recursive function to calculate this in C++ could be:
+			재귀는 어떤 문제를
+			"더 작은 같은 문제"로 나눌 수 있을 때 매우 유용하다.
+
+			대표 예:
+				- 팩토리얼
+				- 트리 순회
+				- DFS
+				- 분할 정복
+				- 백트래킹
+
+			하지만 재귀는 반드시 종료 조건(base case)이 있어야 한다.
+			그렇지 않으면 무한 호출이 발생한다.
+
+
+			=======================================================================================
+			1. 팩토리얼 예제
+			=======================================================================================
+
+			수학적으로 팩토리얼은 다음과 같다.
+
+				n! = n * (n-1) * (n-2) * ... * 1
+
+			예:
+				5! = 5 * 4 * 3 * 2 * 1 = 120
+
+			이걸 재귀식으로 쓰면:
+
+				n! = n * (n-1)!
+				1! = 1
+
+			즉, 문제를 더 작은 같은 문제로 바꾼 것이다.
+
+
+			=======================================================================================
+			2. 현재 factorial 함수 의미
+			=======================================================================================
+
+			현재 함수는 다음과 같다.
+
+				long factorial(long a)
+				{
+					if (a > 1)
+						return a * factorial(a - 1);
+					else
+						return 1;
+				}
+
+			의미:
+				- a가 1보다 크면
+					a * factorial(a-1)
+				- a가 1 이하이면
+					1 반환
+
+			즉, 9! 를 구할 때 내부적으로는
+
+				9 * factorial(8)
+				8 * factorial(7)
+				7 * factorial(6)
+				...
+				1
+
+			처럼 계속 들어간 뒤,
+			반대로 결과가 쌓이면서 올라온다.
+
+
+			=======================================================================================
+			3. 종료 조건이 왜 중요한가?
+			=======================================================================================
+
+			재귀에는 반드시 종료 조건이 필요하다.
+
+			이 예제에서는:
+
+				if (a > 1)
+					...
+				else
+					return 1;
+
+			이 부분이 종료 조건이다.
+
+			이게 없으면 factorial은 계속 자기 자신을 호출해서
+			스택 오버플로우가 발생할 수 있다.
+
+
+			=======================================================================================
+			4. 핵심 요약
+			=======================================================================================
+
+				- 재귀는 함수가 자기 자신을 호출하는 방식이다.
+				- 큰 문제를 작은 같은 문제로 나눌 때 유용하다.
+				- 반드시 종료 조건이 있어야 한다.
+				- 팩토리얼은 대표적인 재귀 예제이다.
 		*/
-		{
-			long number = 9;
-			std::cout << number << " != " << factorial(number);
 
-			system("pause");
+
+		//=========================================================================================
+		// [테스트 예제 1] factorial 기본 호출
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 1] factorial 기본 호출" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			long number = 9;
+			std::cout << number << "! = " << factorial(number) << std::endl;
+			std::cout << std::endl;
 
 			/*
-			output:
-				9 != 362880
+				예상 출력:
+					9! = 362880
 			*/
 		}
+
+
+		//=========================================================================================
+		// [테스트 예제 2] 작은 값들 확인
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 2] 작은 값들 확인" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			for (long i = 1; i <= 5; ++i)
+			{
+				std::cout << i << "! = " << factorial(i) << std::endl;
+			}
+
+			std::cout << std::endl;
+		}
+
+
+		//=========================================================================================
+		// [테스트 예제 3] 재귀 흐름 설명
+		//=========================================================================================
+		{
+			std::cout << "==================================================" << std::endl;
+			std::cout << "[테스트 3] 재귀 흐름 설명" << std::endl;
+			std::cout << "==================================================" << std::endl;
+
+			std::cout << "factorial(4)" << std::endl;
+			std::cout << "= 4 * factorial(3)" << std::endl;
+			std::cout << "= 4 * 3 * factorial(2)" << std::endl;
+			std::cout << "= 4 * 3 * 2 * factorial(1)" << std::endl;
+			std::cout << "= 4 * 3 * 2 * 1" << std::endl;
+			std::cout << "= 24" << std::endl;
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	void Test()
 	{
-		//functions();
-
-		//functions_with_no_type();
-
-		//the_return_value_of_main();
-
-		//arguments_passed_by_value_n_by_reference();
-
-		//efficiency_considerations_n_const_references();
-
-		//inline_functions();
-
-		//default_values_in_parameters();
-
-		//declaring_functions();
+		//recursivity();
 
 		//variadic_function();
 
-		//recursivity();
+		//declaring_functions();
+
+		//default_values_in_parameters();
+
+		//inline_functions();
+
+		//efficiency_considerations_n_const_references();
+
+		//arguments_passed_by_value_n_by_reference();
+
+		//the_return_value_of_main();
+
+		//functions_with_no_type();
+
+		//functions();
 	}
 
 }// end of Functions

@@ -85,71 +85,235 @@ namespace Constants
 	void typed_constant_expressions()
 	{
 		/*
-			Typed constant expressions
+			📚 타입이 있는 상수 표현식 (Typed constant expressions)
 
-			Sometimes, it is just convenient to give a name to a constant value :
+			프로그램을 작성하다 보면
+			고정된 값(constant value)에 이름을 붙여서 사용하면 편리한 경우가 많다.
 
-			const double pi = 3.1415926;
-			const char tab = '\t';
+			예:
+				const double pi = 3.1415926;
+				const char tab = '\t';
 
-			We can then use these names instead of the literals they were defined to:
+			이렇게 하면 숫자나 문자 리터럴을 직접 반복해서 쓰는 대신,
+			의미 있는 이름으로 사용할 수 있다.
+
+			const 의 의미:
+			- 선언과 동시에 값을 정한다.
+			- 그 이후에는 값을 바꿀 수 없다.
+			- 자료형이 명확하다. (int, double, char 등)
+
+			즉 const 는
+			"값이 변하지 않는 타입이 있는 변수"처럼 생각하면 이해하기 쉽다.
 		*/
+
 		{
 			const double pi = 3.14159;
 			const char newline = '\n';
 
-			double r = 5.0;	// radius
+			double r = 5.0;   // 반지름(radius)
 			double circle;
 
 			circle = 2 * pi * r;
+
 			std::cout << circle;
 			std::cout << newline;
 
-			system("pause");
-
 			/*
-			output:
-				31.4159
+				출력 결과:
+					31.4159
+
+				설명:
+				원둘레 공식:
+					2 * pi * r
+
+				r = 5.0 이므로
+					2 * 3.14159 * 5.0 = 31.4159
 			*/
 		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] const 상수는 의미를 분명하게 해준다" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			const int maxPlayers = 100;
+			int currentPlayers = 57;
+
+			std::cout << "maxPlayers = " << maxPlayers << std::endl;
+			std::cout << "currentPlayers = " << currentPlayers << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				100 이라는 숫자를 그냥 쓰는 것보다
+				maxPlayers 라는 이름을 쓰면
+				그 값의 의미를 더 쉽게 이해할 수 있다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 3] const 값은 변경할 수 없다" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			const int year = 2026;
+
+			std::cout << "year = " << year << std::endl;
+			std::cout << "const 로 선언한 값은 이후에 바꿀 수 없다." << std::endl;
+			std::cout << std::endl;
+
+			/*
+				예를 들어 아래 코드는 오류가 된다:
+
+					year = 2030;   // 컴파일 오류
+
+				설명:
+				const 상수는 읽기 전용(read-only)이다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 4] 문자 상수 사용" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			const char tab = '\t';
+			const char newline = '\n';
+
+			std::cout << "Name" << tab << "Score" << newline;
+			std::cout << "Justin" << tab << 100 << newline;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				tab 은 탭 문자,
+				newline 은 줄바꿈 문자이다.
+
+				이처럼 문자 상수에도 의미 있는 이름을 붙여서 사용할 수 있다.
+			*/
+		}
+
+		system("pause");
 	}
 
 	void preprocessor_definitions()
 	{
 		/*
-			Preprocessor definitions (#define)
+			📚 전처리기 정의 (#define)
 
-			Another mechanism to name constant values is the use of preprocessor definitions.
-			They have the following form:
+			상수에 이름을 붙이는 또 다른 방법은
+			전처리기 정의(preprocessor definition)를 사용하는 것이다.
 
-				#define identifier replacement
+			형태:
+				#define 이름 치환값
 
-			After this directive, any occurrence of identifier in the code is interpreted as replacement,
-			where replacement is any sequence of characters (until the end of the line).
-			This replacement is performed by the preprocessor, and happens before the program is compiled,
-			thus causing a sort of blind replacement: the validity of the types
-			or syntax involved is not checked in any way.
+			예:
+				#define PI 3.14159
+				#define NEWLINE '\n'
 
-			For example:
+			의미:
+			컴파일이 시작되기 전에,
+			소스 코드 안의 이름(identifier)을
+			지정된 치환값(replacement)으로 단순 치환한다.
+
+			중요:
+			이 치환은 전처리기(preprocessor)가 수행하며,
+			컴파일러가 타입이나 문법을 검사하기 전에 먼저 이루어진다.
+
+			즉,
+			#define 은 "타입이 있는 상수"가 아니라
+			"문자 그대로 바꿔치기하는 규칙"에 가깝다.
+
+			그래서 const 보다 더 단순하고 강력하지만,
+			그만큼 실수도 생기기 쉽다.
 		*/
-		{
-			#define PI 3.14159
-			#define NEWLINE '\n'
 
-			double r = 5.0;               // radius
+		#define PI 3.14159
+		#define NEWLINE '\n'
+
+		{
+			double r = 5.0;   // 반지름(radius)
 			double circle;
 
 			circle = 2 * PI * r;
+
 			std::cout << circle;
 			std::cout << NEWLINE;
 
-			system("pause");
-
 			/*
-			output:
-				31.4159
+				출력 결과:
+					31.4159
+
+				설명:
+				전처리 단계에서
+					PI      -> 3.14159
+					NEWLINE -> '\n'
+				로 바뀐 후 컴파일된다.
 			*/
 		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] #define 도 이름 있는 상수처럼 보일 수 있다" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			#define MAX_USERS 500
+
+			int currentUsers = 123;
+
+			std::cout << "MAX_USERS = " << MAX_USERS << std::endl;
+			std::cout << "currentUsers = " << currentUsers << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				코드 안의 MAX_USERS 는
+				전처리 단계에서 500 으로 치환된다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 3] #define 은 타입이 없다" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << "PI = " << PI << std::endl;
+			std::cout << "PI * 2 = " << PI * 2 << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				#define PI 3.14159
+				는 const double PI = 3.14159; 와 다르다.
+
+				#define 은 단순히 글자를 바꾸는 것이지,
+				실제로 double 타입 변수를 만드는 것이 아니다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 4] #define 사용 시 주의점" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << "#define 은 타입 검사 없이 단순 치환이므로" << std::endl;
+			std::cout << "예상하지 못한 문제를 만들 수 있다." << std::endl;
+			std::cout << "현대 C++에서는 상수값에는 보통 const 또는 constexpr 를 더 선호한다." << std::endl;
+			std::cout << std::endl;
+
+			/*
+				예를 들어:
+					#define VALUE 10 + 20
+
+				이런 식으로 괄호 없이 정의하면
+				사용 위치에 따라 의도와 다른 결과가 생길 수 있다.
+
+				그래서 단순 상수값은
+				const 가 더 안전하고 읽기 좋다.
+			*/
+		}
+
+		system("pause");
 	}
 
 	void Test()
@@ -160,4 +324,4 @@ namespace Constants
 
 		//preprocessor_definitions();
 	}
-}//Constants
+}//end of Constants

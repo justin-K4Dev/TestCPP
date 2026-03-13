@@ -1,35 +1,38 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 
 namespace Classes2
 {
-	// operator definition class
 	class CVector
 	{
 	public:
 		int x, y;
-		CVector() {};
+
+		CVector() : x(0), y(0) {}
 		CVector(int a, int b) : x(a), y(b) {}
 
-		CVector operator + (const CVector&);
-		CVector& operator = (const CVector&);
+		CVector operator+(const CVector& param);
+		CVector& operator=(const CVector& param);
 	};
 
-	CVector CVector::operator+ (const CVector& param) {
+	CVector CVector::operator+(const CVector& param)
+	{
 		CVector temp;
 		temp.x = x + param.x;
 		temp.y = y + param.y;
 		return temp;
 	}
 
-	CVector& CVector::operator= (const CVector& param)
+	CVector& CVector::operator=(const CVector& param)
 	{
 		x = param.x;
 		y = param.y;
 		return *this;
 	}
 
-	CVector operator+ (const CVector& lhs, const CVector& rhs) {
+	// 비멤버 operator+ 도 가능
+	CVector operator+(const CVector& lhs, const CVector& rhs)
+	{
 		CVector temp;
 		temp.x = lhs.x + rhs.x;
 		temp.y = lhs.y + rhs.y;
@@ -39,52 +42,26 @@ namespace Classes2
 	void overloading_operators()
 	{
 		/*
-			Overloading operators
+			📚 연산자 오버로딩 (Overloading operators)
 
-			Classes, essentially, define new types to be used in C++ code.
-			And types in C++ not only interact with code by means of constructions and assignments.
-			They also interact by means of operators.
-			For example, take the following operation on fundamental types:
+			클래스는 새로운 타입을 만드는 것이다.
+			새로운 타입도 int, double 같은 기본 타입처럼
+			+, =, == 같은 연산자를 사용할 수 있으면 편리한 경우가 많다.
 
-				int a, b, c;
+			하지만 클래스는 기본적으로
+			"두 객체를 더한다" 같은 의미가 자동으로 정해져 있지 않다.
+
+			예:
 				a = b + c;
 
-			Here, different variables of a fundamental type (int) are applied the addition operator,
-			and then the assignment operator.
-			For a fundamental arithmetic type, the meaning of such operations is generally obvious and unambiguous,
-			but it may not be so for certain class types.
-			For example:
+			이 문장은 int 에서는 당연하지만,
+			사용자 정의 클래스에서는
+			+ 연산이 무엇을 의미하는지 직접 정의해야 한다.
 
-				struct myclass {
-					string product;
-					float price;
-				} a, b, c;
-				
-				a = b + c;
-
-			Here, it is not obvious what the result of the addition operation on b and c does.
-			In fact, this code alone would cause a compilation error, since the type myclass has no defined behavior for additions.
-			However, C++ allows most operators to be overloaded so that their behavior can be defined for just about any type, including classes.
-			Here is a list of all the operators that can be overloaded:
-
-				Overloadable operators
-				+    -    *    /    =    <    >    +=   -=   *=   /=   <<   >>
-				<<=  >>=  ==   !=   <=   >=   ++   --   %    &    ^    !    |
-				~    &=   ^=   |=   &&   ||   %=   []   ()   ,    ->*  ->   new
-				delete    new[]     delete[]
-
-			Operators are overloaded by means of operator functions, which are regular functions with special names:
-			their name begins by the operator keyword followed by the operator sign that is overloaded.
-			The syntax is:
-
-				type operator sign (parameters) { ... body ... }
-			
-			For example, cartesian vectors are sets of two coordinates : x and y.
-			The addition operation of two cartesian vectors is defined as the addition both x coordinates together,
-			and both y coordinates together.
-			For example, adding the cartesian vectors(3, 1) and (1, 2) together would result in(3 + 1, 1 + 2) = (4, 3).
-			This could be implemented in C++ with the following code :
+			이렇게 연산자 동작을 사용자 정의 타입에 맞게 정의하는 것이
+			연산자 오버로딩이다.
 		*/
+
 		{
 			CVector foo(3, 1);
 			CVector bar(1, 2);
@@ -92,82 +69,65 @@ namespace Classes2
 			CVector result;
 			result = foo + bar;
 
-			std::cout << result.x << ',' << result.y << '\n';
-
-			system("pause");
+			std::cout << result.x << "," << result.y << std::endl;
+			std::cout << std::endl;
 
 			/*
-			output:
-				4,3
+				출력:
+					4,3
+
+				설명:
+				(3,1) + (1,2) = (4,3)
 			*/
 		}
-		/*
-			If confused about so many appearances of CVector, consider that some of them refer to the class name (i.e., the type) CVector
-			and some others are functions with that name (i.e., constructors, which must have the same name as the class).
-			For example:
 
-				CVector (int, int) : x(a), y(b) {}  // function name CVector (constructor)
-				CVector operator+ (const CVector&); // function that returns a CVector  
-
-			The function operator+ of class CVector overloads the addition operator (+) for that type.
-			Once declared, this function can be called either implicitly using the operator,
-			or explicitly using its functional name:
-
-				c = a + b;
-				c = a.operator+ (b);
-
-			Both expressions are equivalent.
-
-			The operator overloads are just regular functions which can have any behavior;
-			there is actually no requirement that the operation performed by that overload bears a relation to the mathematical
-			or usual meaning of the operator, although it is strongly recommended.
-			For example, a class that overloads operator+ to actually subtract or that overloads operator== to fill the object with zeros,
-			is perfectly valid, although using such a class could be challenging.
-
-			The parameter expected for a member function overload for operations such as operator+ is naturally the operand to the right hand side of the operator.
-			This is common to all binary operators (those with an operand to its left and one operand to its right).
-			But operators can come in diverse forms.
-			Here you have a table with a summary of the parameters needed for each of the different operators than can be overloaded
-			(please, replace @ by the operator in each case):
-
-				Expression		Operator										Member function			Non-member function
-				@a				+ - * & ! ~ ++ --								A::operator@()			operator@(A)
-				a@				++ --											A::operator@(int)		operator@(A,int)
-				a@b				+ - * / % ^ & | < > == != <= >= << >> && || ,	A::operator@(B)			operator@(A,B)
-				a@b				= += -= *= /= %= ^= &= |= <<= >>= []			A::operator@(B)			-
-				a(b,c...)		()												A::operator()(B,C...)	-
-				a->b			->												A::operator->()			-
-				(TYPE)	a		TYPE											A::operator TYPE()		-
-
-			Where a is an object of class A, b is an object of class B and c is an object of class C.
-			TYPE is just any type (that operators overloads the conversion to type TYPE).
-
-			Notice that some operators may be overloaded in two forms: 
-			either as a member function or as a non-member function:
-			The first case has been used in the example above for operator+.
-			But some operators can also be overloaded as non-member functions;
-			In this case, the operator function takes an object of the proper class as first argument.
-
-			For example:
-		*/
 		{
-			CVector foo(3, 1);
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] 연산자 함수 직접 호출 형태" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			CVector foo(10, 20);
 			CVector bar(1, 2);
-			CVector result;
 
-			result = foo + bar;
+			CVector result = foo.operator+(bar);
 
-			std::cout << result.x << ',' << result.y << '\n';
-				
-			system("pause");
+			std::cout << result.x << "," << result.y << std::endl;
+			std::cout << std::endl;
 
 			/*
-			output:
-				4,3
+				설명:
+					foo + bar;
+				와
+					foo.operator+(bar);
+				는 같은 의미이다.
 			*/
 		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 3] 대입 연산자 =" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			CVector a(7, 8);
+			CVector b;
+
+			b = a;
+
+			std::cout << "b = (" << b.x << "," << b.y << ")" << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				operator= 는 대입 연산 동작을 정의한다.
+				return *this; 를 반환하면
+				연쇄 대입 같은 패턴에도 대응하기 좋다.
+			*/
+		}
+
+		system("pause");
 	}
 
+	//------------------------------------------------------------------------------------------------
 
 	class Dummy {
 	public:
@@ -185,40 +145,70 @@ namespace Classes2
 	void the_keyword_this()
 	{
 		/*
-			The keyword this
+			📚 this 키워드
 
-			The keyword this represents a pointer to the object whose member function is being executed.
-			It is used within a class's member function to refer to the object itself.
+			this 는
+			"현재 멤버 함수가 실행 중인 객체 자신"을 가리키는 포인터이다.
 
-			One of its uses can be to check if a parameter passed to a member function is the object itself.
-			For example:
+			즉, 멤버 함수 안에서 this 는
+			현재 객체의 주소를 의미한다.
+
+			주요 용도:
+			1) 현재 객체 자신과 비교
+			2) 자기 자신을 반환
+			3) 멤버 이름과 매개변수 이름이 같을 때 구분
+			4) operator= 에서 *this 반환
 		*/
+
 		{
 			Dummy a;
 			Dummy* b = &a;
+
 			if (b->isitme(a))
-				std::cout << "yes, &a is b\n";
+				std::cout << "yes, &a is b" << std::endl;
+
+			std::cout << std::endl;
 
 			/*
-			output:
-				yes, &a is b
+				출력:
+					yes, &a is b
+
+				설명:
+				b 는 a의 주소를 가지고 있고,
+				b->isitme(a) 를 호출하면
+				함수 내부의 this 도 결국 a의 주소를 가리킨다.
+
+				따라서
+					&param == this
+				는 true 가 된다.
 			*/
 		}
-		/*
-			It is also frequently used in operator= member functions that return objects by reference.
-			Following with the examples on cartesian vector seen before,
-			its operator= function could have been defined as:
 
-				CVector& CVector::operator= (const CVector& param)
-				{
-					x = param.x;
-					y = param.y;
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] operator= 와 this" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			CVector a(1, 2);
+			CVector b(9, 9);
+
+			b = a;
+
+			std::cout << "b = (" << b.x << "," << b.y << ")" << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				CVector::operator= 에서
 					return *this;
-				}
+				는 현재 객체 자신을 참조로 반환하는 것이다.
+			*/
+		}
 
-			In fact, this function is very similar to the code that the compiler generates implicitly for this class for operator=.
-		*/
+		system("pause");
 	}
+
+	//------------------------------------------------------------------------------------------------
 
 
 	// static member class
@@ -233,64 +223,75 @@ namespace Classes2
 	void static_members()
 	{
 		/*
-			static members
+			📚 static 멤버
 
-			A class can contain static members, either data or functions.
+			클래스는 static 멤버를 가질 수 있다.
 
-			A static data member of a class is also known as a "class variable",
-			because there is only one common variable for all the objects of that same class,
-			sharing the same value: i.e., its value is not different from one object of this class to another.
+			static 데이터 멤버는
+			객체마다 따로 존재하는 것이 아니라
+			클래스 전체에서 하나만 공유된다.
 
-			For example, it may be used for a variable within a class that can contain a counter
-			with the number of objects of that class that are currently allocated,
-			as in the following example:
+			즉:
+			- 일반 멤버 변수 -> 객체마다 따로 있음
+			- static 멤버 변수 -> 클래스 전체에 하나만 있음
+
+			그래서 static 멤버는
+			객체 개수 세기, 공용 설정값, 전역 상태 비슷한 역할에 자주 사용된다.
 		*/
+
 		{
 			Counter a;
 			Counter b[5];
-			std::cout << a.n << '\n';
-			Counter * c = new Counter;
-			std::cout << Counter::n << '\n';
+
+			std::cout << a.n << std::endl;
+
+			Counter* c = new Counter;
+			std::cout << Counter::n << std::endl;
 
 			delete c;
-
-			system("pause");
+			std::cout << std::endl;
 
 			/*
-			output:
-				6
-				7
+				출력:
+					6
+					7
+
+				설명:
+				a 하나 생성 -> +1
+				b 배열 5개 생성 -> +5
+				총 6
+
+				그 후 new Counter -> +1
+				총 7
 			*/
 		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] 객체 이름으로도 접근 가능, 클래스 이름으로도 접근 가능" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			Counter x;
+
+			std::cout << "x.n        = " << x.n << std::endl;
+			std::cout << "Counter::n = " << Counter::n << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				둘 다 같은 static 변수 n 을 가리킨다.
+			*/
+		}
+
 		/*
-			In fact, static members have the same properties as non-member variables but they enjoy class scope.
-			For that reason, and to avoid them to be declared several times,
-			they cannot be initialized directly in the class, but need to be initialized somewhere outside it.
-			As in the previous example:
+			주의:
+			static 멤버 변수는 클래스 안에서 선언만 하고,
+			실제 정의 및 초기화는 클래스 밖에서 해야 한다.
 
 				int Counter::n = 0;
-
-			Because it is a common variable value for all the objects of the same class,
-			it can be referred to as a member of any object of that class
-			or even directly by the class name (of course this is only valid for static members):
-
-				cout << a.n;
-				cout << Counter::n;
-
-			These two calls above are referring to the same variable:
-			the static variable n within class Counter shared by all objects of this class.
-
-			Again, it is just like a non-member variable,
-			but with a name that requires to be accessed like a member of a class (or an object).
-
-			Classes can also have static member functions.
-			These represent the same:
-			members of a class that are common to all object of that class,
-			acting exactly as non-member functions but being accessed like members of the class.
-			Because they are like non-member functions,
-			they cannot access non-static members of the class (neither member variables nor member functions).
-			They neither can use the keyword this.
 		*/
+
+		system("pause");
 	}
 
 
@@ -306,102 +307,90 @@ namespace Classes2
 
 	void printMyClass(const MyClass& arg)
 	{
-		std::cout << arg.get() << '\n';
+		std::cout << arg.get() << std::endl;
 	}
 
 	void const_member_functions()
 	{
 		/*
-			Const member functions
+			📚 const 멤버 함수
 
-			When an object of a class is qualified as a const object:
-					
-				const MyClass myobject;
+			객체가 const 이면
+			그 객체는 읽기 전용처럼 취급된다.
 
-			The access to its data members from outside the class is restricted to read-only,
-			as if all its data members were const for those accessing them from outside the class.
-			Note though, that the constructor is still called and is allowed to initialize
-			and modify these data members:
+			즉 const 객체에서는
+			객체 상태를 바꾸지 않는 멤버 함수만 호출할 수 있다.
+
+			멤버 함수 뒤에 const 를 붙이면
+			그 함수는 "객체 상태를 바꾸지 않는다"는 의미가 된다.
+
+			예:
+				int get() const;
+
+			이런 const 멤버 함수 안에서는
+			비정적(non-static) 멤버 값을 수정할 수 없다.
 		*/
+
 		{
 			const MyClass foo(10);
-			// foo.x = 20;					// not valid: x cannot be modified
-			std::cout << foo.x << '\n';		// ok: data member x can be read
+			// foo.x = 20; // 오류
 
-			system("pause");
+			std::cout << foo.x << std::endl;
+			std::cout << std::endl;
 
 			/*
-			output:
-				10
+				출력:
+					10
+
+				설명:
+				const 객체는 멤버 값을 읽을 수는 있지만
+				수정할 수는 없다.
 			*/
 		}
-		/*
-			The member functions of a const object can only be called if they are themselves specified as const members;
-			in the example above, member get (which is not specified as const) cannot be called from foo.
-			To specify that a member is a const member,
-			the const keyword shall follow the function prototype,
-			after the closing parenthesis for its parameters:
 
-				int get() const {return x;}
-
-			Note that const can be used to qualify the type returned by a member function.
-			This const is not the same as the one which specifies a member as const.
-			Both are independent and are located at different places in the function prototype:
-
-				int get() const { return x; }			// const member function
-				const int& get() { return x; }			// member function returning a const&
-				const int& get() const { return x; }	// const member function returning a const&
-
-			Member functions specified to be const cannot modify non-static data members nor call other non-const member functions.
-			In essence, const members shall not modify the state of an object.
-
-			const objects are limited to access only member functions marked as const,
-			but non-const objects are not restricted and thus can access both const and non-const member functions alike.
-
-			You may think that anyway you are seldom going to declare const objects,
-			and thus marking all members that don't modify the object as const is not worth the effort,
-			but const objects are actually very common.
-			Most functions taking classes as parameters actually take them by const reference,
-			and thus, these functions can only access their const members:
-		*/
 		{
 			MyClass foo(10);
 			printMyClass(foo);
 
-			system("pause");
+			std::cout << std::endl;
 
 			/*
-			output:
-				10
+				출력:
+					10
+
+				설명:
+				printMyClass 는 const MyClass& 를 받는다.
+				따라서 arg 에 대해 호출 가능한 함수는 const 멤버 함수뿐이다.
+
+				그래서 get() const 가 반드시 필요하다.
 			*/
 		}
-		/*
-			If in this example, get was not specified as a const member,
-			the call to arg.get() in the print function would not be possible,
-			because const objects only have access to const member functions.
 
-			Member functions can be overloaded on their constness: i.e.,
-			a class may have two member functions with identical signatures except that one is const and the other is not:
-			in this case, the const version is called only when the object is itself const,
-			and the non-const version is called when the object is itself non-const.
-		*/
 		{
 			MyClass foo(10);
 			const MyClass bar(20);
-			foo.get() = 15;         // ok: get() returns int&
-									// bar.get() = 25;        // not valid: get() returns const int&
-			std::cout << foo.get() << '\n';
-			std::cout << bar.get() << '\n';
 
-			system("pause");
+			foo.get() = 15;
+			// bar.get() = 25; // 오류: const 객체의 get() 은 const int& 반환
+
+			std::cout << foo.get() << std::endl;
+			std::cout << bar.get() << std::endl;
+			std::cout << std::endl;
 
 			/*
-			output:
-				15
-				20
+				출력:
+					15
+					20
+
+				설명:
+				비const 객체 foo 는 non-const get() 호출
+				const 객체 bar 는 const get() 호출
+
+				즉 const 여부에 따라 함수 오버로딩도 가능하다.
 			*/
 		}
 
+		system("pause");
 	}
 
 
@@ -429,77 +418,58 @@ namespace Classes2
 	void class_templates()
 	{
 		/*
-			class templates
+			📚 클래스 템플릿 (Class templates)
 
-			Just like we can create function templates, we can also create class templates,
-			allowing classes to have members that use template parameters as types.
-			For example:
+			템플릿은 "타입을 나중에 결정하는 설계도"라고 볼 수 있다.
 
-				template <class T>
-				class mypair {
-					T values [2];
-				public:
-					mypair (T first, T second)
-					{
-						values[0]=first; values[1]=second;
-					}
-				};
+			클래스 템플릿을 사용하면
+			int용 클래스, double용 클래스 등을 각각 만들지 않고
+			하나의 일반화된 클래스로 여러 타입을 처리할 수 있다.
 
-			The class that we have just defined serves to store two elements of any valid type.
-			For example, if we wanted to declare an object of this class to store two integer values of type int
-			with the values 115 and 36 we would write:
+			예:
+				MyPair<int>
+				MyPair<double>
 
-			The class that we have just defined serves to store two elements of any valid type.
-			For example,
-			if we wanted to declare an object of this class to store two integer values of type int with the values 115
-			and 36 we would write:
-
-				mypair<int> myobject (115, 36);
-
-			This same class could also be used to create an object to store any other type, such as:
-
-				mypair<double> myfloats (3.0, 2.18);
-
-			The constructor is the only member function in the previous class template
-			and it has been defined inline within the class definition itself.
-			In case that a member function is defined outside the defintion of the class template,
-			it shall be preceded with the template <...> prefix:
+			둘 다 같은 템플릿 설계를 사용하지만
+			T 자리에 각각 int, double 이 들어간다.
 		*/
-		{
-			MyPair <int> myObj(100, 75);
-			std::cout << myObj.getMax() << "\n";
 
-			system("pause");
+		{
+			MyPair<int> myObj(100, 75);
+			std::cout << myObj.getMax() << std::endl;
+			std::cout << std::endl;
 
 			/*
-			output:
-				100
+				출력:
+					100
 			*/
 		}
-		/*
-			Notice the syntax of the definition of member function getmax:
 
-				template <class T>
-				T mypair<T>::getmax () 
+		{
+			MyPair<double> myDoubleObj(3.14, 8.75);
+			std::cout << myDoubleObj.getMax() << std::endl;
+			std::cout << std::endl;
 
-			Confused by so many T's? There are three T's in this declaration: The first one is the template parameter.
-			The second T refers to the type returned by the function.
-			And the third T (the one between angle brackets) is also a requirement:
-			It specifies that this function's template parameter is also the class template parameter.
-		*/
+			/*
+				설명:
+				같은 템플릿이지만
+				T = double 로 동작한다.
+			*/
+		}
+
+		system("pause");
 	}
 
 
 	class TemplateClass
 	{
 	public:
-
 		template<typename T>
 		struct Checker
 		{
 			inline bool Check(T* obj)
 			{
-				return obj->GetValue(1) == 10;
+				return obj->GetValue(1) == 11;
 			}
 		};
 
@@ -509,17 +479,16 @@ namespace Classes2
 			return Checker<T>();
 		}
 
-
 		template<typename C, class R, class A>
 		struct ClassFunction
 		{
-			typedef R (C::*MemberFunctor)(A);
+			typedef R(C::* MemberFunctor)(A);
 
 			C* objPtr;
 			MemberFunctor functor;
 
 			template <typename Method>
-			ClassFunction(C *object, Method method)
+			ClassFunction(C* object, Method method)
 			{
 				objPtr = object;
 				functor = method;
@@ -529,7 +498,7 @@ namespace Classes2
 		template<typename C, class R, class A>
 		struct ClassFunctionMaker
 		{
-			template<typename R(C::*func)(A)>
+			template<typename R(C::* func)(A)>
 			inline static ClassFunction<C, R, A> Create(C* object)
 			{
 				return ClassFunction<C, R, A>(object, func);
@@ -537,16 +506,16 @@ namespace Classes2
 		};
 
 		template<typename C, typename R, typename A>
-		static ClassFunctionMaker<C, R, A> makeClassFunctionMaker( R(C::*)(A) )
+		static ClassFunctionMaker<C, R, A> makeClassFunctionMaker(R(C::*)(A))
 		{
 			return ClassFunctionMaker<C, R, A>();
 		}
 	};
 
-	#define CLASS_FUNC_CHECK(object, func)										\
+#define CLASS_FUNC_CHECK(object, func) \
 	TemplateClass::GetChecker(func).Check(object)
 
-	#define CLASS_FUNC_WRAPPER_CREATE(object, func)								\
+#define CLASS_FUNC_WRAPPER_CREATE(object, func) \
 	TemplateClass::makeClassFunctionMaker(func).Create<func>(object)
 
 	class W
@@ -562,7 +531,7 @@ namespace Classes2
 
 		void print()
 		{
-			std::cout << "a is " << a;
+			std::cout << "a is " << a << std::endl;
 		}
 
 		int f(float)
@@ -573,64 +542,91 @@ namespace Classes2
 
 	void template_typename()
 	{
-		//member function pointer definition
-			//typedef R (C::*MemberFunctor)(A);
-
-		//template class member function pointer
-			//template <typename R(C::*func)(A)>
-
-		//template class member function parameter
-			//makeClassFunctionMaker( R(C::*)(A) )
-		
-		W obj;
-
-		CLASS_FUNC_CHECK(&obj, &W::GetValue);
-
-		CLASS_FUNC_WRAPPER_CREATE(&obj, &W::GetValue);
-
-		//pointer to data members of class
-		//syntax for declaration :
-			//datatype class_name::*pointer_name;
-		//syntax for assignment :
-			//pointer_name = &class_name::datamember_name;
-		//both declaration and assignment can be done in a single statement too.
-			//datatype class_name::*pointer_name = &class_name::datamember_name;
-
-		//using pointers with objects	
-			//Object.*pointerToMember
-			//ObjectPointer->*pointerToMember
-
-		Data d, *dp;
-		dp = &d;	//pointer to object
-
-		int Data::*ptr = &Data::a;	//pointer to data member 'a'
-
-		d.*ptr = 10;
-		d.print();
-
-		dp->*ptr = 20;
-		dp->print();
-
-		system("pause");
-
 		/*
-		output:
-			a is 10
-			a is 20
+			📚 멤버 함수 포인터 / 데이터 멤버 포인터 / 템플릿 활용
+
+			이 예제는 조금 고급 내용이다.
+
+			핵심은 다음 3가지이다.
+
+			1) 클래스의 멤버 함수 포인터를 타입으로 다룰 수 있다
+			2) 클래스의 데이터 멤버도 포인터로 가리킬 수 있다
+			3) 템플릿을 이용하면 이런 복잡한 타입도 자동 추론에 가깝게 다룰 수 있다
 		*/
 
-		//pointer to member functions of class
-			//syntax:
-			//return_type (class_name::*ptr_name) (argument_type) = &class_name::function_name;
+		{
+			W obj;
 
-		int (Data::*fp1) (float) = &Data::f;	//declaration and assignment
-		int (Data::*fp2) (float);				//only Declaration
+			bool checkResult = CLASS_FUNC_CHECK(&obj, &W::GetValue);
+			std::cout << "checkResult = " << checkResult << std::endl;
 
-		fp2 = &Data::f;   // Assignment inside main()
+			TemplateClass::ClassFunction<W, int, int> wrapper =
+				CLASS_FUNC_WRAPPER_CREATE(&obj, &W::GetValue);
+
+			std::cout << "wrapper.objPtr->GetValue(1) = "
+				<< (wrapper.objPtr->*(wrapper.functor))(1) << std::endl;
+			std::cout << std::endl;
+		}
+
+		{
+			Data d;
+			Data* dp = &d;
+
+			// 데이터 멤버 포인터
+			int Data::* ptr = &Data::a;
+
+			d.*ptr = 10;
+			d.print();
+
+			dp->*ptr = 20;
+			dp->print();
+
+			std::cout << std::endl;
+
+			/*
+				출력:
+					a is 10
+					a is 20
+
+				설명:
+				int Data::*ptr = &Data::a;
+				는 Data 클래스의 int 멤버 a 를 가리키는 포인터이다.
+
+				사용:
+					객체.*포인터
+					객체포인터->*포인터
+			*/
+		}
+
+		{
+			// 멤버 함수 포인터
+			int (Data:: * fp1)(float) = &Data::f;
+			int (Data:: * fp2)(float);
+
+			fp2 = &Data::f;
+
+			Data d;
+
+			std::cout << (d.*fp1)(3.14f) << std::endl;
+			std::cout << (d.*fp2)(7.5f) << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				멤버 함수 포인터 문법:
+
+					반환형 (클래스이름::*포인터이름)(매개변수형)
+
+				호출:
+					객체.*포인터
+					객체포인터->*포인터
+			*/
+		}
+
+		system("pause");
 	}
 
 
-	// template class
 	template <class T>
 	class MyContainer
 	{
@@ -640,17 +636,19 @@ namespace Classes2
 		T increase() { return ++element; }
 	};
 
-	// template class specialization:
+	// char 전용 특수화
 	template <>
 	class MyContainer<char>
 	{
 		char element;
 	public:
 		MyContainer(char arg) { element = arg; }
+
 		char uppercase()
 		{
 			if ((element >= 'a') && (element <= 'z'))
 				element += 'A' - 'a';
+
 			return element;
 		}
 	};
@@ -658,53 +656,42 @@ namespace Classes2
 	void template_specialization()
 	{
 		/*
-			Template specialization
+			📚 템플릿 특수화 (Template specialization)
 
-			It is possible to define a different implementation for a template when a specific type is passed as template argument.
-			This is called a template specialization.
+			템플릿은 보통 모든 타입에 대해 같은 규칙으로 동작한다.
 
-			For example, let's suppose that we have a very simple class called mycontainer that can store one element of any type
-			and that has just one member function called increase, which increases its value.
-			But we find that when it stores an element of type char it would be more convenient to have a completely different implementation
-			with a function member uppercase,
-			so we decide to declare a class template specialization for that type:
+			하지만 특정 타입에 대해서는
+			완전히 다른 구현을 제공하고 싶을 수 있다.
+
+			이럴 때 사용하는 것이 템플릿 특수화이다.
+
+			예제에서는
+			일반 타입 T 에 대해서는 increase() 를 제공하고,
+			char 타입에 대해서는 uppercase() 라는 전혀 다른 기능을 제공한다.
 		*/
+
 		{
 			MyContainer<int> myInt(7);
 			MyContainer<char> myChar('j');
 
 			std::cout << myInt.increase() << std::endl;
 			std::cout << myChar.uppercase() << std::endl;
-
-			system("pause");
+			std::cout << std::endl;
 
 			/*
-			output:
-				8
-				J
+				출력:
+					8
+					J
 			*/
 		}
+
 		/*
-			This is the syntax used for the class template specialization:
+			중요:
+			특수화 클래스는
+			일반 템플릿 클래스의 멤버를 자동으로 상속받지 않는다.
 
-				template <> class mycontainer <char> { ... };
-
-			First of all, notice that we precede the class name with template<> , including an empty parameter list.
-			This is because all types are known and no template arguments are required for this specialization,
-			but still, it is the specialization of a class template, and thus it requires to be noted as such.
-
-			But more important than this prefix, is the <char> specialization parameter after the class template name.
-			This specialization parameter itself identifies the type for which the template class is being specialized (char).
-			Notice the differences between the generic class template and the specialization:
-
-				template <class T> class mycontainer { ... };
-				template <> class mycontainer <char> { ... };
-
-				The first line is the generic template, and the second one is the specialization.
-
-			When we declare specializations for a template class, we must also define all its members,
-			even those identical to the generic template class,
-			because there is no "inheritance" of members from the generic template to the specialization.
+			즉 char 특수화 버전을 만들면
+			그 안에 필요한 멤버를 전부 다시 정의해야 한다.
 		*/
 
 		system("pause");
@@ -784,34 +771,52 @@ namespace Classes2
 	void user_defined_conversion()
 	{
 		/*
-			user-defined conversion
+			📚 사용자 정의 변환 (user-defined conversion)
+
+			C++에서는 클래스가 특정 타입으로 변환되는 규칙을
+			직접 정의할 수 있다.
+
+			예:
+				operator int()
+				operator SomeType*()
+
+			이 예제에서는 GetComponent 객체가
+			필요한 타입의 포인터로 변환될 수 있도록 템플릿 변환 연산자를 정의했다.
+
+			즉:
+				Inventory* pInventory = GetComponent(&playerCharacter);
+
+			이 문장에서 GetComponent 임시 객체가
+			자동으로 Inventory* 로 변환된다.
 		*/
+
 		{
 			Character playerCharacter;
 			Inventory inventory;
 
 			inventory.Print();
-				
-			// register object
-			playerCharacter.RegisterComponent<Inventory>(&inventory); // user-defined conversion by template function
 
-			// find object
+			playerCharacter.RegisterComponent<Inventory>(&inventory);
+
 			Inventory* pInventory = GetComponent(&playerCharacter);
-			if (nullptr != pInventory) {
-				std::cout << "Found object !!! - ObjectName:" << pInventory->GetObjectName() << std::endl;
+			if (nullptr != pInventory)
+			{
+				std::cout << "Found object !!! - ObjectName: " << pInventory->GetObjectName() << std::endl;
 			}
 
-			system("pause");
+			std::cout << std::endl;
 
 			/*
-			output:
-				constructor ObjectName:class Classes2::Object
-				constructor ObjectName:class Classes2::Object
-				typeid(*this).name() : class Classes2::Inventory
-				typeid(*this).raw_name() : .?AVInventory@Classes2@@
-				Found objet !!! - ObjectName:class Classes2::Inventory
+				설명:
+				GetComponent(&playerCharacter) 는 GetComponent 객체를 만든다.
+				그 후
+					operator Inventory*()
+				형태의 사용자 정의 변환이 호출되어
+				Inventory* 로 바뀐다.
 			*/
 		}
+
+		system("pause");
 	}
 
 
@@ -858,16 +863,29 @@ namespace Classes2
 	void nested_class()
 	{
 		/*
-			Nested Class
+			📚 중첩 클래스 (Nested class)
 
-			The name of the nested class exists in the scope of the enclosing class,
-			and name lookup from a member function of a nested class visits the scope of the enclosing class
-			after examining the scope of the nested class.
-			Like any member of its enclosing class,
-			the nested class has access to all names (private, protected, etc) to which the enclosing class has access,
-			but it is otherwise independent and
-			has no special access to the this pointer of the enclosing class.
+			클래스 안에 또 다른 클래스를 정의할 수 있다.
+			이를 중첩 클래스라고 한다.
+
+			예:
+				class OuterClass
+				{
+					class InnerClass
+					{
+					};
+				};
+
+			중첩 클래스의 이름은 바깥 클래스의 범위 안에 존재한다.
+
+				OuterClass::InnerClass
+
+			처럼 접근한다.
+
+			중첩 클래스는 바깥 클래스의 스코프 안에 있지만,
+			별도의 독립된 타입으로 생각하는 것이 이해하기 쉽다.
 		*/
+
 		{
 			OuterClass outObj(100);
 			OuterClass::InnerClass inObj(20.6f);
@@ -875,29 +893,36 @@ namespace Classes2
 			outObj.outerFunc();
 			inObj.innerFunc();
 
-			system("pause");
+			std::cout << std::endl;
 
 			/*
-			output:
-				OuterClass::outerFunc() : n = 100
-				OuterClass::innerFunc() : f = 20.6
+				출력:
+					OuterClass::outerFunc() : n = 100
+					InnerClass::innerFunc() : f = 20.6
 			*/
 		}
 
 		{
-			//OuterClass::nestedStruct ns; // compile error, nestedStruct is private !!!
+			// OuterClass::nestedStruct ns; // 오류: private 이므로 직접 접근 불가
 
 			OuterClass::GetPrivateMember().CallFunc();
 
-			auto obj = OuterClass::GetPrivateMember();
-			obj.CallFunc();
+			OuterClass::InnerClass obj(3.5f);
+			obj.innerFunc();
 
-			system("pause");
+			std::cout << std::endl;
+
 			/*
-			output:
-				nestedStruct::CallFunc() : can't access f
+				설명:
+				nestedStruct 는 private 이므로
+				밖에서 직접 타입 이름으로 접근할 수 없다.
+
+				하지만 public static 함수 GetPrivateMember() 를 통해
+				객체를 받아와 사용할 수는 있다.
 			*/
 		}
+
+		system("pause");
 	}
 	
 

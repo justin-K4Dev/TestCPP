@@ -1,571 +1,2089 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 
 
 namespace Operators
 {
-	/*
-		Operators
-
-		Once introduced to variables and constants, we can begin to operate with them by using operators.
-		What follows is a complete list of operators
-		At this point, it is likely not necessary to know all of them,
-		but they are all listed here to also serve as reference.
-	*/
-
 	void assignment_operator()
 	{
 		/*
-			Assignment operator (=)
+			📚 대입 연산자 (Assignment operator) 
+			
+			(=)
 
-			The assignment operator assigns a value to a variable.
+			대입 연산자는 오른쪽의 값을 왼쪽 변수에 저장한다.
 
-				x = 5;
+			형태:
+				변수 = 값;
+				변수1 = 변수2;
 
-			This statement assigns the integer value 5 to the variable x.
-			The assignment operation always takes place from right to left, and never the other way around:
+			예:
+				x = 10;   // x에 10 저장
+				a = b;    // b의 현재 값을 a에 복사
 
-				x = y;
-
-			This statement assigns to variable x the value contained in variable y.
-			The value of x at the moment this statement is executed is lost and replaced by the value of y.
-
-			Consider also that we are only assigning the value of y to x at the moment of the assignment operation.
-			Therefore, if y changes at a later moment, it will not affect the new value taken by x.
-
-			For example, let's have a look at the following code - I have included
-			the evolution of the content stored in the variables as comments:
+			중요한 점:
+			1) 대입은 항상 오른쪽 -> 왼쪽으로 진행된다.
+			2) 기존에 들어 있던 값은 새 값으로 덮어써진다.
+			3) 변수끼리 대입하면 "연결"이 아니라 "복사"이다.
+			4) 대입식 자체도 하나의 값으로 평가될 수 있다.
 		*/
+
 		{
-			int a, b;         // a:?,  b:?
-			a = 10;           // a:10, b:?
-			b = 4;            // a:10, b:4
-			a = b;            // a:4,  b:4
-			b = 7;            // a:4,  b:7
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 1] 가장 기본적인 대입" << std::endl;
+			std::cout << "============================================" << std::endl;
 
-			std::cout << "a:";
-			std::cout << a;
-			std::cout << " b:";
-			std::cout << b;
+			int x;      // 아직 초기화되지 않은 상태
+			x = 5;      // x에 5를 저장
 
-			system("pause");
+			std::cout << "x = " << x << std::endl;
+			std::cout << std::endl;
 
 			/*
-			output:
-				a:4 b:7
+				결과:
+					x = 5
+
+				설명:
+				오른쪽 값 5가 왼쪽 변수 x에 저장된다.
 			*/
 		}
-		/*
-			This program prints on screen the final values of a and b (4 and 7, respectively).
-			Notice how a was not affected by the final modification of b, even though we declared a = b earlier.
 
-			Assignment operations are expressions that can be evaluated.
-			That means that the assignment itself has a value,
-			and -for fundamental types- this value is the one assigned in the operation.
-			For example:
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] 기존 값 덮어쓰기" << std::endl;
+			std::cout << "============================================" << std::endl;
 
-				y = 2 + (x = 5);
+			int x = 3;  // x는 3
+			std::cout << "초기 x = " << x << std::endl;
 
-			In this expression, y is assigned the result of adding 2
-			and the value of another assignment expression (which has itself a value of 5).
-			It is roughly equivalent to:
+			x = 10;     // 기존 값 3은 사라지고 10으로 바뀜
+			std::cout << "변경 후 x = " << x << std::endl;
+			std::cout << std::endl;
 
-				x = 5;
-				y = 2 + x;
+			/*
+				결과:
+					초기 x = 3
+					변경 후 x = 10
 
-			With the final result of assigning 7 to y.
+				설명:
+				대입 연산은 기존 값을 유지하지 않고 새 값으로 덮어쓴다.
+			*/
+		}
 
-			The following expression is also valid in C++:
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 3] 변수의 값을 다른 변수에 복사" << std::endl;
+			std::cout << "============================================" << std::endl;
 
-				x = y = z = 5;
+			int a, b;   // a: ?, b: ?
+			a = 10;     // a: 10
+			b = 4;      // b: 4
+			a = b;      // a: 4, b: 4
+			b = 7;      // a: 4, b: 7
 
-			It assigns 5 to the all three variables: x, y and z; always from right-to-left.
-		*/
+			std::cout << "a = " << a << std::endl;
+			std::cout << "b = " << b << std::endl;
+			std::cout << std::endl;
+
+			/*
+				결과:
+					a = 4
+					b = 7
+
+				설명:
+				a = b; 를 실행한 순간,
+				b의 값 4가 a에 복사되었다.
+
+				그 이후 b를 7로 바꿔도
+				a는 자동으로 바뀌지 않는다.
+
+				즉:
+				대입은 참조 연결이 아니라 값 복사이다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 4] 대입식도 하나의 값으로 사용 가능" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int x = 0;
+			int y = 0;
+
+			y = 2 + (x = 5);
+
+			std::cout << "x = " << x << std::endl;
+			std::cout << "y = " << y << std::endl;
+			std::cout << std::endl;
+
+			/*
+				결과:
+					x = 5
+					y = 7
+
+				설명:
+				(x = 5) 는 단순히 x에 5를 저장하는 것에서 끝나지 않고,
+				그 식 자체도 값 5로 평가된다.
+
+				따라서:
+					y = 2 + (x = 5);
+				는
+					y = 2 + 5;
+				와 같은 효과가 있다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 5] 연속 대입" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int x, y, z;
+
+			x = y = z = 5;
+
+			std::cout << "x = " << x << std::endl;
+			std::cout << "y = " << y << std::endl;
+			std::cout << "z = " << z << std::endl;
+			std::cout << std::endl;
+
+			/*
+				결과:
+					x = 5
+					y = 5
+					z = 5
+
+				설명:
+				대입 연산자는 오른쪽에서 왼쪽으로 처리된다.
+
+				즉,
+					x = y = z = 5;
+				는 내부적으로 다음과 비슷하다.
+
+					z = 5;
+					y = z;
+					x = y;
+
+				결과적으로 모두 5가 된다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 6] 잘못 이해하기 쉬운 부분 확인" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int a = 100;
+			int b = 200;
+
+			a = b;      // a는 b의 값 200을 복사받음
+			b = 999;    // b만 다시 변경
+
+			std::cout << "a = " << a << std::endl;
+			std::cout << "b = " << b << std::endl;
+			std::cout << std::endl;
+
+			/*
+				결과:
+					a = 200
+					b = 999
+
+				설명:
+				많이 헷갈리는 부분이다.
+
+				a = b; 를 했다고 해서
+				a가 앞으로도 계속 b를 따라가는 것이 아니다.
+
+				그 순간의 값만 복사한다.
+			*/
+		}
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	void arithmetic_operators()
 	{
 		/*
-			Arithmetic operators ( +, -, *, /, % )
+			📚 산술 연산자 (Arithmetic operator)
 
-			The five arithmetical operations supported by C++ are:
+			( +, -, *, /, % )
 
-				operator	description
-				+			addition
-				-			subtraction
-				*			multiplication
-				/			division
-				%			modulo
+			C++에서 기본적으로 제공하는 대표적인 산술 연산자는 다음 5개이다.
 
-			Operations of addition, subtraction, multiplication
-			and division correspond literally to their respective mathematical operators.
-			The last one, modulo operator, represented by a percentage sign (%),
-			gives the remainder of a division of two values.
-			For example:
+				연산자		의미
+				---------------------
+				+			덧셈
+				-			뺄셈
+				*			곱셈
+				/			나눗셈
+				%			나머지
 
-				x = 11 % 3;
+			+, -, *, / 는 우리가 수학에서 사용하는 계산과 거의 같은 의미이다.
 
-			results in variable x containing the value 2, since dividing 11 by 3 results in 3,
-			with a remainder of 2.
+			단, / 와 % 는 자료형에 따라 결과가 다르게 보일 수 있으므로 주의가 필요하다.
+
+			특히:
+			1) 정수 / 정수  -> 정수 결과 (소수점 버림)
+			2) % 는 나머지를 구하는 연산자
 		*/
+
 		{
-			system("pause");
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 1] 덧셈 (+)" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int a = 10;
+			int b = 3;
+			int result = a + b;
+
+			std::cout << "a = " << a << std::endl;
+			std::cout << "b = " << b << std::endl;
+			std::cout << "a + b = " << result << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				10 + 3 = 13
+			*/
 		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] 뺄셈 (-)" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int a = 10;
+			int b = 3;
+			int result = a - b;
+
+			std::cout << "a = " << a << std::endl;
+			std::cout << "b = " << b << std::endl;
+			std::cout << "a - b = " << result << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				10 - 3 = 7
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 3] 곱셈 (*)" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int a = 10;
+			int b = 3;
+			int result = a * b;
+
+			std::cout << "a = " << a << std::endl;
+			std::cout << "b = " << b << std::endl;
+			std::cout << "a * b = " << result << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				10 * 3 = 30
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 4] 정수 나눗셈 (/)" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int a = 10;
+			int b = 3;
+			int result = a / b;
+
+			std::cout << "a = " << a << std::endl;
+			std::cout << "b = " << b << std::endl;
+			std::cout << "a / b = " << result << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				정수끼리 나누면 소수점 이하는 버린다.
+
+				10 / 3 = 3.333...
+				하지만 int / int 이므로 결과는 3
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 5] 실수 나눗셈 (/)" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			double a = 10.0;
+			double b = 3.0;
+			double result = a / b;
+
+			std::cout << "a = " << a << std::endl;
+			std::cout << "b = " << b << std::endl;
+			std::cout << "a / b = " << result << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				실수끼리 나누면 소수점까지 포함한 결과가 나온다.
+
+				10.0 / 3.0 = 3.33333...
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 6] 나머지 (%)" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int a = 11;
+			int b = 3;
+			int result = a % b;
+
+			std::cout << "a = " << a << std::endl;
+			std::cout << "b = " << b << std::endl;
+			std::cout << "a % b = " << result << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				11 / 3 = 3 ... 2
+
+				몫은 3이고,
+				나머지는 2이므로
+
+				11 % 3 = 2
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 7] / 와 % 를 함께 보기" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int a = 17;
+			int b = 5;
+
+			int quotient = a / b;   // 몫
+			int remainder = a % b;  // 나머지
+
+			std::cout << "a = " << a << std::endl;
+			std::cout << "b = " << b << std::endl;
+			std::cout << "a / b = " << quotient << std::endl;
+			std::cout << "a % b = " << remainder << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				17 / 5 = 3 ... 2
+
+				즉,
+				몫은 3
+				나머지는 2
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 8] 홀수 / 짝수 판별에 % 사용" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int value1 = 8;
+			int value2 = 11;
+
+			std::cout << "value1 = " << value1 << std::endl;
+			if (value1 % 2 == 0)
+			{
+				std::cout << value1 << " 은(는) 짝수입니다." << std::endl;
+			}
+			else
+			{
+				std::cout << value1 << " 은(는) 홀수입니다." << std::endl;
+			}
+
+			std::cout << std::endl;
+
+			std::cout << "value2 = " << value2 << std::endl;
+			if (value2 % 2 == 0)
+			{
+				std::cout << value2 << " 은(는) 짝수입니다." << std::endl;
+			}
+			else
+			{
+				std::cout << value2 << " 은(는) 홀수입니다." << std::endl;
+			}
+
+			std::cout << std::endl;
+
+			/*
+				설명:
+				어떤 수를 2로 나눴을 때 나머지가 0이면 짝수,
+				1이면 홀수이다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 9] 연산 결과를 변수에 다시 저장" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int score = 50;
+
+			std::cout << "초기 score = " << score << std::endl;
+
+			score = score + 10;
+			std::cout << "score = score + 10 -> " << score << std::endl;
+
+			score = score - 20;
+			std::cout << "score = score - 20 -> " << score << std::endl;
+
+			score = score * 2;
+			std::cout << "score = score * 2  -> " << score << std::endl;
+
+			score = score / 4;
+			std::cout << "score = score / 4  -> " << score << std::endl;
+
+			std::cout << std::endl;
+
+			/*
+				설명:
+				산술 연산의 결과를 다시 같은 변수에 저장할 수도 있다.
+			*/
+		}
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	void compound_assignment()
 	{
 		/*
-			Compound assignment (+=, -=, *=, /=, %=, >>=, <<=, &=, ^=, |=)
+			📚 복합 대입 연산자 (Compound Assignment Operator)
+			
+			( +=, -=, *=, /=, %=, >>=, <<=, &=, ^=, |= )
 
-			Compound assignment operators modify the current value of a variable by performing an operation on it.
-			They are equivalent to assigning the result of an operation to the first operand:
+			복합 대입 연산자는
+			"현재 변수값에 어떤 연산을 수행한 뒤,
+			그 결과를 다시 같은 변수에 저장" 하는 연산자이다.
 
-				expression				equivalent to...
-				y += x;					y = y + x;
-				x -= 5;					x = x - 5;
-				x /= y;					x = x / y;
-				price *= units + 1;		price = price * (units+1);
+			즉 아래처럼 자주 쓰는 코드를
 
-			and the same for all other compound assignment operators.
-			For example:
+				y = y + x;
+
+			더 짧게
+
+				y += x;
+
+			처럼 쓸 수 있다.
+
+			대표적인 예:
+				y += x;      -> y = y + x;
+				x -= 5;      -> x = x - 5;
+				x /= y;      -> x = x / y;
+				price *= 2;  -> price = price * 2;
+
+			산술 연산뿐 아니라
+			비트 연산과 시프트 연산에도 같은 방식으로 사용할 수 있다.
 		*/
-		{
-			int a, b = 3;
-			a = b;
-			a += 2;             // equivalent to a=a+2
-			std::cout << a << std::endl;
 
-			system("pause");
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 1] += 기본 예제" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int a, b = 3;
+			a = b;      // a = 3
+
+			a += 2;     // a = a + 2 = 5
+
+			std::cout << "a = " << a << std::endl;
+			std::cout << std::endl;
 
 			/*
-			output:
-				5
+				결과:
+					a = 5
+
+				설명:
+				a += 2; 는
+				a = a + 2; 와 완전히 같다.
 			*/
 		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] -= 예제" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int x = 10;
+
+			x -= 4;     // x = x - 4
+
+			std::cout << "x = " << x << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				10 - 4 = 6
+				따라서 x는 6이 된다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 3] *= 예제" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int x = 7;
+
+			x *= 3;     // x = x * 3
+
+			std::cout << "x = " << x << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				7 * 3 = 21
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 4] /= 예제" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int x = 20;
+
+			x /= 3;     // x = x / 3
+
+			std::cout << "x = " << x << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				int / int 이므로 소수점 이하는 버려진다.
+
+				20 / 3 = 6.666...
+				하지만 정수 결과는 6
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 5] %= 예제" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int x = 20;
+
+			x %= 3;     // x = x % 3
+
+			std::cout << "x = " << x << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				20 / 3 = 6 ... 2
+				나머지는 2 이므로 x는 2가 된다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 6] <<= 예제" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int x = 2;      // 0000 0010
+
+			x <<= 1;        // x = x << 1 -> 0000 0100 = 4
+
+			std::cout << "x = " << x << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				왼쪽 시프트는 비트를 왼쪽으로 이동시킨다.
+				2를 왼쪽으로 1칸 밀면 4가 된다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 7] >>= 예제" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int x = 16;     // 0001 0000
+
+			x >>= 2;        // x = x >> 2 -> 0000 0100 = 4
+
+			std::cout << "x = " << x << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				오른쪽 시프트는 비트를 오른쪽으로 이동시킨다.
+				16을 오른쪽으로 2칸 밀면 4가 된다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 8] &= 예제" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int x = 60;     // 0011 1100
+			int y = 13;     // 0000 1101
+
+			x &= y;         // x = x & y
+
+			std::cout << "x = " << x << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				0011 1100
+				0000 1101
+				---------
+				0000 1100 = 12
+
+				따라서 x는 12가 된다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 9] |= 예제" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int x = 60;     // 0011 1100
+			int y = 13;     // 0000 1101
+
+			x |= y;         // x = x | y
+
+			std::cout << "x = " << x << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				0011 1100
+				0000 1101
+				---------
+				0011 1101 = 61
+
+				따라서 x는 61이 된다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 10] ^= 예제" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int x = 60;     // 0011 1100
+			int y = 13;     // 0000 1101
+
+			x ^= y;         // x = x ^ y
+
+			std::cout << "x = " << x << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				0011 1100
+				0000 1101
+				---------
+				0011 0001 = 49
+
+				따라서 x는 49가 된다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 11] 여러 복합 대입 연산을 연속으로 사용" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int score = 10;
+
+			std::cout << "초기 score = " << score << std::endl;
+
+			score += 5;   // 15
+			std::cout << "score += 5  -> " << score << std::endl;
+
+			score *= 2;   // 30
+			std::cout << "score *= 2  -> " << score << std::endl;
+
+			score -= 8;   // 22
+			std::cout << "score -= 8  -> " << score << std::endl;
+
+			score /= 3;   // 7
+			std::cout << "score /= 3  -> " << score << std::endl;
+
+			score %= 5;   // 2
+			std::cout << "score %= 5  -> " << score << std::endl;
+
+			std::cout << std::endl;
+
+			/*
+				설명:
+				복합 대입 연산자는
+				변수값을 계속 갱신해가며 계산할 때 매우 자주 사용된다.
+			*/
+		}
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	void increment_n_decrement()
 	{
 		/*
-			Increment and decrement (++, --)
+			📚 증가 / 감소 연산자 (Increment & Decrement Operator)
+			
+			(++, --)
 
-			Some expression can be shortened even more: the increase operator (++)
-			and the decrease operator (--) increase or reduce by one the value stored in a variable.
-			They are equivalent to +=1 and to -=1, respectively. Thus:
+			증가 연산자 ++ 는 변수의 값을 1 증가시킨다.
+			감소 연산자 -- 는 변수의 값을 1 감소시킨다.
 
+			예:
 				++x;
 				x += 1;
 				x = x + 1;
 
-			are all equivalent in its functionality; the three of them increase by one the value of x.
+			위 3개는 기능적으로 같은 의미이다.
 
-			In the early C compilers, the three previous expressions may have produced
-			different executable code depending on which one was used.
-			Nowadays, this type of code optimization is generally performed automatically by the compiler,
-			thus the three expressions should produce exactly the same executable code.
+			중요한 특징:
+			++ 와 -- 는 변수 앞(prefix)에도 붙을 수 있고,
+			변수 뒤(suffix)에도 붙을 수 있다.
 
-			A peculiarity of this operator is that it can be used both as a prefix and as a suffix.
-			That means that it can be written either before the variable name (++x)
-			or after it (x++).
+				++x   // 전위 증가
+				x++   // 후위 증가
 
-			Although in simple expressions like x++ or ++x,
-			both have exactly the same meaning; in other expressions in which the result of the increment
-			or decrement operation is evaluated,
-			they may have an important difference in their meaning:
-			In the case that the increase operator is used as a prefix (++x) of the value,
-			the expression evaluates to the final value of x, once it is already increased.
-			On the other hand, in case that it is used as a suffix (x++), the value is also increased,
-			but the expression evaluates to the value that x had before being increased.
-			Notice the difference:
+			단독으로 쓸 때는 둘 다 결국 x를 1 증가시키지만,
+			식의 결과값이 사용될 때는 차이가 있다.
 
-				Example 1							Example 2
-				x = 3;								x = 3;
-				y = ++x;							y = x++;
-				// x contains 4, y contains 4		// x contains 4, y contains 3
+			1) 전위 증가 (++x)
+			   먼저 x를 증가시키고,
+			   증가된 값을 식의 결과로 사용한다.
 
-			In Example 1, the value assigned to y is the value of x after being increased.
-			While in Example 2, it is the value x had before being increased.
+			2) 후위 증가 (x++)
+			   현재 x 값을 먼저 식의 결과로 사용하고,
+			   그 다음에 x를 증가시킨다.
 		*/
 		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 1] 전위 증가 (++x)" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int x = 3;
+			int y = ++x;
+
+			std::cout << "x = " << x << std::endl;
+			std::cout << "y = " << y << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				++x 는 먼저 x를 1 증가시킨다.
+				그래서 x는 4가 되고,
+				그 증가된 값 4가 y에 대입된다.
+
+				결과:
+					x = 4
+					y = 4
+			*/
+		}
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] 후위 증가 (x++)" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int x = 3;
+			int y = x++;
+
+			std::cout << "x = " << x << std::endl;
+			std::cout << "y = " << y << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				x++ 는 먼저 현재 x 값을 식의 결과로 사용한다.
+				그 후 x를 1 증가시킨다.
+
+				즉,
+				y에는 증가 전 값 3이 들어가고,
+				그 다음 x가 4가 된다.
+
+				결과:
+					x = 4
+					y = 3
+			*/
+		}
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 3] 후위 증가 출력 확인" << std::endl;
+			std::cout << "============================================" << std::endl;
+
 			int x = 3;
 			int y = ++x;
 
 			std::cout << x++ << std::endl;
 			std::cout << x << std::endl;
 			std::cout << y << std::endl;
-
-			system("pause");
+			std::cout << std::endl;
 
 			/*
-			output:
-				4
-				5
-				4
+				설명:
+				처음:
+					x = 3
+					y = ++x -> x=4, y=4
+
+				그 다음:
+					std::cout << x++;
+
+				이 줄은 현재 x 값 4를 먼저 출력하고,
+				출력 후 x를 5로 증가시킨다.
+
+				따라서:
+					첫 줄 출력: 4
+					둘째 줄 출력: 5
+					셋째 줄 출력: 4
 			*/
 		}
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 4] 감소 연산자 (--)" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int x = 5;
+			int a = --x; // 먼저 감소
+			int y = 5;
+			int b = y--; // 먼저 사용 후 감소
+
+			std::cout << "전위 감소 결과 x = " << x << ", a = " << a << std::endl;
+			std::cout << "후위 감소 결과 y = " << y << ", b = " << b << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				--x : 먼저 감소 후 사용
+				y-- : 먼저 사용 후 감소
+			*/
+		}
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	void relational_n_comparison_operators()
 	{
 		/*
-			Relational and comparison operators ( ==, !=, >, <, >=, <= )
+			📚 관계 / 비교 연산자 (Relational & Comparison Operator)
 
-			Two expressions can be compared using relational and equality operators.
-			For example, to know if two values are equal or if one is greater than the other.
+			( ==, !=, >, <, >=, <= )
 
-			The result of such an operation is either true or false (i.e., a Boolean value).
+			두 값을 비교해서
+			결과를 true 또는 false 로 얻는 연산자이다.
 
-			The relational operators in C++ are:
+				==   같다
+				!=   다르다
+				>    크다
+				<    작다
+				>=   크거나 같다
+				<=   작거나 같다
 
-				operator	description
-				==			Equal to
-				!=			Not equal to
-				<			Less than
-				>			Greater than
-				<=			Less than or equal to
-				>=			Greater than or equal to
+			주의:
+			=  는 대입 연산자
+			== 는 비교 연산자
 
-			Here there are some examples:
-
-				(7 == 5)     // evaluates to false
-				(5 > 4)      // evaluates to true
-				(3 != 2)     // evaluates to true
-				(6 >= 6)     // evaluates to true
-				(5 < 5)      // evaluates to false
-
-
-			Of course, it's not just numeric constants that can be compared,
-			but just any value, including, of course, variables.
-			Suppose that a=2, b=3 and c=6, then:
-
-				(a == 5)     // evaluates to false, since a is not equal to 5
-				(a*b >= c)   // evaluates to true, since (2*3 >= 6) is true
-				(b+4 > a*c)  // evaluates to false, since (3+4 > 2*6) is false
-				((b=2) == a) // evaluates to true
-
-			Be careful! The assignment operator (operator =, with one equal sign) is not the same as
-			the equality comparison operator (operator ==, with two equal signs);
-			the first one (=) assigns the value on the right-hand to the variable on its left,
-			while the other (==) compares whether the values on both sides of the operator are equal.
-			Therefore, in the last expression ((b=2) == a), we first assigned the value 2 to b
-			and then we compared it to a (that also stores the value 2), yielding true.
+			둘은 완전히 다르다.
 		*/
+
 		{
-			system("pause");
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 1] 기본 비교 예제" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << "(7 == 5) = " << (7 == 5) << std::endl;
+			std::cout << "(5 > 4)  = " << (5 > 4) << std::endl;
+			std::cout << "(3 != 2) = " << (3 != 2) << std::endl;
+			std::cout << "(6 >= 6) = " << (6 >= 6) << std::endl;
+			std::cout << "(5 < 5)  = " << (5 < 5) << std::endl;
+			std::cout << std::endl;
+
+			/*
+				true 는 보통 1,
+				false 는 보통 0 으로 출력된다.
+			*/
 		}
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] 변수 비교 예제" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int a = 2;
+			int b = 3;
+			int c = 6;
+
+			std::cout << "(a == 5)     = " << (a == 5) << std::endl;
+			std::cout << "(a * b >= c) = " << (a * b >= c) << std::endl;
+			std::cout << "(b + 4 > a * c) = " << (b + 4 > a * c) << std::endl;
+			std::cout << std::endl;
+
+			/*
+				a == 5       -> 2 == 5      -> false
+				a*b >= c     -> 2*3 >= 6    -> true
+				b+4 > a*c    -> 3+4 > 2*6   -> false
+			*/
+		}
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 3] = 와 == 차이" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int a = 2;
+			int b = 3;
+
+			bool result = ((b = 2) == a);
+
+			std::cout << "a = " << a << std::endl;
+			std::cout << "b = " << b << std::endl;
+			std::cout << "result = " << result << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				(b = 2) 는 먼저 b에 2를 대입한다.
+				그 다음 2 == a 를 비교한다.
+
+				a도 2이므로 결과는 true
+
+				최종:
+					a = 2
+					b = 2
+					result = true(1)
+			*/
+		}
+
+		system("pause");
 	}
 
+	//---------------------------------------------------------------------------------------------
 
 	void logical_operators()
 	{
 		/*
-			Logical operators ( !, &&, || )
+			📚 논리 연산자 (Logical Operator)
 
-			The operator ! is the C++ operator for the Boolean operation NOT.
-			It has only one operand, to its right, and inverts it, producing false if its operand is true,
-			and true if its operand is false. Basically,
-			it returns the opposite Boolean value of evaluating its operand.
-			For example:
+			( !, &&, || )
 
-				!(5 == 5)   // evaluates to false because the expression at its right (5 == 5) is true
-				!(6 <= 4)   // evaluates to true because (6 <= 4) would be false
-				!true       // evaluates to false
-				!false      // evaluates to true
+			!   : NOT  -> 참/거짓 반전
+			&&  : AND  -> 둘 다 true일 때만 true
+			||  : OR   -> 둘 중 하나라도 true면 true
 
-			The logical operators && and || are used when evaluating two expressions to obtain a single relational result.
-			The operator && corresponds to the Boolean logical operation AND,
-			which yields true if both its operands are true, and false otherwise.
-			The following panel shows the result of operator && evaluating the expression a&&b:
-
-				&& OPERATOR (and)
-				a		b		a && b
-				true	true	true
-				true	false	false
-				false	true	false
-				false	false	false
-
-			The operator || corresponds to the Boolean logical operation OR,
-			which yields true if either of its operands is true, thus being false only when both operands are false.
-			Here are the possible results of a||b:
-
-				|| OPERATOR (or)
-				a		b		a || b
-				true	true	true
-				true	false	true
-				false	true	true
-				false	false	false
-
-			For example:
-				( (5 == 5) && (3 > 6) )  // evaluates to false ( true && false )
-				( (5 == 5) || (3 > 6) )  // evaluates to true ( true || false )
-
-
-			When using the logical operators,
-			C++ only evaluates what is necessary from left to right to come up with the combined relational result,
-			ignoring the rest.
-			Therefore, in the last example ((5==5)||(3>6)), C++ evaluates first whether 5==5 is true,
-			and if so, it never checks whether 3>6 is true or not.
-			This is known as short-circuit evaluation, and works like this for these operators:
-
-				operator	short-circuit
-				&&			if the left-hand side expression is false,
-							the combined result is false (the right-hand side expression is never evaluated).
-				||			if the left-hand side expression is true,
-							the combined result is true (the right-hand side expression is never evaluated).
-
-			This is mostly important when the right-hand expression has side effects, such as altering values:
-
-				if ( (i<10) && (++i<n) ) { ... }   // note that the condition increments i
-
-			Here, the combined conditional expression would increase i by one,
-			but only if the condition on the left of && is true, because otherwise,
-			the condition on the right - hand side(++i < n) is never evaluated.
+			결과는 항상 true 또는 false 이다.
 		*/
+
 		{
-			system("pause");
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 1] NOT (!)" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << "!(5 == 5) = " << !(5 == 5) << std::endl;
+			std::cout << "!(6 <= 4) = " << !(6 <= 4) << std::endl;
+			std::cout << "!true     = " << !true << std::endl;
+			std::cout << "!false    = " << !false << std::endl;
+			std::cout << std::endl;
 		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] AND (&&)" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << "((5 == 5) && (3 > 6)) = " << ((5 == 5) && (3 > 6)) << std::endl;
+			std::cout << "((5 == 5) && (6 > 3)) = " << ((5 == 5) && (6 > 3)) << std::endl;
+			std::cout << std::endl;
+
+			/*
+				true && false -> false
+				true && true  -> true
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 3] OR (||)" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << "((5 == 5) || (3 > 6)) = " << ((5 == 5) || (3 > 6)) << std::endl;
+			std::cout << "((4 < 1)  || (2 > 8)) = " << ((4 < 1) || (2 > 8)) << std::endl;
+			std::cout << std::endl;
+
+			/*
+				true || false  -> true
+				false || false -> false
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 4] short-circuit 확인" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int i = 10;
+			int n = 20;
+
+			if ((i < 10) && (++i < n))
+			{
+				std::cout << "조건 참" << std::endl;
+			}
+			else
+			{
+				std::cout << "조건 거짓" << std::endl;
+			}
+
+			std::cout << "i = " << i << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				왼쪽 조건 (i < 10) 은 false 이다.
+				&& 는 왼쪽이 false 이면 전체 결과가 이미 false 이므로
+				오른쪽 (++i < n) 은 아예 검사하지 않는다.
+
+				그래서 i는 증가하지 않고 그대로 10이다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 5] || short-circuit 확인" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int x = 5;
+
+			if ((x == 5) || (++x > 0))
+			{
+				std::cout << "조건 참" << std::endl;
+			}
+
+			std::cout << "x = " << x << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				왼쪽 조건 (x == 5) 가 true 이므로
+				|| 는 오른쪽을 검사하지 않는다.
+
+				따라서 ++x 는 실행되지 않고 x는 5 그대로이다.
+			*/
+		}
+
+		system("pause");
 	}
+
+	//---------------------------------------------------------------------------------------------
 
 	void conditional_ternary_operator()
 	{
 		/*
-			Conditional ternary operator ( ? )
+			📚 조건(삼항) 연산자 (Conditional Ternary Operator)
+			( ? : )
 
-			The conditional operator evaluates an expression, returning one value if that expression evaluates to true,
-			and a different one if the expression evaluates as false.
-			Its syntax is:
+			형태:
+				조건식 ? 참일 때 값 : 거짓일 때 값
 
-				condition ? result1 : result2 
+			의미:
+			조건식이 true 이면 앞의 값을 선택하고,
+			false 이면 뒤의 값을 선택한다.
 
-			If condition is true, the entire expression evaluates to result1, and otherwise to result2.
-
-				7 == 5 ? 4 : 3		// evaluates to 3, since 7 is not equal to 5.
-				7 == 5 + 2 ? 4 : 3	// evaluates to 4, since 7 is equal to 5+2.
-				5 > 3 ? a : b		// evaluates to the value of a, since 5 is greater than 3.
-				a > b ? a : b		// evaluates to whichever is greater, a or b.  
-
-			For example:
+			간단한 if-else 를 한 줄로 표현할 때 자주 사용한다.
 		*/
+
 		{
 			int a, b, c;
 
 			a = 2;
 			b = 7;
-			c = (a>b) ? a : b;
+			c = (a > b) ? a : b;
 
 			std::cout << c << '\n';
 
-			system("pause");
-
 			/*
-			output:
-				7
+				설명:
+				(a > b) 는 (2 > 7) 이므로 false
+				따라서 : 뒤의 값 b가 선택된다.
+
+				결과:
+					c = 7
 			*/
 		}
-		/*
-			In this example, a was 2, and b was 7, so the expression being evaluated (a>b) was not true,
-			thus the first value specified after the question mark was discarded in favor of the second value
-			(the one after the colon) which was b (with a value of 7).
-		*/
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] 큰 값 선택" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int x = 10;
+			int y = 20;
+
+			int maxValue = (x > y) ? x : y;
+
+			std::cout << "x = " << x << std::endl;
+			std::cout << "y = " << y << std::endl;
+			std::cout << "maxValue = " << maxValue << std::endl;
+			std::cout << std::endl;
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 3] 짝수 / 홀수 문자열 선택" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int value = 11;
+			const char* text = (value % 2 == 0) ? "짝수" : "홀수";
+
+			std::cout << "value = " << value << std::endl;
+			std::cout << "결과 = " << text << std::endl;
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
+
+	//---------------------------------------------------------------------------------------------
 
 	void comma_operator()
 	{
 		/*
-			Comma operator ( , )
+			📚 쉼표 연산자 (Comma Operator)
+			( , )
 
-			The comma operator (,) is used to separate two or more expressions
-			that are included where only one expression is expected.
-			When the set of expressions has to be evaluated for a value, only the right-most expression is considered.
+			쉼표 연산자는 여러 식을 순서대로 실행하고,
+			마지막 식의 결과를 전체 결과로 사용한다.
 
-			For example, the following code:
- 
-				a = ( b = 3, b + 2 );
+			형태:
+				(식1, 식2)
+				(식1, 식2, 식3)
 
-			would first assign the value 3 to b, and then assign b+2 to variable a.
-			So, at the end, variable a would contain the value 5 while variable b would contain value 3.
+			의미:
+			1) 왼쪽 식부터 차례대로 실행
+			2) 마지막 식의 값이 전체 식의 결과가 됨
 		*/
+
 		{
 			int a(0), b(0);
 
 			a = (b = 3, b + 2);
 
-			system("pause");
+			std::cout << "a = " << a << std::endl;
+			std::cout << "b = " << b << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				(b = 3, b + 2)
+
+				1) 먼저 b = 3 실행
+				2) 그 다음 b + 2 계산 -> 5
+				3) 전체 괄호 식의 결과는 마지막 식의 값 5
+
+				따라서:
+					b = 3
+					a = 5
+			*/
 		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] 여러 식 순서대로 실행" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int x = 0;
+			int y = 0;
+			int z = 0;
+
+			z = (x = 1, y = 2, x + y);
+
+			std::cout << "x = " << x << std::endl;
+			std::cout << "y = " << y << std::endl;
+			std::cout << "z = " << z << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				1) x = 1
+				2) y = 2
+				3) x + y = 3
+
+				마지막 식의 결과가 전체 결과이므로
+				z = 3
+			*/
+		}
+
+		system("pause");
 	}
+
+	//---------------------------------------------------------------------------------------------
+
+	struct MaskApplier
+	{
+		// 하위 6비트만 유효한 영역으로 사용
+		// 0x3F = 63 = 111111
+		static const int FlagsMask = 0x3F;
+
+		int Value;
+		int Mask;
+
+		MaskApplier(int value, int mask)
+			: Value(value), Mask(mask)
+		{
+		}
+
+		int getMaskedValue() const
+		{
+			// Value 전체를 쓰는 것이 아니라
+			// Mask가 1인 비트만 남긴다.
+			return Value & Mask;
+		}
+
+		int apply(int area) const
+		{
+			// 핵심 공식
+			// 1) Value에서 Mask가 1인 비트만 추출
+			// 2) area에서 Mask가 0인 비트만 유지
+			// 3) 둘을 OR로 합쳐 최종 결과 생성
+			//
+			// 즉,
+			// - Mask가 1인 비트 -> Value 사용
+			// - Mask가 0인 비트 -> area 유지
+			return (Value & Mask) | (area & ~Mask);
+		}
+	};
 
 	void bitwise_operators()
 	{
 		/*
-			Bitwise operators ( &, |, ^, ~, <<, >> )
+			📚 비트 연산자 (Bitwise Operator)
 
-			Bitwise operators modify variables considering the bit patterns that represent the values they store.
+			비트 연산자는 변수에 저장된 값을 "숫자" 자체로 보는 것이 아니라
+			그 숫자를 메모리에서 표현하는 "비트 패턴" 기준으로 연산한다.
 
-			operator	asm equivalent	description
-			&			AND				Bitwise AND
-			|			OR				Bitwise inclusive OR
-			^			XOR				Bitwise exclusive OR
-			~			NOT				Unary complement (bit inversion)
-			<<			SHL				Shift bits left
-			>>			SHR				Shift bits right
+			연산자		의미				설명
+			---------------------------------------------------------------
+			&			비트 AND			둘 다 1일 때만 1
+			|			비트 OR				둘 중 하나라도 1이면 1
+			^			비트 XOR			서로 다를 때만 1
+			~			비트 NOT			비트를 반전시킴 (0->1, 1->0)
+			<<			왼쪽 시프트			비트를 왼쪽으로 이동
+			>>			오른쪽 시프트		비트를 오른쪽으로 이동
 		*/
 		{
 			int a = 2;
 
+			// 10진수 2
+			// 2진수로는:
+			// 0000 0010
+
 			a = a << 1;
+			// 왼쪽으로 1칸 이동
+			// 0000 0010 -> 0000 0100
+			// 즉 2 -> 4
 			std::cout << a << "\n";
 
 			a = a << 2;
+			// 현재 a는 4
+			// 2진수:
+			// 0000 0100
+			//
+			// 왼쪽으로 2칸 이동
+			// 0000 0100 -> 0001 0000
+			// 즉 4 -> 16
 			std::cout << a << std::endl;
 
 			system("pause");
 
 			/*
-			output:
+			출력 결과:
 				4
 				16
 			*/
 		}
+
+		auto toBinary8 = [](int value) -> std::string
+		{
+			return std::bitset<8>(value & 0xFF).to_string();
+		};
+
+		auto toBinary6 = [](int value) -> std::string
+		{
+			return std::bitset<6>(value & MaskApplier::FlagsMask).to_string();
+		};
+
+		auto printLine = []()
+		{
+			std::cout << "------------------------------------------------------------" << std::endl;
+		};
+
+		auto runMask = [&](const std::string& title, int area, int value, int mask, int expected)
+		{
+			MaskApplier applier(value, mask);
+
+			int maskedValue = applier.getMaskedValue();
+			int result = applier.apply(area);
+
+			std::cout << title << std::endl;
+			printLine();
+
+			std::cout << "area         : " << area << "  (" << toBinary6(area) << ")" << std::endl;
+			std::cout << "value        : " << value << "  (" << toBinary6(value) << ")" << std::endl;
+			std::cout << "mask         : " << mask << "  (" << toBinary6(mask) << ")" << std::endl;
+			std::cout << "maskedValue  : " << maskedValue << "  (" << toBinary6(maskedValue) << ")" << std::endl;
+			std::cout << "result       : " << result << "  (" << toBinary6(result) << ")" << std::endl;
+			std::cout << "expected     : " << expected << "  (" << toBinary6(expected) << ")" << std::endl;
+			std::cout << "PASS         : " << (result == expected ? "OK" : "FAIL") << std::endl;
+			std::cout << std::endl;
+		};
+
+		{
+			printLine();
+			std::cout << "[1] 왼쪽 시프트 (<<) / 오른쪽 시프트 (>>)" << std::endl;
+			printLine();
+
+			int a = 2;
+
+			// 2 = 0000 0010
+			std::cout << "초기 a       : " << a << " (" << toBinary8(a) << ")" << std::endl;
+
+			a = a << 1;
+			// 0000 0010 -> 0000 0100
+			// 2 -> 4
+			std::cout << "a << 1       : " << a << " (" << toBinary8(a) << ")" << std::endl;
+
+			a = a << 2;
+			// 0000 0100 -> 0001 0000
+			// 4 -> 16
+			std::cout << "a << 2       : " << a << " (" << toBinary8(a) << ")" << std::endl;
+
+			a = a >> 1;
+			// 0001 0000 -> 0000 1000
+			// 16 -> 8
+			std::cout << "a >> 1       : " << a << " (" << toBinary8(a) << ")" << std::endl;
+
+			std::cout << std::endl;
+		}
+
+		{
+			printLine();
+			std::cout << "[2] &, |, ^, ~ 기본 예제" << std::endl;
+			printLine();
+
+			int a = 60; // 0011 1100
+			int b = 13; // 0000 1101
+
+			std::cout << "a            : " << a << " (" << toBinary8(a) << ")" << std::endl;
+			std::cout << "b            : " << b << " (" << toBinary8(b) << ")" << std::endl;
+			std::cout << std::endl;
+
+			int andResult = a & b;
+			// 0011 1100
+			// 0000 1101
+			// ----------
+			// 0000 1100 = 12
+			std::cout << "a & b        : " << andResult << " (" << toBinary8(andResult) << ")" << std::endl;
+
+			int orResult = a | b;
+			// 0011 1100
+			// 0000 1101
+			// ----------
+			// 0011 1101 = 61
+			std::cout << "a | b        : " << orResult << " (" << toBinary8(orResult) << ")" << std::endl;
+
+			int xorResult = a ^ b;
+			// 0011 1100
+			// 0000 1101
+			// ----------
+			// 0011 0001 = 49
+			std::cout << "a ^ b        : " << xorResult << " (" << toBinary8(xorResult) << ")" << std::endl;
+
+			int notA = ~a;
+			// 모든 비트를 반전
+			std::cout << "~a           : " << notA << " (" << toBinary8(notA) << ")" << std::endl;
+			std::cout << std::endl;
+		}
+
+		{
+			printLine();
+			std::cout << "[3] 플래그 상태 관리 예제" << std::endl;
+			printLine();
+
+			const unsigned int STATE_NONE = 0;
+			const unsigned int STATE_CONNECTED = 1 << 0; // 0001
+			const unsigned int STATE_LOGINED = 1 << 1; // 0010
+			const unsigned int STATE_IN_ROOM = 1 << 2; // 0100
+			const unsigned int STATE_READY = 1 << 3; // 1000
+
+			unsigned int userState = STATE_NONE;
+
+			// | : 상태 추가
+			userState |= STATE_CONNECTED;
+			userState |= STATE_LOGINED;
+
+			std::cout << "현재 userState         : " << userState << " (" << std::bitset<4>(userState) << ")" << std::endl;
+
+			// & : 상태 포함 여부 검사
+			if (userState & STATE_CONNECTED)
+			{
+				std::cout << "STATE_CONNECTED 포함" << std::endl;
+			}
+
+			if (userState & STATE_LOGINED)
+			{
+				std::cout << "STATE_LOGINED 포함" << std::endl;
+			}
+
+			if ((userState & STATE_IN_ROOM) == 0)
+			{
+				std::cout << "STATE_IN_ROOM 없음" << std::endl;
+			}
+
+			// ^ : 토글
+			userState ^= STATE_READY;
+			std::cout << "READY 토글 ON          : " << userState << " (" << std::bitset<4>(userState) << ")" << std::endl;
+
+			userState ^= STATE_READY;
+			std::cout << "READY 토글 OFF         : " << userState << " (" << std::bitset<4>(userState) << ")" << std::endl;
+
+			std::cout << std::endl;
+		}
+
+		{
+			printLine();
+			std::cout << "[4] XOR를 이용한 변경 감지 예제" << std::endl;
+			printLine();
+
+			const unsigned int FLAG_HP_CHANGED = 1 << 0;
+			const unsigned int FLAG_MP_CHANGED = 1 << 1;
+			const unsigned int FLAG_POS_CHANGED = 1 << 2;
+			const unsigned int FLAG_LEVEL_CHANGED = 1 << 3;
+
+			unsigned int oldState = FLAG_HP_CHANGED | FLAG_POS_CHANGED; // 0101
+			unsigned int newState = FLAG_MP_CHANGED | FLAG_POS_CHANGED; // 0110
+
+			unsigned int changed = oldState ^ newState;
+
+			std::cout << "oldState     : " << oldState << " (" << std::bitset<4>(oldState) << ")" << std::endl;
+			std::cout << "newState     : " << newState << " (" << std::bitset<4>(newState) << ")" << std::endl;
+			std::cout << "changed      : " << changed << " (" << std::bitset<4>(changed) << ")" << std::endl;
+
+			if (changed & FLAG_HP_CHANGED)    std::cout << "HP 상태 변경됨" << std::endl;
+			if (changed & FLAG_MP_CHANGED)    std::cout << "MP 상태 변경됨" << std::endl;
+			if (changed & FLAG_POS_CHANGED)   std::cout << "Position 상태 변경됨" << std::endl;
+			if (changed & FLAG_LEVEL_CHANGED) std::cout << "Level 상태 변경됨" << std::endl;
+
+			std::cout << std::endl;
+		}
+
+		{
+			printLine();
+			std::cout << "[5] MaskApplier 테스트" << std::endl;
+			printLine();
+
+			// TEST 1
+			// 하위 3비트만 교체
+			// area  = 56 = 111000
+			// value =  5 = 000101
+			// mask  =  7 = 000111
+			// result= 61 = 111101
+			runMask(
+				"TEST 1 - 하위 3비트만 교체",
+				56,
+				5,
+				7,
+				61
+			);
+
+			// TEST 2
+			// 상위 3비트만 교체
+			// area  =  7 = 000111
+			// value = 40 = 101000
+			// mask  = 56 = 111000
+			// result= 47 = 101111
+			runMask(
+				"TEST 2 - 상위 3비트만 교체",
+				7,
+				40,
+				56,
+				47
+			);
+
+			// TEST 3
+			// 전체 6비트 교체
+			runMask(
+				"TEST 3 - 전체 6비트 교체",
+				0,
+				63,
+				MaskApplier::FlagsMask,
+				63
+			);
+
+			// TEST 4
+			// mask가 0이면 아무 것도 바뀌지 않음
+			runMask(
+				"TEST 4 - mask가 0이면 원본 유지",
+				45,
+				18,
+				0,
+				45
+			);
+
+			// TEST 5
+			// value에 mask 바깥 비트가 있어도 실제 적용은 mask 안쪽만 된다.
+			runMask(
+				"TEST 5 - Value는 Mask 범위 안쪽만 적용",
+				0,
+				63,
+				3,
+				3
+			);
+
+			// TEST 6
+			// 중간 비트만 선택적으로 교체
+			runMask(
+				"TEST 6 - 중간 비트만 교체",
+				51,
+				12,
+				12,
+				63
+			);
+		}
+
+		system("pause");
 	}
+
+	//---------------------------------------------------------------------------------------------
 
 	void explicit_type_casting_operator()
 	{
 		/*
-			Explicit type casting operator
+			📚 명시적 형변환 연산자 (Explicit Type Casting Operator)
 
-			Type casting operators allow to convert a value of a given type to another type.
-			There are several ways to do this in C++. The simplest one, which has been inherited from the C language,
-			is to precede the expression to be converted by the new type enclosed between parentheses (()):
+			형변환(casting)은
+			어떤 자료형의 값을 다른 자료형으로 바꾸는 것이다.
 
-				int i(0);
-				float f = 3.14f;
-				i = (int) f;
+			예를 들어:
+				float -> int
+				double -> int
+				int -> float
 
-			The previous code converts the floating-point number 3.14 to an integer value (3);
-			the remainder is lost.
-			Here, the typecasting operator was (int).
-			Another way to do the same thing in C++ is to use the functional notation preceding the expression to be converted by the type and enclosing the expression between parentheses:
+			C++에서는 여러 가지 형변환 방법이 있지만,
+			기본적으로 초보 단계에서 많이 보는 방법은 다음 2가지이다.
 
-				i = int (f);
+			1) C 스타일 형변환
+				(타입)값
 
-			Both ways of casting types are valid in C++.
+				예:
+					i = (int)f;
+
+			2) 함수형 표기(functional notation)
+				타입(값)
+
+				예:
+					i = int(f);
+
+			두 방식 모두 C++에서 사용할 수 있다.
+
+			중요:
+			실수 -> 정수 형변환을 하면
+			소수점 이하 부분은 버려진다.
 		*/
-		{
-			int i(0);
 
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 1] float -> int (C 스타일 형변환)" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int i(0);
 			float f = 3.14f;
+
 			i = (int)f;
 
-			system("pause");
+			std::cout << "f = " << f << std::endl;
+			std::cout << "i = " << i << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				3.14f 를 int 로 바꾸면
+				정수 부분만 남고 소수점 이하는 버려진다.
+
+				따라서:
+					i = 3
+			*/
 		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] float -> int (함수형 표기)" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int i(0);
+			float f = 9.87f;
+
+			i = int(f);
+
+			std::cout << "f = " << f << std::endl;
+			std::cout << "i = " << i << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				int(f) 도 (int)f 와 같은 의미이다.
+				9.87 -> 9
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 3] int -> float" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int a = 10;
+			float b = (float)a;
+
+			std::cout << "a = " << a << std::endl;
+			std::cout << "b = " << b << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				정수를 실수로 바꾸면
+				값은 그대로이고 자료형만 float 로 바뀐다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 4] 형변환이 없을 때와 있을 때의 차이" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int a = 10;
+			int b = 3;
+
+			float result1 = a / b;          // int / int -> 3
+			float result2 = (float)a / b;   // float / int -> 3.333...
+
+			std::cout << "result1 = " << result1 << std::endl;
+			std::cout << "result2 = " << result2 << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				a / b 는 int / int 이므로 먼저 정수 나눗셈이 수행된다.
+				즉 10 / 3 = 3
+
+				그 결과 3이 float 에 저장되어 3.0 이 된다.
+
+				반면 (float)a / b 는
+				float / int 이므로 실수 나눗셈이 되어
+				3.333... 이 나온다.
+			*/
+		}
+
+		system("pause");
 	}
+
+	//---------------------------------------------------------------------------------------------
 
 	void sizeof_operator()
 	{
 		/*
-			sizeof
+			📚 sizeof 연산자 (SizeOf Operator)
 
-			This operator accepts one parameter, which can be either a type or a variable,
-			and returns the size in bytes of that type or object:
+			sizeof 는 어떤 자료형(type) 또는 변수(object)가
+			메모리에서 몇 바이트(byte)를 차지하는지 알려주는 연산자이다.
 
-				x = sizeof (char);
+			형태:
+				sizeof(자료형)
+				sizeof(변수)
 
-			Here, x is assigned the value 1, because char is a type with a size of one byte.
+			예:
+				sizeof(char)
+				sizeof(int)
+				sizeof(x)
 
-			The value returned by sizeof is a compile-time constant,
-			so it is always determined before program execution.
+			중요:
+			sizeof 의 결과는 실행 중에 계산되는 것이 아니라
+			컴파일 시점에 결정되는 상수값이다.
 		*/
+
 		{
 			int x = sizeof(char);
 
-			std::cout << x;
-
-			system("pause");
+			std::cout << x << std::endl;
 
 			/*
-			output:
-				1
+				결과:
+					1
+
+				설명:
+				char 는 1바이트 자료형이다.
 			*/
 		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] 기본 자료형 크기 확인" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << "sizeof(char)   = " << sizeof(char) << std::endl;
+			std::cout << "sizeof(short)  = " << sizeof(short) << std::endl;
+			std::cout << "sizeof(int)    = " << sizeof(int) << std::endl;
+			std::cout << "sizeof(long)   = " << sizeof(long) << std::endl;
+			std::cout << "sizeof(float)  = " << sizeof(float) << std::endl;
+			std::cout << "sizeof(double) = " << sizeof(double) << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				자료형에 따라 차지하는 메모리 크기가 다르다.
+
+				단, long 의 크기처럼
+				일부 자료형은 컴파일러 / 플랫폼에 따라 달라질 수 있다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 3] 변수로 sizeof 사용" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int a = 10;
+			double b = 3.14;
+			char c = 'A';
+
+			std::cout << "sizeof(a) = " << sizeof(a) << std::endl;
+			std::cout << "sizeof(b) = " << sizeof(b) << std::endl;
+			std::cout << "sizeof(c) = " << sizeof(c) << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				sizeof 는 자료형뿐 아니라 변수에도 사용할 수 있다.
+				이 경우 해당 변수의 자료형 크기를 반환한다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 4] 배열 크기 확인" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int arr[5] = { 10, 20, 30, 40, 50 };
+
+			std::cout << "sizeof(arr) = " << sizeof(arr) << std::endl;
+			std::cout << "sizeof(arr[0]) = " << sizeof(arr[0]) << std::endl;
+			std::cout << "배열 원소 개수 = " << sizeof(arr) / sizeof(arr[0]) << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				arr 전체 크기 = int 5개 크기
+				arr[0] 크기   = int 1개 크기
+
+				따라서:
+					배열 전체 크기 / 원소 하나 크기
+				로 원소 개수를 구할 수 있다.
+			*/
+		}
+
+		system("pause");
 	}
+
+	//---------------------------------------------------------------------------------------------
 
 	void other_operators()
 	{
 		/*
-			Other operators
+			📚 기타 연산자 (Other operators)
 
-			Later in these tutorials, we will see a few more operators, like the ones referring to pointers
-			or the specifics for object-oriented programming.
+			C++에는 지금까지 배운 연산자 외에도
+			나중에 배우게 될 다양한 연산자들이 있다.
+
+			예를 들면:
+			1) 포인터 관련 연산자
+				&   주소 얻기
+				*   역참조
+
+			2) 멤버 접근 연산자
+				.   객체 멤버 접근
+				->  포인터를 통한 멤버 접근
+
+			3) 범위 지정 연산자
+				::  스코프 지정
+
+			4) 동적 메모리 연산자
+				new
+				delete
+
+			5) 배열 / 함수 호출 관련 연산자
+				[]
+				()
+
+			이 함수는 실제 계산보다는
+			"앞으로 더 많은 연산자를 배우게 된다" 는 의미의 안내용이다.
 		*/
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[안내] 앞으로 배우게 될 기타 연산자들" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			std::cout << "&   : 변수의 주소를 구할 때 사용" << std::endl;
+			std::cout << "*   : 포인터가 가리키는 값을 접근할 때 사용" << std::endl;
+			std::cout << ".   : 객체의 멤버 접근" << std::endl;
+			std::cout << "->  : 포인터를 통한 객체 멤버 접근" << std::endl;
+			std::cout << "::  : 범위(스코프) 지정" << std::endl;
+			std::cout << "new / delete : 동적 메모리 할당 / 해제" << std::endl;
+			std::cout << "[]  : 배열 인덱스 접근" << std::endl;
+			std::cout << "()  : 함수 호출" << std::endl;
+			std::cout << std::endl;
+		}
+
+		system("pause");
 	}
+
+	//---------------------------------------------------------------------------------------------
 
 	void precedence_of_operators()
 	{
 		/*
-			Precedence of operators
+			📚 연산자 우선순위 (Precedence of operators)
 
-			A single expression may have multiple operators.
-			For example:
+			하나의 식 안에 여러 연산자가 들어가면
+			어떤 연산을 먼저 계산할지 순서가 필요하다.
+			이 순서를 연산자 우선순위라고 한다.
 
+			예:
 				x = 5 + 7 % 2;
 
-			In C++, the above expression always assigns 6 to variable x,
-			because the % operator has a higher precedence than the + operator,
-			and is always evaluated before.
-			Parts of the expressions can be enclosed in parenthesis to override this precedence order,
-			or to make explicitly clear the intended effect.
-			Notice the difference:
+			여기서 % 는 + 보다 우선순위가 높기 때문에
+			먼저 7 % 2 가 계산된다.
 
-				x = 5 + (7 % 2);	// x = 6 (same as without parenthesis)
-				x = (5 + 7) % 2;	// x = 0
+				7 % 2 = 1
+				5 + 1 = 6
 
-			From greatest to smallest priority,
-			C++ operators are evaluated in the following order:
-			
-			Level	Precedence group				Operator			Description							Grouping
-			1		Scope							::					scope qualifier						Left-to-right
-			2		Postfix (unary)					++ --				postfix increment / decrement		Left-to-right
-													()					functional forms
-													[]					subscript
-													. ->				member access
-			3		Prefix (unary)					++ --				prefix increment / decrement		Right-to-left
-													~ !					bitwise NOT / logical NOT
-													+ -					unary prefix
-													& *					reference / dereference
-													new delete			allocation / deallocation
-													sizeof				parameter pack
-													(type)				C-style type-casting
-			4		Pointer-to-member				.* ->*				access pointer						Left-to-right
-			5		Arithmetic: scaling				* / %				multiply, divide, modulo			Left-to-right
-			6		Arithmetic: addition			+ -					addition, subtraction				Left-to-right
-			7		Bitwise shift					<< >>				shift left, shift right				Left-to-right
-			8		Relational						< > <= >=			comparison operators				Left-to-right
-			9		Equality						== !=				equality / inequality				Left-to-right
-			10		And								&					bitwise AND							Left-to-right
-			11		Exclusive or					^					bitwise XOR							Left-to-right
-			12		Inclusive or					|					bitwise OR							Left-to-right
-			13		Conjunction						&&					logical AND							Left-to-right
-			14		Disjunction						||					logical OR							Left-to-right
-			15		Assignment-level expressions	= *= /= %= += -=
-													>>= <<= &= ^= |=	assignment / compound assignment	Right-to-left
-													?:					conditional operator
-			16		Sequencing						,					comma separator						Left-to-right
+			따라서 x = 6 이 된다.
 
+			괄호 () 를 사용하면
+			기본 우선순위를 바꿀 수 있다.
 
-			When an expression has two operators with the same precedence level,
-			grouping determines which one is evaluated first: either left-to-right or right-to-left.
+			우선순위가 높은 것부터 낮은 것 순서로,
+			C++ 연산자는 다음과 같은 순서로 평가된다.
 
-			Enclosing all sub-statements in parentheses (even those unnecessary because of their precedence)
-			improves code readability.
+			단계	우선순위 그룹					연산자					설명									결합 방향
+			-----------------------------------------------------------------------------------------------------------------------
+			1		범위 지정						::						범위 지정 연산자						왼쪽 → 오른쪽
+			2		후위 연산자 (단항)				++ --					후위 증가 / 후위 감소					왼쪽 → 오른쪽
+													()						함수 호출 / 함수형 표기
+													[]						배열 첨자 접근
+													.  ->					멤버 접근
+			3		전위 연산자 (단항)				++ --					전위 증가 / 전위 감소					오른쪽 → 왼쪽
+													~  !					비트 NOT / 논리 NOT
+													+  -					단항 부호 연산자
+													&  *					주소 연산 / 역참조
+													new delete				메모리 할당 / 해제
+													sizeof					크기 구하기
+													(type)					C 스타일 형변환
+			4		멤버 포인터						.*  ->*					멤버 포인터 접근						왼쪽 → 오른쪽
+			5		산술 연산: 곱셈 계열			*  /  %					곱셈, 나눗셈, 나머지					왼쪽 → 오른쪽
+			6		산술 연산: 덧셈 계열			+  -					덧셈, 뺄셈								왼쪽 → 오른쪽
+			7		비트 시프트						<<  >>					왼쪽 시프트, 오른쪽 시프트				왼쪽 → 오른쪽
+			8		관계 연산						<  >  <=  >=			크기 비교 연산자						왼쪽 → 오른쪽
+			9		동등 비교						==  !=					같다 / 다르다							왼쪽 → 오른쪽
+			10		비트 AND						&						비트 AND								왼쪽 → 오른쪽
+			11		비트 XOR						^						비트 XOR								왼쪽 → 오른쪽
+			12		비트 OR							|						비트 OR									왼쪽 → 오른쪽
+			13		논리 AND						&&						논리 AND								왼쪽 → 오른쪽
+			14		논리 OR							||						논리 OR									왼쪽 → 오른쪽
+			15		대입 계열 식					=  *=  /=  %=  +=  -=	대입 / 복합 대입						오른쪽 → 왼쪽
+													>>= <<= &= ^= |=
+													?:						조건(삼항) 연산자
+			16		쉼표 연산자						,						쉼표 구분자
 		*/
+
 		{
-			system("pause");
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 1] % 가 + 보다 먼저 계산됨" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int x = 5 + 7 % 2;
+
+			std::cout << "x = " << x << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				7 % 2 = 1
+				5 + 1 = 6
+
+				따라서 x = 6
+			*/
 		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 2] 괄호로 우선순위 변경" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int x1 = 5 + (7 % 2);
+			int x2 = (5 + 7) % 2;
+
+			std::cout << "x1 = " << x1 << std::endl;
+			std::cout << "x2 = " << x2 << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				x1 = 5 + (7 % 2)
+				   = 5 + 1
+				   = 6
+
+				x2 = (5 + 7) % 2
+				   = 12 % 2
+				   = 0
+
+				괄호 위치에 따라 결과가 달라진다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 3] 곱셈이 덧셈보다 먼저 계산됨" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int a = 2 + 3 * 4;
+			int b = (2 + 3) * 4;
+
+			std::cout << "2 + 3 * 4 = " << a << std::endl;
+			std::cout << "(2 + 3) * 4 = " << b << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				곱셈(*)은 덧셈(+)보다 우선순위가 높다.
+
+				따라서
+					2 + 3 * 4
+				는
+					2 + 12
+				가 되어 14
+
+				반면
+					(2 + 3) * 4
+				는
+					5 * 4
+				가 되어 20
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 4] 비교 연산과 산술 연산" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			bool result1 = 2 + 3 > 4;
+			bool result2 = 2 + (3 > 4);
+
+			std::cout << "2 + 3 > 4 = " << result1 << std::endl;
+			std::cout << "2 + (3 > 4) = " << result2 << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				result1:
+					2 + 3 > 4
+					= 5 > 4
+					= true
+
+				result2:
+					3 > 4 는 false -> 0
+					2 + 0 = 2
+					bool 로 저장되므로 true
+
+				즉 괄호 위치에 따라 의미가 달라진다.
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 5] 같은 우선순위에서는 결합 방향 확인" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int x = 20 - 5 - 3;
+			int y = 20 / 2 / 2;
+
+			std::cout << "20 - 5 - 3 = " << x << std::endl;
+			std::cout << "20 / 2 / 2 = " << y << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				- 와 / 는 같은 우선순위에서 보통 왼쪽에서 오른쪽으로 계산된다.
+
+				20 - 5 - 3
+				= (20 - 5) - 3
+				= 15 - 3
+				= 12
+
+				20 / 2 / 2
+				= (20 / 2) / 2
+				= 10 / 2
+				= 5
+			*/
+		}
+
+		{
+			std::cout << "============================================" << std::endl;
+			std::cout << "[TEST 6] 대입은 오른쪽에서 왼쪽으로" << std::endl;
+			std::cout << "============================================" << std::endl;
+
+			int a, b, c;
+			a = b = c = 5;
+
+			std::cout << "a = " << a << std::endl;
+			std::cout << "b = " << b << std::endl;
+			std::cout << "c = " << c << std::endl;
+			std::cout << std::endl;
+
+			/*
+				설명:
+				대입 연산자는 오른쪽에서 왼쪽으로 처리된다.
+
+				c = 5
+				b = c
+				a = b
+
+				결과적으로 모두 5가 된다.
+			*/
+		}
+
+		/*
+			실무 팁:
+			연산자 우선순위를 전부 외우려 하기보다
+			헷갈릴 수 있는 부분은 괄호로 명확하게 표현하는 것이 좋다.
+
+			예:
+				int x = (a + b) * c;
+				if ((hp > 0) && (mp > 10))
+		*/
+
+		system("pause");
 	}
 
 	void Test()
