@@ -85,6 +85,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	TypeConversions::Test();
 
+	BitwiseOperation::Test();
 
 	ExplicitMutable::Test();
 
@@ -111,6 +112,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	AdvancedMacro::Test();
 
 	NonLocalGoTo::Test();
+
+	NumberBaseConverter::Test();
 
 	Program32Bit264Bit::Test();
 

@@ -248,6 +248,12 @@
     <ClCompile Include="FloatingPoint.cpp">
       <Filter>Logic\Basic of C++</Filter>
     </ClCompile>
+    <ClCompile Include="NumberBaseConverter.cpp">
+      <Filter>Logic\Etc</Filter>
+    </ClCompile>
+    <ClCompile Include="BitwiseOperation.cpp">
+      <Filter>Logic\Etc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="locale_cpp_facets.gif">

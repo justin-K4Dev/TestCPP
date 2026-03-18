@@ -10,6 +10,12 @@ namespace ByteOrder
 
 			: 데이터가 바이트 단위로 메모리에 저장 되는 순서를 의미
 
+			* LSB (Least Significant Bit) 
+			  - 가장 낮은 자리 비트, 보통 맨 오른쪽 비트
+
+			* MSB (Most Significant Bit)
+			  - 가장 높은 자리 비트, 보통 맨 왼쪽 비트
+
 			- Endian
 			: 컴퓨터의 메모리와 같은 1차원의 공간에 여러 개의 연속된 대상을 배열하는 방법을 뜻 한다.
 
@@ -62,7 +68,7 @@ namespace ByteOrder
 				IA-64 (64 bit)			Bi (Big/Little) Endian
 				MIPS					Bi (Big/Little) Endian
 
-			- Bi Endian
+			- Bi-endian (바이 엔디안, 영어에서 bi 는 두가지, 둘다를 의미하는 단어, bicycle 바퀴가 두개)
 			: Big Endian 과 Little Endian 중 하나를 선택할 수 있도록 설계
 
 			- Middle Endian

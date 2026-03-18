@@ -106,6 +106,8 @@ namespace TypeConversions { void Test(); }
 
 namespace Attribute { void Test(); }
 
+namespace BitwiseOperation { void Test(); }
+
 namespace DeadLockAvoidanceTips { void Test(); }
 
 namespace StringHelper { void Test(); }
@@ -113,6 +115,8 @@ namespace StringHelper { void Test(); }
 namespace Unicode { void Test(); }
 
 namespace NonLocalGoTo { void Test(); }
+
+namespace NumberBaseConverter { void Test(); }
 
 namespace MacroTipsAndTricks { void Test(); }
 

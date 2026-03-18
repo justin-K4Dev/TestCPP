@@ -207,6 +207,7 @@
   <ItemGroup>
     <ClCompile Include="AdvancedMacro.cpp" />
     <ClCompile Include="Attribute.cpp" />
+    <ClCompile Include="BitwiseOperation.cpp" />
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="ABI.cpp" />
     <ClCompile Include="DeadLockAvoidanceTips.cpp" />
@@ -217,6 +218,7 @@
     <ClCompile Include="Introduction.cpp" />
     <ClCompile Include="Locale.cpp" />
     <ClCompile Include="MacroTipsAndTricks.cpp" />
+    <ClCompile Include="NumberBaseConverter.cpp" />
     <ClCompile Include="Program32bit264bit.cpp" />
     <ClCompile Include="Arrays.cpp" />
     <ClCompile Include="ByteOrder.cpp" />

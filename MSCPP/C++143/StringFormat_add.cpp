@@ -147,7 +147,7 @@ namespace StringFormat_AddFeatures
 		}
 		{
 			int n = 42;
-			std::cout << std::format("이진수  : {:b}\n", n);
+			std::cout << std::format("2진수  : {:b}\n", n);
 			std::cout << std::format("8진수   : {:o}\n", n);
 			std::cout << std::format("16진수  : {:x}\n", n);
 			std::cout << std::format("16진수(대): {:X}\n", n);

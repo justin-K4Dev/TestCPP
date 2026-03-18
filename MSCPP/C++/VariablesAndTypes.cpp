@@ -791,7 +791,7 @@ namespace VariablesAndTypes
 
 		bool begin = true;
 
-		// (4) MSB(가장 높은 바이트) -> LSB 순으로 출력
+		// (4) MSB(가장 높은 비트(오른쪽)) -> LSB(가장 낮은 자리 비트(왼쪽)) 순으로 출력
 		for (int i = (int)sizeof(T) - 1; i >= 0; --i)
 		{
 			// 각 바이트의 bit7..bit0을 출력
@@ -1225,7 +1225,7 @@ namespace VariablesAndTypes
 				printBitFormatOfType(-1.0f);
 				/*
 				output:
-					1.000000 : float = 0 01111111 00000 00000 00000 00000 000
+					 1.000000 : float = 0 01111111 00000 00000 00000 00000 000
 					-1.000000 : float = 1 01111111 00000 00000 00000 00000 000
 				*/
 
@@ -1233,7 +1233,7 @@ namespace VariablesAndTypes
 				printBitFormatOfType(-10.0f);
 				/*
 				output:
-					10.000000 : float = 0 10000010 01000 00000 00000 00000 000
+					 10.000000 : float = 0 10000010 01000 00000 00000 00000 000
 					-10.000000 : float = 1 10000010 01000 00000 00000 00000 000
 				*/
 
@@ -1241,7 +1241,7 @@ namespace VariablesAndTypes
 				printBitFormatOfType(-100.0f);
 				/*
 				output:
-					100.000000 : float = 0 10000101 10010 00000 00000 00000 000
+					 100.000000 : float = 0 10000101 10010 00000 00000 00000 000
 					-100.000000 : float = 1 10000101 10010 00000 00000 00000 000
 				*/
 
@@ -1249,7 +1249,7 @@ namespace VariablesAndTypes
 				printBitFormatOfType(-1000.0f);
 				/*
 				output:
-					1000.000000 : float = 0 10001000 11110 10000 00000 00000 000
+					 1000.000000 : float = 0 10001000 11110 10000 00000 00000 000
 					-1000.000000 : float = 1 10001000 11110 10000 00000 00000 000
 				*/
 
@@ -1257,7 +1257,7 @@ namespace VariablesAndTypes
 				printBitFormatOfType(-10000.0f);
 				/*
 				output:
-					10000.000000 : float = 0 10001100 00111 00010 00000 00000 000
+					 10000.000000 : float = 0 10001100 00111 00010 00000 00000 000
 					-10000.000000 : float = 1 10001100 00111 00010 00000 00000 000
 				*/
 
@@ -1265,7 +1265,7 @@ namespace VariablesAndTypes
 				printBitFormatOfType(-0.1f);
 				/*
 				output:
-					0.100000 : float = 0 01111011 10011 00110 01100 11001 101
+					 0.100000 : float = 0 01111011 10011 00110 01100 11001 101
 					-0.100000 : float = 1 01111011 10011 00110 01100 11001 101
 				*/
 
@@ -1273,7 +1273,7 @@ namespace VariablesAndTypes
 				printBitFormatOfType(-0.01f);
 				/*
 				output:
-					0.010000 : float = 0 01111000 01000 11110 10111 00001 010
+					 0.010000 : float = 0 01111000 01000 11110 10111 00001 010
 					-0.010000 : float = 1 01111000 01000 11110 10111 00001 010
 				*/
 
@@ -1281,7 +1281,7 @@ namespace VariablesAndTypes
 				printBitFormatOfType(-0.001f);
 				/*
 				output:
-					0.001000 : float = 0 01110101 00000 11000 10010 01101 111
+					 0.001000 : float = 0 01110101 00000 11000 10010 01101 111
 					-0.001000 : float = 1 01110101 00000 11000 10010 01101 111
 				*/
 
@@ -1629,6 +1629,342 @@ namespace VariablesAndTypes
 				printf("Signed 32-bit sub ok : a=%d, b=%d, r=%d\n", a, b, r);
 		}
 
+		system("pause");
+	}
+
+	//---------------------------------------------------------------------------------------------
+
+	void positive_n_negative_variables()
+	{
+		/*
+			📚 양수와 음수
+
+			C++의 32비트 signed int(std::int32_t)는 보통 2의 보수(two's complement) 방식으로 표현된다.
+
+			[32비트 비트 배치]
+
+				bit index:
+				 31    30    29    28                      3    2    1    0
+				+-----+-----+-----+-----+------------------+----+----+----+----+
+				|  S  |     |     |     |   value bits     |    |    |    |    |
+				+-----+-----+-----+-----+------------------+----+----+----+----+
+
+				S = sign bit (부호 비트)
+
+			- bit31 == 0 : 양수 또는 0
+			- bit31 == 1 : 음수
+
+			---------------------------------------------------------------------------------------
+			[signed 와 unsigned 차이]
+			---------------------------------------------------------------------------------------
+
+			컴퓨터 메모리에는 결국 "비트 패턴"만 저장된다.
+			signed / unsigned 의 차이는 저장 방식의 차이가 아니라,
+			같은 비트 패턴을 "어떻게 해석하느냐"의 차이다.
+
+			예를 들어 32비트에서 다음 비트 패턴이 있다고 하자.
+
+				11111111 11111111 11111111 11111111
+
+			이 비트 패턴을
+
+				1) std::int32_t  (signed)   로 해석하면  -> -1
+				2) std::uint32_t (unsigned) 로 해석하면  -> 4294967295
+
+			즉, 비트 패턴은 같고, 자료형에 따라 십진수 해석 결과만 달라진다.
+
+			또 다른 예:
+
+				10000000 00000000 00000000 00000000
+
+			이 비트 패턴을
+
+				1) std::int32_t  로 해석하면 -> -2147483648
+				2) std::uint32_t 로 해석하면 -> 2147483648
+
+			즉,
+				같은 비트 패턴
+				= signed   에서는 음수일 수 있고
+				= unsigned 에서는 큰 양수일 수 있다
+
+			---------------------------------------------------------------------------------------
+			[예시 비트 패턴]
+			---------------------------------------------------------------------------------------
+
+				값(signed)  2진수(32비트)                           16진수
+			   ----------------------------------------------------------------
+				+10       = 00000000 00000000 00000000 00001010   = 0x0000000A
+				-10       = 11111111 11111111 11111111 11110110   = 0xFFFFFFF6
+				-1        = 11111111 11111111 11111111 11111111   = 0xFFFFFFFF
+				 0        = 00000000 00000000 00000000 00000000   = 0x00000000
+				+1        = 00000000 00000000 00000000 00000001   = 0x00000001
+				-2        = 11111111 11111111 11111111 11111110   = 0xFFFFFFFE
+				-5        = 11111111 11111111 11111111 11111011   = 0xFFFFFFFB
+				-100      = 11111111 11111111 11111111 10011100   = 0xFFFFFF9C
+				-1000     = 11111111 11111111 11111100 00011000   = 0xFFFFFC18
+
+			※ 위 비트 패턴은 "저장된 모양"이고,
+			  signed / unsigned 는 이 비트 패턴을 숫자로 해석하는 방식이 다르다.
+
+			예:
+				11111111 11111111 11111111 11111111
+
+				std::int32_t  기준 -> -1
+				std::uint32_t 기준 -> 4294967295
+
+				11111111 11111111 11111111 11111110
+
+				std::int32_t  기준 -> -2
+				std::uint32_t 기준 -> 4294967294
+
+				11111111 11111111 11111111 11110110
+
+				std::int32_t  기준 -> -10
+				std::uint32_t 기준 -> 4294967285
+
+			---------------------------------------------------------------------------------------
+			[부호 비트 마스크]
+			---------------------------------------------------------------------------------------
+
+				SIGN_BIT_MASK = 0x80000000
+							  = 10000000 00000000 00000000 00000000
+
+				std::uint32_t 기준 : 2147483648
+				std::int32_t  기준 : -2147483648
+
+			이 마스크를 값과 AND(&) 하면 최상위 부호 비트만 추출할 수 있다.
+
+			예: value = -10
+
+				value         = 11111111 11111111 11111111 11110110
+				SIGN_BIT_MASK = 10000000 00000000 00000000 00000000
+								----------------------------------- &
+								10000000 00000000 00000000 00000000
+
+				=> 결과가 0이 아니므로 음수
+
+			예: value = +10
+
+				value         = 00000000 00000000 00000000 00001010
+				SIGN_BIT_MASK = 10000000 00000000 00000000 00000000
+								----------------------------------- &
+								00000000 00000000 00000000 00000000
+
+				=> 결과가 0이므로 양수(또는 0)
+
+			---------------------------------------------------------------------------------------
+			[왜 unsigned로 캐스팅해서 비트를 보나?]
+			---------------------------------------------------------------------------------------
+
+			signed 값은 "숫자 의미"가 강하고,
+			unsigned 값은 "순수 비트 패턴"을 보기 쉽다.
+
+			예:
+				std::int32_t  s = -1;
+				std::uint32_t u = static_cast<std::uint32_t>(s);
+
+				s의 비트 패턴 = 11111111 11111111 11111111 11111111
+				u의 비트 패턴 = 11111111 11111111 11111111 11111111
+
+				비트는 동일
+				해석만 다름
+
+			따라서 비트 연산 설명에서는
+				std::uint32_t
+			로 바꿔서 출력하면 더 직관적이다.
+
+			---------------------------------------------------------------------------------------
+			[음수 마스크 / 양수 마스크]
+			---------------------------------------------------------------------------------------
+
+			1) 음수 마스크
+				value < 0  -> 0xFFFFFFFF
+				value >= 0 -> 0x00000000
+
+				0xFFFFFFFF = 11111111 11111111 11111111 11111111
+						   = std::uint32_t 기준 4294967295
+						   = std::int32_t  기준 -1 로 해석 가능
+
+				0x00000000 = 00000000 00000000 00000000 00000000
+						   = 0
+
+			2) 양수(0 포함) 마스크
+				value >= 0 -> 0xFFFFFFFF
+				value < 0  -> 0x00000000
+
+			---------------------------------------------------------------------------------------
+			[마스크를 이용한 분기 없는 선택]
+			---------------------------------------------------------------------------------------
+
+				result = (a & mask) | (b & ~mask);
+
+				mask = 0xFFFFFFFF 이면
+					a & mask  -> a
+					b & ~mask -> 0
+					result    -> a
+
+				mask = 0x00000000 이면
+					a & mask  -> 0
+					b & ~mask -> b
+					result    -> b
+		*/
+
+		auto print_bits32 = [](const char* label, std::int32_t value)
+		{
+			std::uint32_t u = static_cast<std::uint32_t>(value);
+
+			std::cout << std::left << std::setw(20) << label
+				<< " = "
+				<< std::bitset<32>(u)
+				<< "  dec: " << std::right << std::setw(12) << value
+				<< "  hex: 0x"
+				<< std::hex << std::uppercase << std::setw(8) << std::setfill('0') << u
+				<< std::dec << std::nouppercase << std::setfill(' ')
+				<< '\n';
+		};
+
+		auto print_mask32 = [](const char* label, std::uint32_t value)
+		{
+			std::cout << std::left << std::setw(20) << label
+				<< " = "
+				<< std::bitset<32>(value)
+				<< "  dec: " << std::right << std::setw(12) << value
+				<< "  hex: 0x"
+				<< std::hex << std::uppercase << std::setw(8) << std::setfill('0') << value
+				<< std::dec << std::nouppercase << std::setfill(' ')
+				<< '\n';
+		};
+
+		constexpr std::uint32_t SIGN_BIT_MASK = 0x80000000u;
+
+		auto is_negative_by_sign_bit = [SIGN_BIT_MASK](std::int32_t value) -> bool
+		{
+			std::uint32_t u = static_cast<std::uint32_t>(value);
+			return (u & SIGN_BIT_MASK) != 0;
+		};
+
+		auto make_negative_mask = [](std::int32_t value) -> std::uint32_t
+		{
+			return (value < 0) ? 0xFFFFFFFFu : 0x00000000u;
+		};
+
+		auto make_non_negative_mask = [](std::int32_t value) -> std::uint32_t
+		{
+			return (value >= 0) ? 0xFFFFFFFFu : 0x00000000u;
+		};
+
+		auto select_by_mask = [](std::uint32_t a, std::uint32_t b, std::uint32_t mask) -> std::uint32_t
+		{
+			return (a & mask) | (b & ~mask);
+		};
+
+		//-----------------------------------------------------------------------------------------
+		// sign bit, 음수/양수 판별, 비트 패턴 확인
+		//-----------------------------------------------------------------------------------------
+		{
+			std::cout << "============================================================\n";
+			std::cout << "1) 양수/음수 비트 표현 및 sign bit 검사\n";
+			std::cout << "============================================================\n";
+
+			std::int32_t values[] =
+			{
+				-10,
+				-1,
+				0,
+				1,
+				10,
+				std::numeric_limits<std::int32_t>::min(),
+				std::numeric_limits<std::int32_t>::max()
+			};
+
+			for (std::int32_t v : values)
+			{
+				std::uint32_t u = static_cast<std::uint32_t>(v);
+				std::uint32_t signOnly = (u & SIGN_BIT_MASK);
+				bool isNegative = is_negative_by_sign_bit(v);
+
+				print_bits32("value", v);
+				print_mask32("SIGN_BIT_MASK", SIGN_BIT_MASK);
+				print_mask32("value & sign bit", signOnly);
+
+				std::cout << "is negative?         = " << std::boolalpha << isNegative << '\n';
+				std::cout << "is non-negative?     = " << std::boolalpha << (!isNegative) << '\n';
+				std::cout << '\n';
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------
+		// 음수 마스크 / 양수 마스크 / 분기 없는 선택 테스트
+		//-----------------------------------------------------------------------------------------
+		{
+			std::cout << "============================================================\n";
+			std::cout << "2) 음수/양수 마스크 및 branchless select 테스트\n";
+			std::cout << "============================================================\n";
+
+			std::int32_t values[] =
+			{
+				-10,
+				-1,
+				0,
+				1,
+				10
+			};
+
+			std::uint32_t a = 0xAAAAAAAAu;
+			std::uint32_t b = 0x55555555u;
+
+			for (std::int32_t v : values)
+			{
+				std::uint32_t negativeMask = make_negative_mask(v);
+				std::uint32_t nonNegativeMask = make_non_negative_mask(v);
+
+				std::uint32_t selectedByNegativeMask = select_by_mask(a, b, negativeMask);
+				std::uint32_t selectedByPositiveMask = select_by_mask(a, b, nonNegativeMask);
+
+				print_bits32("value", v);
+				print_mask32("negative mask", negativeMask);
+				print_mask32("positive mask", nonNegativeMask);
+				print_mask32("A", a);
+				print_mask32("B", b);
+				print_mask32("select by neg mask", selectedByNegativeMask);
+				print_mask32("select by pos mask", selectedByPositiveMask);
+
+				std::cout << "rule 1 : negative     -> A, non-negative -> B\n";
+				std::cout << "rule 2 : non-negative -> A, negative     -> B\n";
+				std::cout << '\n';
+			}
+		}
+
+		//-----------------------------------------------------------------------------------------
+		// 같은 비트 패턴을 signed / unsigned 로 다르게 해석하는 테스트
+		//-----------------------------------------------------------------------------------------
+		{
+			std::cout << "============================================================\n";
+			std::cout << "0) signed / unsigned 해석 차이\n";
+			std::cout << "============================================================\n";
+
+			std::int32_t signedMinusOne = -1;
+			std::uint32_t unsignedFromMinusOne = static_cast<std::uint32_t>(signedMinusOne);
+
+			print_bits32("signed -1", signedMinusOne);
+			print_mask32("as unsigned", unsignedFromMinusOne);
+
+			std::cout << "same bits, different interpretation\n";
+			std::cout << "std::int32_t  : " << signedMinusOne << '\n';
+			std::cout << "std::uint32_t : " << unsignedFromMinusOne << '\n';
+			std::cout << '\n';
+
+			std::uint32_t rawSignBit = 0x80000000u;
+			std::int32_t signedView = static_cast<std::int32_t>(rawSignBit);
+
+			print_mask32("raw 0x80000000", rawSignBit);
+			print_bits32("as int32_t", signedView);
+
+			std::cout << "std::uint32_t : " << rawSignBit << '\n';
+			std::cout << "std::int32_t  : " << signedView << '\n';
+			std::cout << '\n';
+		}
+		
 		system("pause");
 	}
 
@@ -2184,6 +2520,8 @@ namespace VariablesAndTypes
 		//initialization_of_variables();
 
 		//declaration_of_variables();
+
+		//positive_n_negative_variables();
 
 		//integer_over_under_flow();
 

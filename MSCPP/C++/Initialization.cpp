@@ -132,8 +132,8 @@ namespace Initialization
 				  - 없으면 일반 생성자 중에서 최적 후보 선택
 				  - 만약 aggregate 타입이면 → aggregate-initialization 규칙 적용
 
-				Foo f1{1, "hi"};  // aggregate init: f1.n=1, f1.s="hi"
-				Foo f2{};         // f2.n=0, f2.s=""
+				Foo f1{1, "hi"};  // aggregate init: f1.n = 1, f1.s = "hi"
+				Foo f2{};         // f2.n = 0, f2.s = ""
 
 				std::vector<int> v{1,2,3}; // v = [1,2,3]
 			*/
@@ -169,8 +169,8 @@ namespace Initialization
 				float z;
 			};
 
-			Vector3 v1{ 1.0f, 2.0f, 3.0f }; // x=1, y=2, z=3, (list-init)
-			Vector3 v2{};					// x=0, y=0, z=0 (빈 리스트 → 0으로 채움)
+			Vector3 v1{ 1.0f, 2.0f, 3.0f }; // x = 1, y = 2, z = 3, (list-init)
+			Vector3 v2{};					// x = 0, y = 0, z = 0 (빈 리스트 → 0으로 채움)
 		}
 	}
 
