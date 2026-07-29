@@ -82,9 +82,14 @@ namespace FriendshipAndInheritance { void Test(); }
 
 namespace Polymorphism { void Test(); }
 
+// Dump
+namespace MiniDump { void Test(); }
+
 // Other language features
 
 namespace Exception { void Test(); }
+
+namespace Fiber { void Test(); }
 
 namespace PreprocessorDirectives { void Test(); }
 

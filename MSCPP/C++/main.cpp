@@ -23,6 +23,8 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	ByteOrder::Test();
 
+	Fiber::Test();
+
 	Initialization::Test();
 
 	StructureOfProgram::Test();
@@ -77,7 +79,11 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	Classes2::Test();
 
+	MiniDump::Test();
+
 	SpecialMembers::Test();
+
+	Fiber::Test();
 
 	FriendshipAndInheritance::Test();
 

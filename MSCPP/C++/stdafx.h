@@ -5,6 +5,7 @@
 
 #pragma once
 
+
 #define _CRT_SECURE_NO_WARNINGS
 
 #include "targetver.h"
@@ -35,6 +36,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstddef>
+#include <cstdint>
 #include <cctype>
 #include <type_traits>
 #include <typeinfo>

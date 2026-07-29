@@ -46,6 +46,9 @@
     <Filter Include="Logic\Platform">
       <UniqueIdentifier>{8e2a3fb1-8001-49bb-82ee-640b4cedba10}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Logic\Dump">
+      <UniqueIdentifier>{884d7990-a57c-47b8-af0a-968d599d0e24}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -72,6 +75,9 @@
     </ClInclude>
     <ClInclude Include="EnumToString.h">
       <Filter>Logic\Etc\AdvancedMacro</Filter>
+    </ClInclude>
+    <ClInclude Include="FiberScheduler.h">
+      <Filter>Logic\Other language features</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -253,6 +259,12 @@
     </ClCompile>
     <ClCompile Include="BitwiseOperation.cpp">
       <Filter>Logic\Etc</Filter>
+    </ClCompile>
+    <ClCompile Include="MiniDump.cpp">
+      <Filter>Logic\Dump</Filter>
+    </ClCompile>
+    <ClCompile Include="Fiber.cpp">
+      <Filter>Logic\Other language features</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

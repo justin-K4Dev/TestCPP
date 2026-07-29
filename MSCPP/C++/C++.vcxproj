@@ -200,6 +200,7 @@
     <ClInclude Include="CRT_MemoryCheck.h" />
     <ClInclude Include="EnumMacro.h" />
     <ClInclude Include="EnumToString.h" />
+    <ClInclude Include="FiberScheduler.h" />
     <ClInclude Include="Function.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -211,6 +212,7 @@
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="ABI.cpp" />
     <ClCompile Include="DeadLockAvoidanceTips.cpp" />
+    <ClCompile Include="Fiber.cpp" />
     <ClCompile Include="FloatingPoint.cpp" />
     <ClCompile Include="Function.cpp" />
     <ClCompile Include="Initialization.cpp" />
@@ -218,6 +220,7 @@
     <ClCompile Include="Introduction.cpp" />
     <ClCompile Include="Locale.cpp" />
     <ClCompile Include="MacroTipsAndTricks.cpp" />
+    <ClCompile Include="MiniDump.cpp" />
     <ClCompile Include="NumberBaseConverter.cpp" />
     <ClCompile Include="Program32bit264bit.cpp" />
     <ClCompile Include="Arrays.cpp" />
